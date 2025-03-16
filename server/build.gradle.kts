@@ -32,4 +32,6 @@ dependencies {
     implementation(libs.logback.classic)
     testImplementation(libs.ktor.server.test.host)
     testImplementation(libs.kotlin.test.junit)
+
+    implementation("io.viascom.nanoid:nanoid:1.0.1")
 }

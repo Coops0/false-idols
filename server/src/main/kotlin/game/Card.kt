@@ -1,5 +1,7 @@
 package com.cooper.game
 
+import kotlin.math.absoluteValue
+
 typealias CardId = Int
 
 data class Card(
@@ -37,12 +39,22 @@ val cards = listOf(
 )
 
 class CardDeck(totalCardCount: Int = 17) {
-    private val deck: MutableList<Card> = cards.shuffled().take(totalCardCount).toMutableList()
+    private val unplayedCards: MutableList<Card> = cards.shuffled().take(totalCardCount).toMutableList()
+    val playedCards = mutableListOf<Card>()
 
-    fun takeThree(): List<Card> {
-        require(deck.size >= 3) { "Not enough cards in deck" }
-        return List(3) {
-            deck.removeAt(0)
+    fun pickAndTakeThree(): List<Card> {
+        require(unplayedCards.size >= 3) { "Not enough cards in deck" }
+        val cards = List(3) {
+            unplayedCards.removeAt(0)
         }
+
+        playedCards.addAll(cards)
+        return cards
     }
+
+    val points: Int
+        get() = playedCards.sumOf(Card::consequence)
+
+    val absolutePoints: Int
+        get() = playedCards.sumOf { it.consequence.absoluteValue }
 }

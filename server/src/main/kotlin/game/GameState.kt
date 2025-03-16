@@ -1,13 +1,15 @@
 package com.cooper.game
 
+import com.cooper.SocketContentConverterSender
 import com.cooper.message.OutboundMessage
+import com.cooper.message.StrippedPlayer
+import com.cooper.message.StrippedPlayer.Companion.toStrippedPlayer
 import com.cooper.message.server.ServerOutboundMessage
-import kotlinx.coroutines.channels.Channel
 import kotlin.math.absoluteValue
 
 sealed class GameState {
     abstract val name: String
-    abstract val server: Channel<ServerOutboundMessage>
+    abstract val server: SocketContentConverterSender
     abstract val players: List<Player>
 
     suspend fun sendServer(message: ServerOutboundMessage) {
@@ -18,43 +20,36 @@ sealed class GameState {
         return players.firstOrNull { it.name == playerName }
     }
 
+    suspend fun broadcast(message: OutboundMessage) {
+        players.forEach { it.send(message) }
+    }
+
+    suspend fun send(playerName: PlayerName, message: OutboundMessage) {
+        players.firstOrNull { it.name == playerName }?.send(message)
+    }
+
     class Lobby(
-        override val server: Channel<ServerOutboundMessage>,
+        override val server: SocketContentConverterSender,
         override val players: MutableList<Player> = mutableListOf()
     ) : GameState() {
         override val name: String = "lobby"
 
-        suspend fun broadcast(message: OutboundMessage) {
-            players.forEach { it.send(message) }
-        }
-
-        suspend fun send(playerName: PlayerName, message: OutboundMessage) {
-            players.firstOrNull { it.name == playerName }?.send(message)
-        }
-
-        fun toGameInProgress(): GameInProgress {
-            return GameInProgress(server, players)
-        }
+        fun toGameInProgress() = GameInProgress(server, players)
     }
 
     class GameInProgress private constructor(
-        override val server: Channel<ServerOutboundMessage>,
+        override val server: SocketContentConverterSender,
         override val players: MutableList<GamePlayer>
     ) : GameState() {
         override val name: String = "game_in_progress"
 
-        constructor(server: Channel<ServerOutboundMessage>, originalPlayers: List<Player>) : this(
+        constructor(server: SocketContentConverterSender, originalPlayers: List<Player>) : this(
             server,
             assignPlayerRoles(originalPlayers)
         )
 
         var innerGameState: InnerGameState = InnerGameState.AwaitingPlayerActionChoice()
         val deck: CardDeck = CardDeck()
-
-        var points: Int = 0
-            private set
-        var absolutePoints: Int = 0
-            private set
 
         var failedElections: Int = 0
 
@@ -82,24 +77,14 @@ sealed class GameState {
             this.absolutePoints += points.absoluteValue
         }
 
-        suspend fun broadcast(message: OutboundMessage) {
-            players.forEach { it.send(message) }
-        }
-
-        suspend fun send(playerName: PlayerName, message: OutboundMessage) {
-            players.firstOrNull { it.name == playerName }?.send(message)
-        }
-
-        fun toGameOver(winner: SimpleRole, cause: GameOverCause): GameOver {
-            return GameOver(
-                server,
-                players.toMutableList(),
-                winner,
-                satan.name,
-                demons.map(GamePlayer::name),
-                cause
-            )
-        }
+        fun toGameOver(winner: SimpleRole, cause: GameOverCause) = GameOver(
+            server,
+            players.toMutableList(),
+            winner,
+            satan.toStrippedPlayer(),
+            demons.map(StrippedPlayer::fromPlayer),
+            cause
+        )
 
         private companion object {
             private fun assignPlayerRoles(originalPlayers: List<Player>): MutableList<GamePlayer> {
@@ -120,28 +105,23 @@ sealed class GameState {
                 players.addAll(demons.map { GamePlayer(it, ComplexRole.DEMON) })
                 players.addAll(shuffledPlayers.map { GamePlayer(it, ComplexRole.ANGEL) })
 
-                return players.shuffled().toMutableList()
+                players.shuffle()
+                players.random().isChief = true
+
+                return players
             }
         }
     }
 
     class GameOver(
-        override val server: Channel<ServerOutboundMessage>,
+        override val server: SocketContentConverterSender,
         override val players: MutableList<Player>,
         val winner: SimpleRole,
-        val satan: PlayerName,
-        val demons: List<PlayerName>,
+        val satan: StrippedPlayer,
+        val demons: List<StrippedPlayer>,
         val cause: GameOverCause
     ) : GameState() {
         override val name: String = "game_over"
-
-        suspend fun broadcast(message: OutboundMessage) {
-            players.forEach { it.send(message) }
-        }
-
-        suspend fun send(playerName: PlayerName, message: OutboundMessage) {
-            players.firstOrNull { it.name == playerName }?.send(message)
-        }
     }
 
     enum class GameOverCause {

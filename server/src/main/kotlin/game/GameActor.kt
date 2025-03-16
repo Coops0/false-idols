@@ -1,10 +1,10 @@
 package com.cooper.game
 
-import com.cooper.OutgoingSerializerHelper
+import com.cooper.SocketContentConverterSender
 import com.cooper.message.InboundMessage
 import com.cooper.message.server.ServerInboundMessage
-import com.cooper.message.server.ServerOutboundMessage
 import com.cooper.message.server.UpdatePlayersServerOutboundMessage
+import io.viascom.nanoid.NanoId
 import kotlinx.coroutines.channels.Channel
 
 abstract class InnerApplicationMessage
@@ -16,7 +16,7 @@ class ServerInboundApplicationMessage(val serverInboundMessage: ServerInboundMes
 
 class PlayerJoinInnerApplicationMessage(
     val playerName: String,
-    val channel: OutgoingSerializerHelper,
+    val channel: SocketContentConverterSender,
     /// One-shot channel to receive player's connection session ID or join error
     val callback: Channel<Result<SessionId>>
 ) : InnerApplicationMessage()
@@ -28,7 +28,7 @@ val globalInnerApplicationChannel = Channel<InnerApplicationMessage>()
 
 class GameOverThrowable(val newState: GameState.GameOver) : Throwable()
 
-suspend fun launchGameActor(server: Channel<ServerOutboundMessage>) {
+suspend fun launchGameActor(server: SocketContentConverterSender) {
     var gameState: GameState = GameState.Lobby(server)
 
     for (message in globalInnerApplicationChannel) {
@@ -54,10 +54,11 @@ suspend fun launchGameActor(server: Channel<ServerOutboundMessage>) {
 private suspend fun GameState.handlePlayerJoin(message: PlayerJoinInnerApplicationMessage) {
     val existingPlayer = this.players.firstOrNull { it.name == message.playerName }
 
-    val sessionId = "TODO" // todo generate
+    val sessionId = NanoId.generate()
 
     if (existingPlayer != null) {
         existingPlayer.connect(sessionId, message.channel)
+        message.callback.send(Result.success(sessionId))
         return
     }
 
@@ -66,7 +67,9 @@ private suspend fun GameState.handlePlayerJoin(message: PlayerJoinInnerApplicati
         return
     }
 
-    val player = Player(message.playerName, "TODO", PlayerConnection(sessionId, message.channel)) // todo avatar
+    val playerIcon = PlayerIcon.fromIndex(this.players.size)
+
+    val player = Player(message.playerName, playerIcon, PlayerConnection(sessionId, message.channel))
     this.players.add(player)
 
     message.callback.send(Result.success(sessionId))

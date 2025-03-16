@@ -1,6 +1,6 @@
 package com.cooper.game
 
-import com.cooper.OutgoingSerializerHelper
+import com.cooper.SocketContentConverterSender
 import com.cooper.message.OutboundMessage
 
 typealias SessionId = String
@@ -8,21 +8,21 @@ typealias PlayerName = String
 
 class PlayerConnection(
     val sessionId: SessionId,
-    val channel: OutgoingSerializerHelper,
+    val channel: SocketContentConverterSender,
 )
 
 open class Player(
     val name: PlayerName,
-    val picture: String, // TODO
+    val icon: PlayerIcon,
     val channels: MutableList<PlayerConnection>
 ) {
-    constructor(name: PlayerName, picture: String, connections: PlayerConnection) : this(
+    constructor(name: PlayerName, icon: PlayerIcon, connections: PlayerConnection) : this(
         name,
-        picture,
+        icon,
         mutableListOf(connections)
     )
 
-    fun connect(sessionId: SessionId, channel: OutgoingSerializerHelper) {
+    fun connect(sessionId: SessionId, channel: SocketContentConverterSender) {
         channels.add(PlayerConnection(sessionId, channel))
     }
 
@@ -36,7 +36,7 @@ open class Player(
 }
 
 class GamePlayer(player: Player, val role: ComplexRole) :
-        Player(player.name, player.picture, player.channels) {
+        Player(player.name, player.icon, player.channels) {
     var isAlive = true
     var isInvestigated = false
 
@@ -47,4 +47,22 @@ class GamePlayer(player: Player, val role: ComplexRole) :
 
     val simpleRole: SimpleRole
         get() = SimpleRole.fromComplexRole(role)
+}
+
+enum class PlayerIcon(val iconName: String) {
+    ZEBRA("zebra"),
+    CAT("cat"),
+    MOUSE("mouse"),
+    FOX("fox"),
+    RACOON("racoon"),
+    RABBIT("rabbit"),
+    DOG("dog"),
+    PIG("pig"),
+    BEAR("bear"),
+    LION("lion");
+
+
+    companion object {
+        fun fromIndex(index: Int) = entries[index]
+    }
 }

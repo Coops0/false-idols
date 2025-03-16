@@ -3,6 +3,8 @@ package com.cooper
 import com.cooper.game.*
 import com.cooper.message.InboundMessage
 import com.cooper.message.OutboundMessage
+import com.cooper.message.server.ServerInboundMessage
+import com.cooper.message.server.ServerOutboundMessage
 import io.ktor.serialization.*
 import io.ktor.serialization.jackson.*
 import io.ktor.server.application.*
@@ -13,6 +15,7 @@ import io.ktor.websocket.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.launch
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
@@ -27,15 +30,16 @@ fun Application.configureSockets() {
 
     routing {
         ws()
+        serverWs()
     }
 }
 
-class OutgoingSerializerHelper(
+class SocketContentConverterSender(
     private val channel: SendChannel<Frame>,
     private val converter: WebsocketContentConverter,
     private val typeInfo: TypeInfo,
 ) {
-    suspend fun send(message: OutboundMessage) {
+    suspend fun send(message: Any?) {
         channel.send(
             converter.serialize(
                 charset = Charsets.UTF_8,
@@ -54,7 +58,7 @@ private fun Routing.ws() {
             return@webSocket
         }
 
-        val channel = OutgoingSerializerHelper(
+        val channel = SocketContentConverterSender(
             channel = outgoing,
             converter = converter!!,
             typeInfo = TypeInfo(OutboundMessage::class),
@@ -93,6 +97,36 @@ private fun Routing.ws() {
             println("WebSocket exception: $exception")
         }.also {
             globalInnerApplicationChannel.send(PlayerDisconnectInnerApplicationMessage(name, sessionId))
+        }
+    }
+}
+
+private fun Routing.serverWs() {
+    webSocket("/server-ws") {
+        val channel = SocketContentConverterSender(
+            channel = outgoing,
+            converter = converter!!,
+            typeInfo = TypeInfo(ServerOutboundMessage::class),
+        )
+
+        val gameActor = launch { launchGameActor(channel) }
+
+        runCatching {
+            incoming.consumeEach { frame ->
+                if (frame !is Frame.Text) return@consumeEach
+
+                val message = converter!!.deserialize(
+                    charset = Charsets.UTF_8,
+                    typeInfo = TypeInfo(ServerInboundMessage::class),
+                    content = frame,
+                ) as? ServerInboundMessage ?: return@consumeEach
+
+                globalInnerApplicationChannel.send(ServerInboundApplicationMessage(message))
+            }
+        }.onFailure { exception ->
+            println("WebSocket exception: $exception")
+        }.also {
+            gameActor.cancel()
         }
     }
 }
