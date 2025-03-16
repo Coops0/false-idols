@@ -1,7 +1,7 @@
 package com.cooper.game
 
+import com.cooper.OutgoingSerializerHelper
 import com.cooper.message.InboundMessage
-import com.cooper.message.OutboundMessage
 import com.cooper.message.server.ServerInboundMessage
 import com.cooper.message.server.ServerOutboundMessage
 import com.cooper.message.server.UpdatePlayersServerOutboundMessage
@@ -16,7 +16,7 @@ class ServerInboundApplicationMessage(val serverInboundMessage: ServerInboundMes
 
 class PlayerJoinInnerApplicationMessage(
     val playerName: String,
-    val channel: Channel<OutboundMessage>,
+    val channel: OutgoingSerializerHelper,
     /// One-shot channel to receive player's connection session ID or join error
     val callback: Channel<Result<SessionId>>
 ) : InnerApplicationMessage()
