@@ -23,6 +23,6 @@ class StartGameServerInboundMessage : ServerInboundMessage()
 
 class ResolveElectionServerInboundMessage(val passed: Boolean) : ServerInboundMessage()
 
-class SkipServerInboundMessage(val passed: Boolean) : ServerInboundMessage()
+class SkipServerInboundMessage : ServerInboundMessage()
 
 class GoBackToLobbyServerInboundMessage : ServerInboundMessage()

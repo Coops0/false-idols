@@ -1,9 +1,14 @@
 package com.cooper.game
 
 import com.cooper.SocketContentConverterSender
+import com.cooper.game.processor.ServerInboundMessageProcessorAction
+import com.cooper.game.processor.handlePlayerInboundApplicationMessage
+import com.cooper.game.processor.handleServerInboundApplicationMessage
 import com.cooper.message.InboundMessage
+import com.cooper.message.OutboundMessage
 import com.cooper.message.server.ServerInboundMessage
-import com.cooper.message.server.UpdatePlayersServerOutboundMessage
+import com.cooper.message.server.ServerOutboundMessage
+import com.cooper.message.server.UpdateGameStateServerOutboundMessage
 import io.viascom.nanoid.NanoId
 import kotlinx.coroutines.channels.Channel
 
@@ -16,7 +21,7 @@ class ServerInboundApplicationMessage(val serverInboundMessage: ServerInboundMes
 
 class PlayerJoinInnerApplicationMessage(
     val playerName: String,
-    val channel: SocketContentConverterSender,
+    val channel: SocketContentConverterSender<OutboundMessage>,
     /// One-shot channel to receive player's connection session ID or join error
     val callback: Channel<Result<SessionId>>
 ) : InnerApplicationMessage()
@@ -26,33 +31,50 @@ class PlayerDisconnectInnerApplicationMessage(val playerName: PlayerName, val se
 
 val globalInnerApplicationChannel = Channel<InnerApplicationMessage>()
 
-class GameOverThrowable(val newState: GameState.GameOver) : Throwable()
+class GameOverThrowable(val newState: GameState.GameOver) : Throwable("game over")
 
-suspend fun launchGameActor(server: SocketContentConverterSender) {
+suspend fun launchGameActor(server: SocketContentConverterSender<ServerOutboundMessage>) {
     var gameState: GameState = GameState.Lobby(server)
 
     for (message in globalInnerApplicationChannel) {
         when (message) {
             is PlayerInboundApplicationMessage -> {
+                val player = gameState.getBySessionId(message.sessionId) ?: continue
+
                 try {
-//                gameState.handlePlayerInboundMessage(message.sessionId, message.inboundMessage)
+                    gameState.handlePlayerInboundApplicationMessage(player.name, message.inboundMessage)
                 } catch (e: GameOverThrowable) {
                     gameState = e.newState
+                } catch (e: IllegalStateException) {
+                    println("Failed to process player message ${e.message}")
                 }
             }
 
             is ServerInboundApplicationMessage -> {
-//                gameState.handleServerInboundMessage(message.serverInboundMessage)
+                val action = gameState.handleServerInboundApplicationMessage(message.serverInboundMessage)
+                when (action) {
+                    ServerInboundMessageProcessorAction.START_GAME -> {
+                        gameState = (gameState as GameState.Lobby).toGameInProgress()
+                    }
+
+                    ServerInboundMessageProcessorAction.BACK_TO_LOBBY -> {
+                        gameState = (gameState as GameState.GameOver).toLobby()
+                    }
+
+                    null -> {}
+                }
             }
 
             is PlayerJoinInnerApplicationMessage -> gameState.handlePlayerJoin(message)
             is PlayerDisconnectInnerApplicationMessage -> gameState.handlePlayerDisconnect(message)
         }
+
+        gameState.sendServer(UpdateGameStateServerOutboundMessage(gameState))
     }
 }
 
 private suspend fun GameState.handlePlayerJoin(message: PlayerJoinInnerApplicationMessage) {
-    val existingPlayer = this.players.firstOrNull { it.name == message.playerName }
+    val existingPlayer = this[message.playerName]
 
     val sessionId = NanoId.generate()
 
@@ -81,6 +103,6 @@ private suspend fun GameState.handlePlayerDisconnect(message: PlayerDisconnectIn
 
     if (this is GameState.Lobby && player.channels.isEmpty()) {
         players.remove(player)
-        sendServer(UpdatePlayersServerOutboundMessage(players))
+        sendServer(UpdateGameStateServerOutboundMessage(this))
     }
 }

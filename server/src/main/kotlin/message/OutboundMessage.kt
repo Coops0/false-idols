@@ -41,7 +41,7 @@ class RequestActionChoiceOutboundMessage(
 }
 
 /// Sent to chief when they must discard a card
-class RequestChiefCardDiscardOutboundMessage(val cards: Array<Card>) :
+class RequestChiefCardDiscardOutboundMessage(val cards: List<Card>) :
         OutboundMessage("request_chief_card_discard") {
     init {
         assert(cards.size == 3)
@@ -49,7 +49,7 @@ class RequestChiefCardDiscardOutboundMessage(val cards: Array<Card>) :
 }
 
 /// Sent to advisor when they must choose a card to play
-class RequestAdvisorCardChoiceOutboundMessage(val cards: Array<Card>) :
+class RequestAdvisorCardChoiceOutboundMessage(val cards: List<Card>) :
         OutboundMessage("request_advisor_card_choice") {
     init {
         assert(cards.size == 2)

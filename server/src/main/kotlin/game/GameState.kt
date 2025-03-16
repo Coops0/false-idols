@@ -8,15 +8,23 @@ import com.cooper.message.server.ServerOutboundMessage
 
 sealed class GameState {
     abstract val name: String
-    abstract val server: SocketContentConverterSender
+    abstract val server: SocketContentConverterSender<ServerOutboundMessage>
     abstract val players: List<Player>
 
     suspend fun sendServer(message: ServerOutboundMessage) {
         server.send(message)
     }
 
-    operator fun get(playerName: PlayerName): Player? {
+    open operator fun get(playerName: PlayerName): Player? {
         return players.firstOrNull { it.name == playerName }
+    }
+
+    fun getBySessionId(sessionId: SessionId): Player? {
+        return players.firstOrNull { player ->
+            player.channels.any { channel ->
+                channel.sessionId == sessionId
+            }
+        }
     }
 
     suspend fun broadcast(message: OutboundMessage) {
@@ -24,11 +32,11 @@ sealed class GameState {
     }
 
     suspend fun send(playerName: PlayerName, message: OutboundMessage) {
-        players.firstOrNull { it.name == playerName }?.send(message)
+        this[playerName]?.send(message)
     }
 
     class Lobby(
-        override val server: SocketContentConverterSender,
+        override val server: SocketContentConverterSender<ServerOutboundMessage>,
         override val players: MutableList<Player> = mutableListOf()
     ) : GameState() {
         override val name: String = "lobby"
@@ -37,39 +45,27 @@ sealed class GameState {
     }
 
     class GameInProgress private constructor(
-        override val server: SocketContentConverterSender,
+        override val server: SocketContentConverterSender<ServerOutboundMessage>,
         override val players: MutableList<GamePlayer>
     ) : GameState() {
         override val name: String = "game_in_progress"
 
-        constructor(server: SocketContentConverterSender, originalPlayers: List<Player>) : this(
-            server,
-            assignPlayerRoles(originalPlayers)
-        )
+        constructor(server: SocketContentConverterSender<ServerOutboundMessage>, originalPlayers: List<Player>) :
+                this(server, assignPlayerRoles(originalPlayers))
 
-        var innerGameState: InnerGameState = InnerGameState.AwaitingPlayerActionChoice()
+        var innerGameState: InnerGameState = InnerGameState.PostRoleGracePeriod()
         val deck: CardDeck = CardDeck()
 
         var failedElections: Int = 0
 
-        val chief: GamePlayer
-            get() = players.first(GamePlayer::isChief)
-
-        val satan: GamePlayer
-            get() = players.first { it.role == ComplexRole.SATAN }
-
-        val demons: List<GamePlayer>
-            get() = players.filter { it.role == ComplexRole.DEMON }
-
-        val angels: List<GamePlayer>
-            get() = players.filter { it.role == ComplexRole.ANGEL }
-
-        val alive: List<GamePlayer>
-            get() = players.filter(GamePlayer::isAlive)
+        val chief: GamePlayer get() = players.first(GamePlayer::isChief)
+        val satan: GamePlayer get() = players.first { it.role == ComplexRole.SATAN }
+        val demons: List<GamePlayer> get() = players.filter { it.role == ComplexRole.DEMON }
+        val angels: List<GamePlayer> get() = players.filter { it.role == ComplexRole.ANGEL }
+        val alive: List<GamePlayer> get() = players.filter(GamePlayer::isAlive)
 
         /// 6+ cards played
-        val isLateGame: Boolean
-            get() = deck.absolutePoints >= 6
+        val isLateGame: Boolean get() = deck.absolutePoints >= 6
 
         fun toGameOver(winner: SimpleRole, cause: GameOverCause) = GameOver(
             server,
@@ -79,6 +75,10 @@ sealed class GameState {
             demons.map { StrippedPlayer(it.name, it.icon.iconName) },
             cause
         )
+
+        override operator fun get(playerName: PlayerName): GamePlayer? {
+            return players.firstOrNull { it.name == playerName }
+        }
 
         private companion object {
             private fun assignPlayerRoles(originalPlayers: List<Player>): MutableList<GamePlayer> {
@@ -108,7 +108,7 @@ sealed class GameState {
     }
 
     class GameOver(
-        override val server: SocketContentConverterSender,
+        override val server: SocketContentConverterSender<ServerOutboundMessage>,
         override val players: MutableList<Player>,
         val winner: SimpleRole,
         val satan: StrippedPlayer,
@@ -116,6 +116,8 @@ sealed class GameState {
         val cause: GameOverCause
     ) : GameState() {
         override val name: String = "game_over"
+
+        fun toLobby() = Lobby(server, players)
     }
 
     enum class GameOverCause {
@@ -129,6 +131,10 @@ sealed class GameState {
 sealed class InnerGameState {
     abstract val name: String
 
+    class PostRoleGracePeriod : InnerGameState() {
+        override val name: String = "post_role_grace_period"
+    }
+
     class AwaitingPlayerActionChoice(
         val forcedAction: ActionChoice? = null,
         val cause: PlayerActionChoiceCause = PlayerActionChoiceCause.NORMAL_CHIEF,
@@ -141,15 +147,15 @@ sealed class InnerGameState {
         }
     }
 
-    class AwaitingChiefCardDiscard(val cards: Array<Card>) : InnerGameState() {
+    class AwaitingChiefCardDiscard(val cards: List<Card>, val advisorName: String) : InnerGameState() {
         override val name: String = "awaiting_chief_card_discard"
     }
 
-    class AwaitingAdvisorCardChoice(val cards: Array<Card>) : InnerGameState() {
+    class AwaitingAdvisorCardChoice(val cards: List<Card>, val advisorName: String) : InnerGameState() {
         override val name: String = "awaiting_advisor_card_choice"
     }
 
-    class AwaitingElectionOutcome(val nominee: PlayerName) : InnerGameState() {
+    class AwaitingElectionResolution(val nominee: PlayerName) : InnerGameState() {
         override val name: String = "awaiting_election_outcome"
     }
 }

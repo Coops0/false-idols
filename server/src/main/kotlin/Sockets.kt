@@ -34,12 +34,12 @@ fun Application.configureSockets() {
     }
 }
 
-class SocketContentConverterSender(
+class SocketContentConverterSender<M>(
     private val channel: SendChannel<Frame>,
     private val converter: WebsocketContentConverter,
     private val typeInfo: TypeInfo,
 ) {
-    suspend fun send(message: Any?) {
+    suspend fun send(message: M) {
         channel.send(
             converter.serialize(
                 charset = Charsets.UTF_8,
@@ -58,7 +58,7 @@ private fun Routing.ws() {
             return@webSocket
         }
 
-        val channel = SocketContentConverterSender(
+        val channel = SocketContentConverterSender<OutboundMessage>(
             channel = outgoing,
             converter = converter!!,
             typeInfo = TypeInfo(OutboundMessage::class),
@@ -94,7 +94,7 @@ private fun Routing.ws() {
                 globalInnerApplicationChannel.send(PlayerInboundApplicationMessage(sessionId, message))
             }
         }.onFailure { exception ->
-            println("WebSocket exception: $exception")
+            println("WebSocket exception: ${exception.message}")
         }.also {
             globalInnerApplicationChannel.send(PlayerDisconnectInnerApplicationMessage(name, sessionId))
         }
@@ -103,7 +103,7 @@ private fun Routing.ws() {
 
 private fun Routing.serverWs() {
     webSocket("/server-ws") {
-        val channel = SocketContentConverterSender(
+        val channel = SocketContentConverterSender<ServerOutboundMessage>(
             channel = outgoing,
             converter = converter!!,
             typeInfo = TypeInfo(ServerOutboundMessage::class),
@@ -124,7 +124,7 @@ private fun Routing.serverWs() {
                 globalInnerApplicationChannel.send(ServerInboundApplicationMessage(message))
             }
         }.onFailure { exception ->
-            println("WebSocket exception: $exception")
+            println("WebSocket exception: ${exception.message}")
         }.also {
             gameActor.cancel()
         }

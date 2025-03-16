@@ -1,6 +1,7 @@
 package com.cooper.game
 
 import com.cooper.SocketContentConverterSender
+import com.cooper.message.DisconnectOutboundMessage
 import com.cooper.message.OutboundMessage
 
 typealias SessionId = String
@@ -8,7 +9,7 @@ typealias PlayerName = String
 
 class PlayerConnection(
     val sessionId: SessionId,
-    val channel: SocketContentConverterSender,
+    val channel: SocketContentConverterSender<OutboundMessage>,
 )
 
 open class Player(
@@ -16,14 +17,16 @@ open class Player(
     val icon: PlayerIcon,
     val channels: MutableList<PlayerConnection>
 ) {
-    constructor(name: PlayerName, icon: PlayerIcon, connection: PlayerConnection) : this(
-        name,
-        icon,
-        mutableListOf(connection)
-    )
+    constructor(name: PlayerName, icon: PlayerIcon, connection: PlayerConnection) :
+            this(name, icon, mutableListOf(connection))
 
-    fun connect(sessionId: SessionId, channel: SocketContentConverterSender) {
+    fun connect(sessionId: SessionId, channel: SocketContentConverterSender<OutboundMessage>) {
         channels.add(PlayerConnection(sessionId, channel))
+    }
+
+    suspend fun disconnectAll(reason: DisconnectOutboundMessage.DisconnectionReason) {
+        channels.forEach { it.channel.send(DisconnectOutboundMessage(reason)) }
+        channels.clear()
     }
 
     fun disconnect(sessionId: SessionId) {

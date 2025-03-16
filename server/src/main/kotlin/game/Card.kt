@@ -39,22 +39,20 @@ val cards = listOf(
 )
 
 class CardDeck(totalCardCount: Int = 17) {
-    private val unplayedCards: MutableList<Card> = cards.shuffled().take(totalCardCount).toMutableList()
+    private val cardStack: MutableList<Card> = cards.shuffled().take(totalCardCount).toMutableList()
     val playedCards = mutableListOf<Card>()
 
     fun pickAndTakeThree(): List<Card> {
-        require(unplayedCards.size >= 3) { "Not enough cards in deck" }
+        require(cardStack.size >= 3) { "Not enough cards in deck" }
         val cards = List(3) {
-            unplayedCards.removeAt(0)
+            cardStack.removeAt(0)
         }
 
         playedCards.addAll(cards)
         return cards
     }
 
-    val points: Int
-        get() = playedCards.sumOf(Card::consequence)
+    val points: Int get() = playedCards.sumOf(Card::consequence)
 
-    val absolutePoints: Int
-        get() = playedCards.sumOf { it.consequence.absoluteValue }
+    val absolutePoints: Int get() = playedCards.sumOf { it.consequence.absoluteValue }
 }

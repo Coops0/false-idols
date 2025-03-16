@@ -5,8 +5,5 @@ import com.cooper.game.Player
 
 abstract class ServerOutboundMessage(val type: String)
 
-class UpdatePlayersServerOutboundMessage(val players: List<Player>) :
-        ServerOutboundMessage("update_players")
-
 class UpdateGameStateServerOutboundMessage(val gameState: GameState) :
         ServerOutboundMessage("update_game_state")
