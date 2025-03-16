@@ -90,7 +90,7 @@ private fun Routing.ws() {
                 globalInnerApplicationChannel.send(PlayerInboundApplicationMessage(sessionId, message))
             }
         }.onFailure { exception ->
-            println("WebSocket exception: ${exception.localizedMessage}")
+            println("WebSocket exception: $exception")
         }.also {
             globalInnerApplicationChannel.send(PlayerDisconnectInnerApplicationMessage(name, sessionId))
         }

@@ -1,14 +1,14 @@
 package com.cooper.game
 
+import com.cooper.OutgoingSerializerHelper
 import com.cooper.message.OutboundMessage
-import kotlinx.coroutines.channels.Channel
 
 typealias SessionId = String
 typealias PlayerName = String
 
 class PlayerConnection(
     val sessionId: SessionId,
-    val channel: Channel<OutboundMessage>,
+    val channel: OutgoingSerializerHelper,
 )
 
 open class Player(
@@ -22,7 +22,7 @@ open class Player(
         mutableListOf(connections)
     )
 
-    fun connect(sessionId: SessionId, channel: Channel<OutboundMessage>) {
+    fun connect(sessionId: SessionId, channel: OutgoingSerializerHelper) {
         channels.add(PlayerConnection(sessionId, channel))
     }
 
