@@ -20,11 +20,11 @@ suspend fun GameState.handlePlayerInboundApplicationMessage(playerName: PlayerNa
         }
 
         is DiscardOneCardInboundMessage -> {
-
+            this.handleChiefDiscardCard(player, message.cardId)
         }
 
         is ChooseCardInboundMessage -> {
-
+            this.handleAdvisorChooseCard(player, message.cardId)
         }
         else -> throw IllegalArgumentException("Unknown player inbound message type: $message")
     }
