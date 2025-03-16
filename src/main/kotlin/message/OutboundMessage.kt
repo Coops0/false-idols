@@ -25,12 +25,22 @@ class RequestActionChoiceOutboundMessage(
         val name: PlayerName,
         val investigatable: Boolean,
         val electable: Boolean
-    )
+    ) {
+        companion object {
+            fun fromGamePlayer(player: GamePlayer): ActionSupplementedPlayer {
+                return ActionSupplementedPlayer(
+                    player.name,
+                    !player.isInvestigated,
+                    !player.wasChiefLastRound && !player.wasAdvisorLastRound
+                )
+            }
+        }
+    }
 }
 
 /// Sent to chief when they must discard a card
-class RequestChiefialCardDiscardOutboundMessage(val cards: Array<Card>) :
-        OutboundMessage("request_chiefial_card_discard") {
+class RequestChiefCardDiscardOutboundMessage(val cards: Array<Card>) :
+        OutboundMessage("request_chief_card_discard") {
     init {
         assert(cards.size == 3)
     }

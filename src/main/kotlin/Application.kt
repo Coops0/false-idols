@@ -1,7 +1,5 @@
 package com.cooper
 
-import com.cooper.game.GameState
-import com.cooper.game.LobbyGameState
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import io.ktor.serialization.jackson.*
 import io.ktor.server.application.*
@@ -15,8 +13,6 @@ fun main() {
     embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::module)
         .start(wait = true)
 }
-
-
 
 fun Application.module() {
     install(Compression)
