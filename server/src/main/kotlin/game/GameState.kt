@@ -3,9 +3,8 @@ package com.cooper.game
 import com.cooper.SocketContentConverterSender
 import com.cooper.message.OutboundMessage
 import com.cooper.message.StrippedPlayer
-import com.cooper.message.StrippedPlayer.Companion.toStrippedPlayer
+import com.cooper.message.StrippedPlayer.Companion.stripped
 import com.cooper.message.server.ServerOutboundMessage
-import kotlin.math.absoluteValue
 
 sealed class GameState {
     abstract val name: String
@@ -70,19 +69,14 @@ sealed class GameState {
 
         /// 6+ cards played
         val isLateGame: Boolean
-            get() = absolutePoints >= 6
-
-        fun addPoints(points: Int) {
-            this.points += points
-            this.absolutePoints += points.absoluteValue
-        }
+            get() = deck.absolutePoints >= 6
 
         fun toGameOver(winner: SimpleRole, cause: GameOverCause) = GameOver(
             server,
             players.toMutableList(),
             winner,
-            satan.toStrippedPlayer(),
-            demons.map(StrippedPlayer::fromPlayer),
+            satan.stripped,
+            demons.map { StrippedPlayer(it.name, it.icon.iconName) },
             cause
         )
 

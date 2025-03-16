@@ -11,9 +11,10 @@ enum class SimpleRole {
     ANGEL;
 
     companion object {
-        fun fromComplexRole(complexRole: ComplexRole): SimpleRole = when (complexRole) {
-            ComplexRole.ANGEL -> ANGEL
-            else -> DEMON
-        }
+        val ComplexRole.simple: SimpleRole
+            get() = when (this) {
+                ComplexRole.ANGEL -> ANGEL
+                else -> DEMON
+            }
     }
 }

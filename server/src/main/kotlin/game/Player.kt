@@ -16,10 +16,10 @@ open class Player(
     val icon: PlayerIcon,
     val channels: MutableList<PlayerConnection>
 ) {
-    constructor(name: PlayerName, icon: PlayerIcon, connections: PlayerConnection) : this(
+    constructor(name: PlayerName, icon: PlayerIcon, connection: PlayerConnection) : this(
         name,
         icon,
-        mutableListOf(connections)
+        mutableListOf(connection)
     )
 
     fun connect(sessionId: SessionId, channel: SocketContentConverterSender) {
@@ -44,9 +44,6 @@ class GamePlayer(player: Player, val role: ComplexRole) :
 
     var wasChiefLastRound = false
     var wasAdvisorLastRound = false
-
-    val simpleRole: SimpleRole
-        get() = SimpleRole.fromComplexRole(role)
 }
 
 enum class PlayerIcon(val iconName: String) {
@@ -61,8 +58,7 @@ enum class PlayerIcon(val iconName: String) {
     BEAR("bear"),
     LION("lion");
 
-
     companion object {
-        fun fromIndex(index: Int) = entries[index]
+        operator fun get(index: Int) = entries[index]
     }
 }

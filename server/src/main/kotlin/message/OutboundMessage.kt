@@ -61,12 +61,7 @@ class RequestAdvisorCardChoiceOutboundMessage(val cards: Array<Card>) :
 class InvestigationResultOutboundMessage(
     val target: StrippedPlayer,
     val simpleRole: SimpleRole,
-) : OutboundMessage("investigation_result") {
-    constructor(target: StrippedPlayer, complexRole: ComplexRole) : this(
-        target,
-        SimpleRole.fromComplexRole(complexRole)
-    )
-}
+) : OutboundMessage("investigation_result")
 
 /// Request/notification that the player has been disconnected
 class DisconnectOutboundMessage(val reason: DisconnectionReason) : OutboundMessage("disconnect") {
@@ -78,8 +73,6 @@ class DisconnectOutboundMessage(val reason: DisconnectionReason) : OutboundMessa
 /// Utility class to serialize player name & icon
 open class StrippedPlayer(val name: String, val icon: String) {
     companion object {
-        fun fromPlayer(player: Player) = StrippedPlayer(player.name, player.icon.iconName)
-
-        fun Player.toStrippedPlayer() = fromPlayer(this)
+        val Player.stripped get() = StrippedPlayer(this.name, this.icon.iconName)
     }
 }

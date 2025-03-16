@@ -67,7 +67,7 @@ private suspend fun GameState.handlePlayerJoin(message: PlayerJoinInnerApplicati
         return
     }
 
-    val playerIcon = PlayerIcon.fromIndex(this.players.size)
+    val playerIcon = PlayerIcon[this.players.size]
 
     val player = Player(message.playerName, playerIcon, PlayerConnection(sessionId, message.channel))
     this.players.add(player)
