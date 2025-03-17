@@ -3,13 +3,14 @@ package com.cooper.game
 import com.cooper.SocketContentConverterSender
 import com.cooper.message.DisconnectOutboundMessage
 import com.cooper.message.OutboundMessage
+import com.fasterxml.jackson.annotation.JsonIgnore
 
 typealias SessionId = String
 typealias PlayerName = String
 
 class PlayerConnection(
     val sessionId: SessionId,
-    val channel: SocketContentConverterSender<OutboundMessage>,
+    @JsonIgnore val channel: SocketContentConverterSender<OutboundMessage>,
 )
 
 open class Player(
@@ -19,6 +20,13 @@ open class Player(
 ) {
     constructor(name: PlayerName, icon: PlayerIcon, connection: PlayerConnection) :
             this(name, icon, mutableListOf(connection))
+
+    override operator fun equals(other: Any?): Boolean {
+        if (other !is Player) return false
+        return this.name == other.name
+    }
+
+    override fun hashCode() = name.hashCode()
 
     fun connect(sessionId: SessionId, channel: SocketContentConverterSender<OutboundMessage>) {
         channels.add(PlayerConnection(sessionId, channel))

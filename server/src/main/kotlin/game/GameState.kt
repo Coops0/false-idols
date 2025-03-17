@@ -5,10 +5,11 @@ import com.cooper.message.OutboundMessage
 import com.cooper.message.StrippedPlayer
 import com.cooper.message.StrippedPlayer.Companion.stripped
 import com.cooper.message.server.ServerOutboundMessage
+import com.fasterxml.jackson.annotation.JsonIgnore
 
 sealed class GameState {
     abstract val name: String
-    abstract val server: SocketContentConverterSender<ServerOutboundMessage>
+    @get:JsonIgnore abstract val server: SocketContentConverterSender<ServerOutboundMessage>
     abstract val players: List<Player>
 
     suspend fun sendServer(message: ServerOutboundMessage) {
@@ -67,7 +68,7 @@ sealed class GameState {
         /// 6+ cards played
         val isLateGame: Boolean get() = deck.absolutePoints >= 6
 
-        fun toGameOver(winner: SimpleRole, cause: GameOverCause) = GameOver(
+        fun toGameOver(winner: SimpleRole, cause: GameOverReason) = GameOver(
             server,
             players.toMutableList(),
             winner,
@@ -113,18 +114,19 @@ sealed class GameState {
         val winner: SimpleRole,
         val satan: StrippedPlayer,
         val demons: List<StrippedPlayer>,
-        val cause: GameOverCause
+        val reason: GameOverReason
     ) : GameState() {
         override val name: String = "game_over"
 
         fun toLobby() = Lobby(server, players)
     }
 
-    enum class GameOverCause {
+    enum class GameOverReason {
         SATAN_KILLED,
-        SATAN_ELECTED,
+        SATAN_ELECTED_ADVISOR_LATE_GAME,
         POSITIVE_THRESHOLD_REACHED,
         ALL_ANGELS_DEAD,
+        DECK_EMPTY
     }
 }
 

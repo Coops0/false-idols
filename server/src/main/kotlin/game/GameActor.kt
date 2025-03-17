@@ -31,7 +31,10 @@ class PlayerDisconnectInnerApplicationMessage(val playerName: PlayerName, val se
 
 val globalInnerApplicationChannel = Channel<InnerApplicationMessage>()
 
-class GameOverThrowable(val newState: GameState.GameOver) : Throwable("game over")
+class GameOverThrowable(
+    val winner: SimpleRole,
+    val reason: GameState.GameOverReason
+) : Throwable("game over")
 
 suspend fun launchGameActor(server: SocketContentConverterSender<ServerOutboundMessage>) {
     var gameState: GameState = GameState.Lobby(server)
@@ -44,7 +47,7 @@ suspend fun launchGameActor(server: SocketContentConverterSender<ServerOutboundM
                 try {
                     gameState.handlePlayerInboundApplicationMessage(player.name, message.inboundMessage)
                 } catch (e: GameOverThrowable) {
-                    gameState = e.newState
+                    gameState = (gameState as GameState.GameInProgress).toGameOver(e.winner, e.reason)
                 } catch (e: IllegalStateException) {
                     println("Failed to process player message ${e.message}")
                 }

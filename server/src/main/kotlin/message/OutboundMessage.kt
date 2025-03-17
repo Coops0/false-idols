@@ -11,7 +11,7 @@ class AssignRoleOutboundMessage(
     val isChief: Boolean,
 
     /// These will only be non-null if complex role == DEMON
-    val teammates: Array<StrippedPlayer>? = null,
+    val teammates: List<StrippedPlayer>? = null,
     val satan: StrippedPlayer? = null
 ) : OutboundMessage("assign_role")
 
@@ -21,7 +21,7 @@ class RequestActionChoiceOutboundMessage(
     val forcedAction: ActionChoice? = null,
     /// List of (alive) players to choose from (excluding self),
     /// Coupled with eligibility for actions
-    val players: Array<ActionSupplementedPlayer>
+    val players: List<ActionSupplementedPlayer>
 ) : OutboundMessage("request_action") {
     class ActionSupplementedPlayer(
         name: PlayerName,

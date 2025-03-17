@@ -28,11 +28,12 @@ suspend fun GameState.handleServerInboundApplicationMessage(message: ServerInbou
         is ResolveElectionServerInboundMessage -> {
             require(this is GameState.GameInProgress) { "Game must be in progress to resolve election" }
             require(this.innerGameState is InnerGameState.AwaitingElectionResolution) { "Game must be awaiting election resolution to resolve election" }
-            val player = this[(this.innerGameState as InnerGameState.AwaitingElectionResolution).nominee] ?: throw IllegalStateException("Nominee not found")
+            val player = this[(this.innerGameState as InnerGameState.AwaitingElectionResolution).nominee]
+                ?: throw IllegalStateException("Nominee not found")
 
             if (!message.passed) {
                 this.failedElections++
-                this.rotatePresident()
+                this.rotateChief()
                 return null
             }
 
@@ -44,7 +45,7 @@ suspend fun GameState.handleServerInboundApplicationMessage(message: ServerInbou
 
         is SkipServerInboundMessage -> {
             require(this is GameState.GameInProgress) { "Game must be in progress to skip" }
-            when(this.innerGameState) {
+            when (this.innerGameState) {
                 is InnerGameState.PostRoleGracePeriod -> TODO()
                 is InnerGameState.AwaitingChiefCardDiscard -> TODO()
                 is InnerGameState.AwaitingAdvisorCardChoice -> TODO()

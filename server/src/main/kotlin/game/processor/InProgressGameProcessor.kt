@@ -1,13 +1,68 @@
 package com.cooper.game.processor
 
-import com.cooper.game.ActionChoice
-import com.cooper.game.GameState
-import com.cooper.game.InnerGameState
-import com.cooper.game.Player
+import com.cooper.game.*
+import com.cooper.message.RequestActionChoiceOutboundMessage
 import com.cooper.message.RequestAdvisorCardChoiceOutboundMessage
 
-suspend fun GameState.GameInProgress.rotatePresident() {
-    TODO()
+suspend fun GameState.GameInProgress.rotateChief() {
+    val chief = if (this.innerGameState is InnerGameState.PostRoleGracePeriod) {
+        // Chief has already been randomly assigned
+        this.chief
+    } else {
+        var currentChiefIndex = this.alive.indexOf(this.chief)
+        if (currentChiefIndex == -1) {
+            // Chief has been killed
+            currentChiefIndex = this.players
+                .filter { player -> player.isAlive || player == this.chief }
+                .indexOf(this.chief)
+        }
+
+        val nextChief = this.alive[(currentChiefIndex + 1) % this.alive.size]
+        nextChief
+    }
+
+    this.players.forEach { player -> player.isChief = false }
+    chief.isChief = true
+
+    this.innerGameState = InnerGameState.AwaitingPlayerActionChoice(
+        forcedAction = null, // TODO
+        cause = InnerGameState.AwaitingPlayerActionChoice.PlayerActionChoiceCause.NORMAL_CHIEF
+    )
+
+    val actionablePlayers = this.alive.filter { it != chief }
+        .map(RequestActionChoiceOutboundMessage.ActionSupplementedPlayer::fromGamePlayer)
+
+    chief.send(
+        RequestActionChoiceOutboundMessage(
+            forcedAction = null,
+            players = actionablePlayers,
+        )
+    )
+}
+
+// throws GameOverThrowable
+fun GameState.GameInProgress.checkGameOverConditions() {
+    if (isLateGame) {
+        val igs = innerGameState
+        if (igs is InnerGameState.AwaitingChiefCardDiscard && igs.advisorName == satan.name) {
+            throw GameOverThrowable(
+                winner = SimpleRole.DEMON,
+                reason = GameState.GameOverReason.SATAN_ELECTED_ADVISOR_LATE_GAME
+            )
+        }
+    }
+
+    if (deck.points > 8) {
+        throw GameOverThrowable(winner = SimpleRole.ANGEL, reason = GameState.GameOverReason.POSITIVE_THRESHOLD_REACHED)
+    }
+
+    if (angels.isEmpty()) {
+        throw GameOverThrowable(winner = SimpleRole.DEMON, reason = GameState.GameOverReason.ALL_ANGELS_DEAD)
+    }
+
+    if (!satan.isAlive) {
+        throw GameOverThrowable(winner = SimpleRole.ANGEL, reason = GameState.GameOverReason.SATAN_KILLED)
+    }
 }
 
 suspend fun GameState.GameInProgress.handlePlayerActionChoice(
@@ -16,11 +71,10 @@ suspend fun GameState.GameInProgress.handlePlayerActionChoice(
     targetName: String
 ) {
     require(this.innerGameState is InnerGameState.AwaitingPlayerActionChoice) { "Game must be awaiting player action choice to choose action" }
+    require(this.chief == player) { "Player must be chief to execute action" }
 
     val forcedAction = (this.innerGameState as InnerGameState.AwaitingPlayerActionChoice).forcedAction
-    if (forcedAction != null && forcedAction != action) {
-        throw IllegalArgumentException("Player must choose forced action")
-    }
+    require(forcedAction == null || forcedAction == action) { "Player must choose forced action" }
 
     val target = this[targetName] ?: throw IllegalArgumentException("Target not found")
     when (action) {
@@ -56,5 +110,5 @@ suspend fun GameState.GameInProgress.handleAdvisorChooseCard(player: Player, car
 
     this.deck.playedCards.add(card)
     // todo if chaos level xxx && check if game is over
-    this.rotatePresident()
+    this.rotateChief()
 }

@@ -43,7 +43,10 @@ class CardDeck(totalCardCount: Int = 17) {
     val playedCards = mutableListOf<Card>()
 
     fun pickAndTakeThree(): List<Card> {
-        require(cardStack.size >= 3) { "Not enough cards in deck" }
+        if (cardStack.size < 3) {
+            throw GameOverThrowable(winner = SimpleRole.ANGEL, reason = GameState.GameOverReason.DECK_EMPTY)
+        }
+
         val cards = List(3) {
             cardStack.removeAt(0)
         }
