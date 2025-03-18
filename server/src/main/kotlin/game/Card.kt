@@ -8,8 +8,9 @@ data class Card(
     val id: CardId,
     val description: String,
     val consequence: Int,
-    val consequenceQualifier: CardConsequenceQualifier = CardConsequenceQualifier.fromConsequence(consequence)
 ) {
+    val consequenceQualifier: CardConsequenceQualifier = CardConsequenceQualifier.fromConsequence(consequence)
+
     enum class CardConsequenceQualifier {
         POSITIVE,
         NEGATIVE,
@@ -35,6 +36,11 @@ val cards = listOf(
         id = 1,
         description = "Kill Elon Musk",
         consequence = 2
+    ),
+    Card(
+        id = 2,
+        description = "",
+        consequence = 1
     )
     // TODO add more cards
 )
@@ -45,7 +51,10 @@ class CardDeck(totalCardCount: Int = 17) {
 
     fun pickAndTakeThree(): List<Card> {
         if (cardStack.size < 3) {
-            throw GameOverThrowable(winner = SimpleRole.ANGEL, reason = GameState.GameOverReason.DECK_EMPTY)
+            cardStack.addAll(playedCards)
+            playedCards.clear()
+
+            cardStack.shuffle()
         }
 
         val cards = List(3) {

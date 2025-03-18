@@ -45,8 +45,9 @@ suspend fun GameState.GameInProgress.rotateChief() {
         cause = InnerGameState.AwaitingPlayerActionChoice.PlayerActionChoiceCause.NORMAL_CHIEF
     )
 
+    val playersSize = this.players.size
     val actionablePlayers = this.alive.filter { it != newChief }
-        .map(OutboundMessage.RequestActionChoice.ActionSupplementedPlayer::fromGamePlayer)
+        .map { OutboundMessage.RequestActionChoice.ActionSupplementedPlayer.fromGamePlayer(playersSize, it) }
 
     newChief.send(
         OutboundMessage.RequestActionChoice(
@@ -72,6 +73,10 @@ fun GameState.GameInProgress.checkGameOverConditions() {
         throw GameOverThrowable(winner = SimpleRole.ANGEL, reason = GameState.GameOverReason.POSITIVE_THRESHOLD_REACHED)
     }
 
+    if (deck.points < -4) {
+        throw GameOverThrowable(winner = SimpleRole.DEMON, reason = GameState.GameOverReason.NEGATIVE_THRESHOLD_REACHED)
+    }
+
     if (angels.isEmpty()) {
         throw GameOverThrowable(winner = SimpleRole.DEMON, reason = GameState.GameOverReason.ALL_ANGELS_DEAD)
     }
@@ -90,7 +95,6 @@ suspend fun GameState.GameInProgress.handlePlayerActionChoice(
     action: ActionChoice,
     targetName: String
 ) {
-
     val igs = this.innerGameState
 
     require(igs is InnerGameState.AwaitingPlayerActionChoice) { "Game must be awaiting player action choice to choose action" }
@@ -103,10 +107,11 @@ suspend fun GameState.GameInProgress.handlePlayerActionChoice(
     require(target.isAlive) { "Target must be alive" }
     require(target != aggressor) { "Cannot execute action upon self" }
 
-    // todo check is late game
     when (action) {
         ActionChoice.INVESTIGATE -> {
+            require(this.isLateGame) { "Must be late game to investigate" }
             require(!target.isInvestigated) { "Target must not have already been investigated" }
+
             target.isInvestigated = true
 
             this.innerGameState = InnerGameState.AwaitingInvestigationAnalysis(targetName)
@@ -114,6 +119,8 @@ suspend fun GameState.GameInProgress.handlePlayerActionChoice(
         }
 
         ActionChoice.KILL -> {
+            require(this.isLateGame) { "Must be late game to kill" }
+
             target.isAlive = false
             if (target.role == ComplexRole.SATAN) {
                 throw GameOverThrowable(winner = SimpleRole.DEMON, reason = GameState.GameOverReason.SATAN_KILLED)
@@ -151,7 +158,7 @@ suspend fun GameState.GameInProgress.handleChiefDiscardCard(player: GamePlayer, 
     advisor.send(OutboundMessage.RequestAdvisorCardChoice(newCards))
 }
 
-suspend fun GameState.GameInProgress.handleAdvisorChooseCard(player: GamePlayer, cardId: Int) {
+fun GameState.GameInProgress.handleAdvisorChooseCard(player: GamePlayer, cardId: Int) {
     require(this.innerGameState is InnerGameState.AwaitingAdvisorCardChoice) { "Game must be awaiting advisor card choice to choose card" }
     val igs = this.innerGameState as InnerGameState.AwaitingAdvisorCardChoice
 
@@ -165,6 +172,8 @@ suspend fun GameState.GameInProgress.handleAdvisorChooseCard(player: GamePlayer,
 }
 
 suspend fun GameState.GameInProgress.passElection(advisor: GamePlayer) {
+    this.failedElections = 0
+
     val cards = this.deck.pickAndTakeThree()
     this.innerGameState = InnerGameState.AwaitingChiefCardDiscard(cards, advisor.name)
 
@@ -178,14 +187,16 @@ suspend fun GameState.GameInProgress.failElection() {
     this.failedElections++
 
     if (!this.isChaos) {
-        this.idle()
+        return this.idle()
     }
+
+    val playersSize = this.players.size
 
     when (this.failedElections) {
         3 -> {
             // force investigate
             val actionablePlayers = this.alive.filter { it != this.chief }
-                .map(OutboundMessage.RequestActionChoice.ActionSupplementedPlayer::fromGamePlayer)
+                .map { OutboundMessage.RequestActionChoice.ActionSupplementedPlayer.fromGamePlayer(playersSize, it) }
 
             if (actionablePlayers.count(OutboundMessage.RequestActionChoice.ActionSupplementedPlayer::investigatable) == 0) {
                 // no players to investigate, just skip
@@ -208,7 +219,7 @@ suspend fun GameState.GameInProgress.failElection() {
         4 -> {
             // force kill
             val actionablePlayers = this.alive.filter { it != this.chief }
-                .map(OutboundMessage.RequestActionChoice.ActionSupplementedPlayer::fromGamePlayer)
+                .map { OutboundMessage.RequestActionChoice.ActionSupplementedPlayer.fromGamePlayer(playersSize, it) }
 
             this.innerGameState = InnerGameState.AwaitingPlayerActionChoice(
                 permittedActions = listOf(ActionChoice.KILL),

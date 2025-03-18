@@ -130,8 +130,8 @@ sealed class GameState {
         SATAN_KILLED,
         SATAN_ELECTED_ADVISOR_LATE_GAME,
         POSITIVE_THRESHOLD_REACHED,
-        ALL_ANGELS_DEAD,
-        DECK_EMPTY
+        NEGATIVE_THRESHOLD_REACHED,
+        ALL_ANGELS_DEAD
     }
 }
 
