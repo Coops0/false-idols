@@ -9,20 +9,20 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
     property = "type"
 )
 @JsonSubTypes(
-    JsonSubTypes.Type(value = ResetPlayersServerInboundMessage::class, name = "reset_players"),
-    JsonSubTypes.Type(value = StartGameServerInboundMessage::class, name = "start_game"),
-    JsonSubTypes.Type(value = ResolveElectionServerInboundMessage::class, name = "resolve_election"),
-    JsonSubTypes.Type(value = SkipServerInboundMessage::class, name = "skip"),
-    JsonSubTypes.Type(value = GoBackToLobbyServerInboundMessage::class, name = "go_back_to_lobby")
+    JsonSubTypes.Type(value = ServerInboundMessage.ResetPlayers::class, name = "reset_players"),
+    JsonSubTypes.Type(value = ServerInboundMessage.StartGame::class, name = "start_game"),
+    JsonSubTypes.Type(value = ServerInboundMessage.ResolveElection::class, name = "resolve_election"),
+    JsonSubTypes.Type(value = ServerInboundMessage.Skip::class, name = "skip"),
+    JsonSubTypes.Type(value = ServerInboundMessage.GoBackToLobby::class, name = "go_back_to_lobby")
 )
-abstract class ServerInboundMessage
+sealed class ServerInboundMessage {
+    class ResetPlayers : ServerInboundMessage()
 
-class ResetPlayersServerInboundMessage : ServerInboundMessage()
+    class StartGame : ServerInboundMessage()
 
-class StartGameServerInboundMessage : ServerInboundMessage()
+    class ResolveElection(val passed: Boolean) : ServerInboundMessage()
 
-class ResolveElectionServerInboundMessage(val passed: Boolean) : ServerInboundMessage()
+    class Skip : ServerInboundMessage()
 
-class SkipServerInboundMessage : ServerInboundMessage()
-
-class GoBackToLobbyServerInboundMessage : ServerInboundMessage()
+    class GoBackToLobby : ServerInboundMessage()
+}

@@ -2,8 +2,6 @@ package com.cooper.game
 
 import com.cooper.SocketContentConverterSender
 import com.cooper.message.OutboundMessage
-import com.cooper.message.StrippedPlayer
-import com.cooper.message.StrippedPlayer.Companion.stripped
 import com.cooper.message.server.ServerOutboundMessage
 import com.fasterxml.jackson.annotation.JsonIgnore
 

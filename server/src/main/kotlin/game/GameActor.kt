@@ -8,7 +8,6 @@ import com.cooper.message.InboundMessage
 import com.cooper.message.OutboundMessage
 import com.cooper.message.server.ServerInboundMessage
 import com.cooper.message.server.ServerOutboundMessage
-import com.cooper.message.server.UpdateGameStateServerOutboundMessage
 import io.viascom.nanoid.NanoId
 import kotlinx.coroutines.channels.Channel
 
@@ -72,7 +71,7 @@ suspend fun launchGameActor(server: SocketContentConverterSender<ServerOutboundM
             is PlayerDisconnectInnerApplicationMessage -> gameState.handlePlayerDisconnect(message)
         }
 
-        gameState.sendServer(UpdateGameStateServerOutboundMessage(gameState))
+        gameState.sendServer(ServerOutboundMessage.UpdateGameState(gameState))
     }
 }
 
@@ -106,6 +105,6 @@ private suspend fun GameState.handlePlayerDisconnect(message: PlayerDisconnectIn
 
     if (this is GameState.Lobby && player.channels.isEmpty()) {
         players.remove(player)
-        sendServer(UpdateGameStateServerOutboundMessage(this))
+        sendServer(ServerOutboundMessage.UpdateGameState(this))
     }
 }

@@ -2,9 +2,8 @@ package com.cooper.game.processor
 
 import com.cooper.game.GameState
 import com.cooper.game.InnerGameState
-import com.cooper.message.DisconnectOutboundMessage
-import com.cooper.message.RequestChiefCardDiscardOutboundMessage
-import com.cooper.message.server.*
+import com.cooper.message.OutboundMessage
+import com.cooper.message.server.ServerInboundMessage
 
 enum class ServerInboundMessageProcessorAction {
     START_GAME,
@@ -13,19 +12,19 @@ enum class ServerInboundMessageProcessorAction {
 
 suspend fun GameState.handleServerInboundApplicationMessage(message: ServerInboundMessage): ServerInboundMessageProcessorAction? {
     when (message) {
-        is ResetPlayersServerInboundMessage -> {
+        is ServerInboundMessage.ResetPlayers -> {
             require(this is GameState.Lobby) { "Game must be in lobby to reset players" }
             this.players.forEach { player ->
-                player.disconnectAll(DisconnectOutboundMessage.DisconnectionReason.HOST_RESET_PLAYERS)
+                player.disconnectAll(OutboundMessage.Disconnect.DisconnectionReason.HOST_RESET_PLAYERS)
             }
         }
 
-        is StartGameServerInboundMessage -> {
+        is ServerInboundMessage.StartGame -> {
             require(this is GameState.Lobby) { "Game must be in lobby to start" }
             return ServerInboundMessageProcessorAction.START_GAME
         }
 
-        is ResolveElectionServerInboundMessage -> {
+        is ServerInboundMessage.ResolveElection -> {
             require(this is GameState.GameInProgress) { "Game must be in progress to resolve election" }
             require(this.innerGameState is InnerGameState.AwaitingElectionResolution) { "Game must be awaiting election resolution to resolve election" }
             val player = this[(this.innerGameState as InnerGameState.AwaitingElectionResolution).nominee]
@@ -40,10 +39,10 @@ suspend fun GameState.handleServerInboundApplicationMessage(message: ServerInbou
             val cards = this.deck.pickAndTakeThree()
             this.innerGameState = InnerGameState.AwaitingChiefCardDiscard(cards, player.name)
 
-            this.chief.send(RequestChiefCardDiscardOutboundMessage(cards))
+            this.chief.send(OutboundMessage.RequestChiefCardDiscard(cards))
         }
 
-        is SkipServerInboundMessage -> {
+        is ServerInboundMessage.Skip -> {
             require(this is GameState.GameInProgress) { "Game must be in progress to skip" }
             when (this.innerGameState) {
                 is InnerGameState.PostRoleGracePeriod -> TODO()
@@ -53,7 +52,7 @@ suspend fun GameState.handleServerInboundApplicationMessage(message: ServerInbou
             }
         }
 
-        is GoBackToLobbyServerInboundMessage -> {
+        is ServerInboundMessage.GoBackToLobby -> {
             require(this is GameState.GameOver) { "Game must be in progress to go back to lobby" }
             return ServerInboundMessageProcessorAction.BACK_TO_LOBBY
         }

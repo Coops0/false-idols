@@ -1,7 +1,6 @@
 package com.cooper.game
 
 import com.cooper.SocketContentConverterSender
-import com.cooper.message.DisconnectOutboundMessage
 import com.cooper.message.OutboundMessage
 import com.fasterxml.jackson.annotation.JsonIgnore
 
@@ -32,8 +31,8 @@ open class Player(
         channels.add(PlayerConnection(sessionId, channel))
     }
 
-    suspend fun disconnectAll(reason: DisconnectOutboundMessage.DisconnectionReason) {
-        channels.forEach { it.channel.send(DisconnectOutboundMessage(reason)) }
+    suspend fun disconnectAll(reason: OutboundMessage.Disconnect.DisconnectionReason) {
+        channels.forEach { it.channel.send(OutboundMessage.Disconnect(reason)) }
         channels.clear()
     }
 

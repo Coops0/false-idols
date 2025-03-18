@@ -1,8 +1,7 @@
 package com.cooper.game.processor
 
 import com.cooper.game.*
-import com.cooper.message.RequestActionChoiceOutboundMessage
-import com.cooper.message.RequestAdvisorCardChoiceOutboundMessage
+import com.cooper.message.OutboundMessage
 
 suspend fun GameState.GameInProgress.rotateChief() {
     val chief = if (this.innerGameState is InnerGameState.PostRoleGracePeriod) {
@@ -30,10 +29,10 @@ suspend fun GameState.GameInProgress.rotateChief() {
     )
 
     val actionablePlayers = this.alive.filter { it != chief }
-        .map(RequestActionChoiceOutboundMessage.ActionSupplementedPlayer::fromGamePlayer)
+        .map(OutboundMessage.RequestActionChoice.ActionSupplementedPlayer::fromGamePlayer)
 
     chief.send(
-        RequestActionChoiceOutboundMessage(
+        OutboundMessage.RequestActionChoice(
             forcedAction = null,
             players = actionablePlayers,
         )
@@ -98,7 +97,7 @@ suspend fun GameState.GameInProgress.handleChiefDiscardCard(player: Player, card
     this.innerGameState = InnerGameState.AwaitingAdvisorCardChoice(newCards, advisorName)
 
     val advisor = this[advisorName] ?: throw IllegalArgumentException("Advisor not found")
-    advisor.send(RequestAdvisorCardChoiceOutboundMessage(newCards))
+    advisor.send(OutboundMessage.RequestAdvisorCardChoice(newCards))
 }
 
 suspend fun GameState.GameInProgress.handleAdvisorChooseCard(player: Player, cardId: Int) {

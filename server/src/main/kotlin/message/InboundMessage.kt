@@ -11,22 +11,23 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
     property = "type"
 )
 @JsonSubTypes(
-    JsonSubTypes.Type(value = ChooseActionOnPlayerInboundMessage::class, name = "choose_action"),
-    JsonSubTypes.Type(value = DiscardOneCardInboundMessage::class, name = "discard_one_card"),
-    JsonSubTypes.Type(value = ChooseCardInboundMessage::class, name = "choose_card")
+    JsonSubTypes.Type(value = InboundMessage.ChooseActionOnPlayer::class, name = "choose_action"),
+    JsonSubTypes.Type(value = InboundMessage.DiscardOneCard::class, name = "discard_one_card"),
+    JsonSubTypes.Type(value = InboundMessage.ChooseCard::class, name = "choose_card")
 )
-abstract class InboundMessage
+sealed class InboundMessage {
+    /// Chief chooses a player to investigate, kill, or nominate
+    class ChooseActionOnPlayer(
+        val action: ActionChoice,
+        val target: String
+    ) : InboundMessage()
 
-/// Chief chooses a player to investigate, kill, or nominate
-class ChooseActionOnPlayerInboundMessage(
-    val action: ActionChoice,
-    val target: String
-) : InboundMessage()
+    /// Chief chooses one card to discard from deck (of 3) before
+    /// being handed to advisor to select
+    class DiscardOneCard(val cardId: CardId) : InboundMessage()
 
-/// Chief chooses one card to discard from deck (of 3) before
-/// being handed to advisor to select
-class DiscardOneCardInboundMessage(val cardId: CardId) : InboundMessage()
+    /// Advisor picks one of two cards to play
+    class ChooseCard(val cardId: CardId) : InboundMessage()
 
-/// Advisor picks one of two cards to play
-class ChooseCardInboundMessage(val cardId: CardId) : InboundMessage()
+}
 
