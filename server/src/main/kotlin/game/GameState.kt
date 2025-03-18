@@ -52,7 +52,7 @@ sealed class GameState {
         constructor(server: SocketContentConverterSender<ServerOutboundMessage>, originalPlayers: List<Player>) :
                 this(server, assignPlayerRoles(originalPlayers))
 
-        var innerGameState: InnerGameState = InnerGameState.PostRoleGracePeriod()
+        var innerGameState: InnerGameState = InnerGameState.Idle()
         val deck: CardDeck = CardDeck()
 
         var failedElections: Int = 0
@@ -138,8 +138,10 @@ sealed class GameState {
 sealed class InnerGameState {
     abstract val name: String
 
-    class PostRoleGracePeriod : InnerGameState() {
-        override val name: String = "post_role_grace_period"
+    class Idle(
+        val initialWaitPeriod: Boolean = false
+    ) : InnerGameState() {
+        override val name: String = "idle"
     }
 
     class AwaitingPlayerActionChoice(

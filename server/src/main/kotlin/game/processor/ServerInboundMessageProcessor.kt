@@ -40,7 +40,7 @@ suspend fun GameState.handleServerInboundApplicationMessage(message: ServerInbou
         is ServerInboundMessage.Skip -> {
             require(this is GameState.GameInProgress) { "Game must be in progress to skip" }
             when (val igs = this.innerGameState) {
-                is InnerGameState.PostRoleGracePeriod -> this.rotateChief()
+                is InnerGameState.Idle -> this.rotateChief()
                 is InnerGameState.AwaitingChiefCardDiscard ->
                     this.handleChiefDiscardCard(this.chief, igs.cards.random().id)
 

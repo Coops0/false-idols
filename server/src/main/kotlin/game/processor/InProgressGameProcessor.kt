@@ -7,14 +7,14 @@ import com.cooper.message.OutboundMessage.StrippedPlayer.Companion.stripped
 
 suspend fun GameState.GameInProgress.rotateChief() {
     val igs = this.innerGameState
-    val needsTrueRotation = igs !is InnerGameState.PostRoleGracePeriod
+    val wasInitialWaitPeriod = igs is InnerGameState.Idle && igs.initialWaitPeriod
 
     this.players.forEach { player -> player.wasAdvisorLastRound = false }
     if (igs is InnerGameState.AwaitingAdvisorCardChoice) {
         this[igs.advisorName]!!.wasAdvisorLastRound = true
     }
 
-    val newChief = if (!needsTrueRotation) {
+    val newChief = if (wasInitialWaitPeriod) {
         // Chief has already been randomly assigned
         this.chief
     } else {
@@ -30,7 +30,7 @@ suspend fun GameState.GameInProgress.rotateChief() {
         nextChief
     }
 
-    if (needsTrueRotation) {
+    if (!wasInitialWaitPeriod) {
         this.players.forEach { player -> player.wasChiefLastRound = false }
         this.chief.wasChiefLastRound = true
         this.chief.isChief = false
@@ -48,7 +48,6 @@ suspend fun GameState.GameInProgress.rotateChief() {
     val actionablePlayers = this.alive.filter { it != newChief }
         .map(OutboundMessage.RequestActionChoice.ActionSupplementedPlayer::fromGamePlayer)
 
-    // todo only allow certain actions if late game
     newChief.send(
         OutboundMessage.RequestActionChoice(
             permittedActions = permittedActions,
@@ -80,6 +79,10 @@ fun GameState.GameInProgress.checkGameOverConditions() {
     if (!satan.isAlive) {
         throw GameOverThrowable(winner = SimpleRole.ANGEL, reason = GameState.GameOverReason.SATAN_KILLED)
     }
+}
+
+fun GameState.GameInProgress.idle() {
+    this.innerGameState = InnerGameState.Idle()
 }
 
 suspend fun GameState.GameInProgress.handlePlayerActionChoice(
@@ -117,7 +120,7 @@ suspend fun GameState.GameInProgress.handlePlayerActionChoice(
             }
 
             this.checkGameOverConditions()
-            this.rotateChief()
+            this.idle()
         }
 
         ActionChoice.NOMINATE -> {
@@ -158,7 +161,7 @@ suspend fun GameState.GameInProgress.handleAdvisorChooseCard(player: GamePlayer,
     this.deck.playedCards.add(card)
     this.checkGameOverConditions()
 
-    this.rotateChief()
+    this.idle()
 }
 
 suspend fun GameState.GameInProgress.passElection(advisor: GamePlayer) {
@@ -175,7 +178,7 @@ suspend fun GameState.GameInProgress.failElection() {
     this.failedElections++
 
     if (!this.isChaos) {
-        return this.rotateChief()
+        this.idle()
     }
 
     when (this.failedElections) {
