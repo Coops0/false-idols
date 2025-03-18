@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.cooper"
-version = "0.0.1"
+version = "1.0.0"
 
 application {
     mainClass = "com.cooper.ApplicationKt"
@@ -34,4 +34,7 @@ dependencies {
     testImplementation(libs.kotlin.test.junit)
 
     implementation("io.viascom.nanoid:nanoid:1.0.1")
+
+    // resolve vulnerable version
+    implementation("commons-codec:commons-codec:1.13")
 }

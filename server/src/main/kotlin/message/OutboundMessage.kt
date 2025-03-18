@@ -2,6 +2,7 @@ package com.cooper.message
 
 import com.cooper.game.*
 
+@Suppress("CanBeParameter", "MemberVisibilityCanBePrivate")
 sealed class OutboundMessage(val type: String) {
     /// Sent individually to each player at the start of the game
     class AssignRole(

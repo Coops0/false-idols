@@ -93,7 +93,7 @@ suspend fun GameState.GameInProgress.handlePlayerActionChoice(
     require(igs is InnerGameState.AwaitingPlayerActionChoice) { "Game must be awaiting player action choice to choose action" }
     require(this.chief == aggressor) { "Player must be chief to execute action" }
 
-    val permittedActions = (igs as InnerGameState.AwaitingPlayerActionChoice).permittedActions
+    val permittedActions = igs.permittedActions
     require(action in permittedActions) { "Player must execute a permitted action" }
 
     val target = this[targetName] ?: throw IllegalArgumentException("Target not found")
