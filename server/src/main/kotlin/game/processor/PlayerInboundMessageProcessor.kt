@@ -9,20 +9,10 @@ import com.cooper.message.InboundMessage
 suspend fun GameState.handlePlayerInboundApplicationMessage(playerName: PlayerName, message: InboundMessage) {
     require(this is GameState.GameInProgress) { "Game must be in progress to process player inbound messages" }
 
-    val player = this[playerName] ?: throw IllegalStateException("Player not found")
+    val player = this[playerName]!!
     when (message) {
-        is InboundMessage.ChooseActionOnPlayer -> {
-            this.handlePlayerActionChoice(player, message.action, message.target)
-        }
-
-        is InboundMessage.DiscardOneCard -> {
-            this.handleChiefDiscardCard(player, message.cardId)
-        }
-
-        is InboundMessage.ChooseCard -> {
-            this.handleAdvisorChooseCard(player, message.cardId)
-        }
-
-        else -> throw IllegalArgumentException("Unknown player inbound message type: $message")
+        is InboundMessage.ChooseActionOnPlayer -> this.handlePlayerActionChoice(player, message.action, message.target)
+        is InboundMessage.DiscardOneCard -> this.handleChiefDiscardCard(player, message.cardId)
+        is InboundMessage.ChooseCard -> this.handleAdvisorChooseCard(player, message.cardId)
     }
 }

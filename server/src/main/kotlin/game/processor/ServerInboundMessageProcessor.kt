@@ -26,29 +26,30 @@ suspend fun GameState.handleServerInboundApplicationMessage(message: ServerInbou
 
         is ServerInboundMessage.ResolveElection -> {
             require(this is GameState.GameInProgress) { "Game must be in progress to resolve election" }
-            require(this.innerGameState is InnerGameState.AwaitingElectionResolution) { "Game must be awaiting election resolution to resolve election" }
-            val player = this[(this.innerGameState as InnerGameState.AwaitingElectionResolution).nominee]
-                ?: throw IllegalStateException("Nominee not found")
+            val igs = this.innerGameState
 
-            if (!message.passed) {
-                this.failedElections++
-                this.rotateChief()
-                return null
+            require(igs is InnerGameState.AwaitingElectionResolution) { "Game must be awaiting election resolution to resolve election" }
+
+            if (message.passed) {
+                this.passElection(this[igs.nominee]!!)
+            } else {
+                this.failElection()
             }
-
-            val cards = this.deck.pickAndTakeThree()
-            this.innerGameState = InnerGameState.AwaitingChiefCardDiscard(cards, player.name)
-
-            this.chief.send(OutboundMessage.RequestChiefCardDiscard(cards))
         }
 
         is ServerInboundMessage.Skip -> {
             require(this is GameState.GameInProgress) { "Game must be in progress to skip" }
-            when (this.innerGameState) {
-                is InnerGameState.PostRoleGracePeriod -> TODO()
-                is InnerGameState.AwaitingChiefCardDiscard -> TODO()
-                is InnerGameState.AwaitingAdvisorCardChoice -> TODO()
-                else -> return null
+            when (val igs = this.innerGameState) {
+                is InnerGameState.PostRoleGracePeriod -> this.rotateChief()
+                is InnerGameState.AwaitingChiefCardDiscard ->
+                    this.handleChiefDiscardCard(this.chief, igs.cards.random().id)
+
+                is InnerGameState.AwaitingAdvisorCardChoice ->
+                    this.handleAdvisorChooseCard(this[igs.advisorName]!!, igs.cards.random().id)
+
+                is InnerGameState.AwaitingPlayerActionChoice -> this.rotateChief()
+                is InnerGameState.AwaitingInvestigationAnalysis -> this.rotateChief()
+                else -> throw IllegalStateException("Cannot skip in state ${igs.name}")
             }
         }
 
@@ -56,8 +57,6 @@ suspend fun GameState.handleServerInboundApplicationMessage(message: ServerInbou
             require(this is GameState.GameOver) { "Game must be in progress to go back to lobby" }
             return ServerInboundMessageProcessorAction.BACK_TO_LOBBY
         }
-
-        else -> throw IllegalArgumentException("Unknown server inbound message type: $message")
     }
 
     return null

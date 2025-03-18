@@ -5,23 +5,30 @@ import com.cooper.game.*
 sealed class OutboundMessage(val type: String) {
     /// Sent individually to each player at the start of the game
     class AssignRole(
-        val complexRole: ComplexRole,
+        val role: ComplexRole,
         /// After showing role, if this player will be chief
         val isChief: Boolean,
 
+        /// Excluding satan
+        val demonCount: Int,
+
         /// These will only be non-null if complex role == DEMON
         val teammates: List<StrippedPlayer>? = null,
-        val satan: StrippedPlayer? = null
+        val satan: StrippedPlayer? = null,
     ) : OutboundMessage("assign_role")
 
     /// Sent to a player to request an action choice
     class RequestActionChoice(
-        /// Only during an event in which the player must do one action
-        val forcedAction: ActionChoice? = null,
+        /// Sometimes actions are forced, and early game you can only elect
+        val permittedActions: List<ActionChoice> = ActionChoice.entries,
         /// List of (alive) players to choose from (excluding self),
-        /// Coupled with eligibility for actions
-        val players: List<ActionSupplementedPlayer>
+        /// coupled with eligibility for actions. Must be eligible in player and be a permitted action.
+        val players: List<ActionSupplementedPlayer>,
     ) : OutboundMessage("request_action") {
+        init {
+            assert(players.isNotEmpty())
+        }
+
         class ActionSupplementedPlayer(
             name: PlayerName,
             icon: String,

@@ -66,6 +66,9 @@ sealed class GameState {
         /// 6+ cards played
         val isLateGame: Boolean get() = deck.absolutePoints >= 6
 
+        /// 3+ failed elections
+        val isChaos: Boolean get() = failedElections >= 3
+
         fun toGameOver(winner: SimpleRole, cause: GameOverReason) = GameOver(
             server,
             players.toMutableList(),
@@ -81,10 +84,14 @@ sealed class GameState {
 
         private companion object {
             private fun assignPlayerRoles(originalPlayers: List<Player>): MutableList<GamePlayer> {
+                // OG game rules:
+                // 5, 6 -> 1
+                // 7, 8 -> 2
+                // 9, 10 -> 3
                 val demonCount = when (originalPlayers.size) {
-                    3, 4 -> 1
-                    5, 6 -> 2
-                    7, 8 -> 3
+                    4, 5 -> 1
+                    6, 7 -> 2
+                    8, 9 -> 3
                     else -> 4
                 }
 
@@ -136,14 +143,15 @@ sealed class InnerGameState {
     }
 
     class AwaitingPlayerActionChoice(
-        val forcedAction: ActionChoice? = null,
+        val permittedActions: List<ActionChoice> = ActionChoice.entries,
         val cause: PlayerActionChoiceCause = PlayerActionChoiceCause.NORMAL_CHIEF,
+        val forcedElection: Boolean = false
     ) : InnerGameState() {
         override val name: String = "awaiting_chief_action_choice"
 
         enum class PlayerActionChoiceCause {
             NORMAL_CHIEF,
-            FORCED_CHIEF
+            CHAOS
         }
     }
 
@@ -157,5 +165,9 @@ sealed class InnerGameState {
 
     class AwaitingElectionResolution(val nominee: PlayerName) : InnerGameState() {
         override val name: String = "awaiting_election_outcome"
+    }
+
+    class AwaitingInvestigationAnalysis(val target: PlayerName) : InnerGameState() {
+        override val name: String = "awaiting_investigation_analysis"
     }
 }

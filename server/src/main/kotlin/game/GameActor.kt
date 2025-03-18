@@ -6,6 +6,7 @@ import com.cooper.game.processor.handlePlayerInboundApplicationMessage
 import com.cooper.game.processor.handleServerInboundApplicationMessage
 import com.cooper.message.InboundMessage
 import com.cooper.message.OutboundMessage
+import com.cooper.message.OutboundMessage.StrippedPlayer.Companion.stripped
 import com.cooper.message.server.ServerInboundMessage
 import com.cooper.message.server.ServerOutboundMessage
 import io.viascom.nanoid.NanoId
@@ -53,10 +54,20 @@ suspend fun launchGameActor(server: SocketContentConverterSender<ServerOutboundM
             }
 
             is ServerInboundApplicationMessage -> {
-                val action = gameState.handleServerInboundApplicationMessage(message.serverInboundMessage)
+                val action = try {
+                    gameState.handleServerInboundApplicationMessage(message.serverInboundMessage)
+                } catch (e: GameOverThrowable) {
+                    gameState = (gameState as GameState.GameInProgress).toGameOver(e.winner, e.reason)
+                    null
+                } catch (e: IllegalStateException) {
+                    println("Failed to process server message ${e.message}")
+                    null
+                }
+
                 when (action) {
                     ServerInboundMessageProcessorAction.START_GAME -> {
                         gameState = (gameState as GameState.Lobby).toGameInProgress()
+                        gameState.sendPlayerRoles()
                     }
 
                     ServerInboundMessageProcessorAction.BACK_TO_LOBBY -> {
@@ -82,13 +93,11 @@ private suspend fun GameState.handlePlayerJoin(message: PlayerJoinInnerApplicati
 
     if (existingPlayer != null) {
         existingPlayer.connect(sessionId, message.channel)
-        message.callback.send(Result.success(sessionId))
-        return
+        return message.callback.send(Result.success(sessionId))
     }
 
     if (this !is GameState.Lobby) {
-        message.callback.send(Result.failure(IllegalStateException("Cannot join game in progress")))
-        return
+        return message.callback.send(Result.failure(IllegalStateException("Cannot join game in progress")))
     }
 
     val playerIcon = PlayerIcon[this.players.size]
@@ -106,5 +115,23 @@ private suspend fun GameState.handlePlayerDisconnect(message: PlayerDisconnectIn
     if (this is GameState.Lobby && player.channels.isEmpty()) {
         players.remove(player)
         sendServer(ServerOutboundMessage.UpdateGameState(this))
+    }
+}
+
+suspend fun GameState.GameInProgress.sendPlayerRoles() {
+    players.forEach { player ->
+        player.send(
+            if (player.role == ComplexRole.DEMON) OutboundMessage.AssignRole(
+                role = player.role,
+                isChief = player.isChief,
+                demonCount = demons.size,
+                teammates = demons.map { it.stripped },
+                satan = satan.stripped
+            ) else OutboundMessage.AssignRole(
+                role = player.role,
+                isChief = player.isChief,
+                demonCount = demons.size,
+            )
+        )
     }
 }

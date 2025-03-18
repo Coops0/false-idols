@@ -36,6 +36,7 @@ val cards = listOf(
         description = "Kill Elon Musk",
         consequence = 2
     )
+    // TODO add more cards
 )
 
 class CardDeck(totalCardCount: Int = 17) {
