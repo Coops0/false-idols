@@ -1,15 +1,50 @@
 package com.cooper.message.server.compositor
 
-import com.cooper.game.CardDeck
-import com.cooper.game.InnerGameState
+import com.cooper.game.*
+import com.cooper.game.GameState.GameOverReason
+import com.cooper.message.StrippedPlayer
 
 class GameStateCompositor(
     val name: String,
     val players: List<PlayerCompositor>,
-    var innerGameState: InnerGameState = InnerGameState.PostRoleGracePeriod(),
-    val deck: CardDeckCompositor
-) {
 
+    // in game
+    val innerGameState: InnerGameStateCompositor? = null,
+    val deck: CardDeckCompositor? = null,
+    var failedElections: Int? = null,
+
+    // game over
+    val winner: SimpleRole? = null,
+    val satan: StrippedPlayer? = null,
+    val demons: List<StrippedPlayer>? = null,
+    val reason: GameOverReason? = null,
+) {
+    companion object {
+        fun fromGameState(gameState: GameState): GameStateCompositor {
+            return when (gameState) {
+                is GameState.Lobby -> GameStateCompositor(
+                    gameState.name,
+                    gameState.players.map(PlayerCompositor.Companion::fromPlayer),
+                )
+
+                is GameState.GameInProgress -> GameStateCompositor(
+                    gameState.name,
+                    gameState.players.map(PlayerCompositor.Companion::fromPlayer),
+                    InnerGameStateCompositor.fromInnerGameState(gameState.innerGameState),
+                    CardDeckCompositor.fromCardDeck(gameState.deck)
+                )
+
+                is GameState.GameOver -> GameStateCompositor(
+                    gameState.name,
+                    gameState.players.map(PlayerCompositor.Companion::fromPlayer),
+                    winner = gameState.winner,
+                    satan = gameState.satan,
+                    demons = gameState.demons,
+                    reason = gameState.reason
+                )
+            }
+        }
+    }
 }
 
 class PlayerCompositor(
@@ -22,20 +57,20 @@ class PlayerCompositor(
     val wasAdvisorLastRound: Boolean? = null
 ) {
     companion object {
-        fun fromPlayer(player: com.cooper.game.Player) = PlayerCompositor(
-            player.name,
-            player.icon.iconName
-        )
-
-        fun fromGamePlayer(player: com.cooper.game.GamePlayer) = PlayerCompositor(
-            player.name,
-            player.icon.iconName,
-            player.isAlive,
-            player.isInvestigated,
-            player.isChief,
-            player.wasChiefLastRound,
-            player.wasAdvisorLastRound
-        )
+        fun fromPlayer(player: Player): PlayerCompositor {
+            return if (player is GamePlayer) PlayerCompositor(
+                player.name,
+                player.icon.iconName,
+                player.isAlive,
+                player.isInvestigated,
+                player.isChief,
+                player.wasChiefLastRound,
+                player.wasAdvisorLastRound
+            ) else PlayerCompositor(
+                player.name,
+                player.icon.iconName
+            )
+        }
     }
 }
 
@@ -54,30 +89,34 @@ class CardDeckCompositor(
 class InnerGameStateCompositor(
     val type: String,
     val forcedAction: String? = null,
-    val cause: String? = null
+    val cause: String? = null,
+    val advisorName: String? = null
 ) {
     companion object {
-        fun fromInnerGameState(innerGameState: InnerGameState): InnerGameStateCompositor  {
-            when(innerGameState) {
+        fun fromInnerGameState(innerGameState: InnerGameState): InnerGameStateCompositor {
+            when (innerGameState) {
                 is InnerGameState.PostRoleGracePeriod -> return InnerGameStateCompositor("post_role_grace_period")
-                is InnerGameState.AwaitingPlayerActionChoice -> {
-                    return InnerGameStateCompositor(
-                        "awaiting_player_action_choice",
-                        forcedAction = innerGameState.forcedAction?.name,
-                        cause = innerGameState.cause.name
-                    )
-                }
-                is InnerGameState.AwaitingPlayerActionChoice -> {
+                is InnerGameState.AwaitingPlayerActionChoice -> return InnerGameStateCompositor(
+                    "awaiting_player_action_choice",
+                    forcedAction = innerGameState.forcedAction?.name,
+                    cause = innerGameState.cause.name
+                )
 
-                }
-                is InnerGameState.AwaitingChiefCardDiscard -> {
+                is InnerGameState.AwaitingChiefCardDiscard -> return InnerGameStateCompositor(
+                    "awaiting_chief_card_discard",
+                    cause = innerGameState.advisorName,
+                    advisorName = innerGameState.advisorName
+                )
 
-                }
-                is InnerGameState.AwaitingAdvisorCardChoice -> {
+                is InnerGameState.AwaitingAdvisorCardChoice -> return InnerGameStateCompositor(
+                    "awaiting_advisor_card_choice",
+                    advisorName = innerGameState.advisorName,
+                )
 
-                }
-
-                else -> throw IllegalArgumentException("Unknown inner game state type: $innerGameState")
+                is InnerGameState.AwaitingElectionResolution -> return InnerGameStateCompositor(
+                    "awaiting_election_resolution",
+                    advisorName = innerGameState.nominee
+                )
             }
         }
     }
