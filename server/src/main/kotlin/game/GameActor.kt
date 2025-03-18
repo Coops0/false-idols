@@ -11,6 +11,7 @@ import com.cooper.message.server.ServerInboundMessage
 import com.cooper.message.server.ServerOutboundMessage
 import io.viascom.nanoid.NanoId
 import kotlinx.coroutines.channels.Channel
+import java.util.concurrent.atomic.AtomicBoolean
 
 abstract class InnerApplicationMessage
 
@@ -36,7 +37,13 @@ class GameOverThrowable(
     val reason: GameState.GameOverReason
 ) : Throwable("game over")
 
+private val isActorActive: AtomicBoolean = AtomicBoolean(false)
+
 suspend fun launchGameActor(server: SocketContentConverterSender<ServerOutboundMessage>) {
+    if (!isActorActive.compareAndSet(false, true)) {
+        throw IllegalStateException("Game actor is already active")
+    }
+
     var gameState: GameState = GameState.Lobby(server)
 
     for (message in globalInnerApplicationChannel) {
@@ -84,6 +91,8 @@ suspend fun launchGameActor(server: SocketContentConverterSender<ServerOutboundM
 
         gameState.sendServer(ServerOutboundMessage.UpdateGameState(gameState))
     }
+
+    isActorActive.set(false)
 }
 
 private suspend fun GameState.handlePlayerJoin(message: PlayerJoinInnerApplicationMessage) {
