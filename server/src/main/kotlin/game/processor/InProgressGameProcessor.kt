@@ -41,8 +41,7 @@ suspend fun GameState.GameInProgress.rotateChief() {
     val permittedActions = if (this.isLateGame) ActionChoice.entries else listOf(ActionChoice.NOMINATE)
 
     this.innerGameState = InnerGameState.AwaitingPlayerActionChoice(
-        permittedActions = permittedActions,
-        cause = InnerGameState.AwaitingPlayerActionChoice.PlayerActionChoiceCause.NORMAL_CHIEF
+        permittedActions = permittedActions
     )
 
     val playersSize = this.players.size
@@ -131,7 +130,7 @@ suspend fun GameState.GameInProgress.handlePlayerActionChoice(
         }
 
         ActionChoice.NOMINATE -> {
-            require(igs.forcedElection || (!target.wasChiefLastRound && !target.wasAdvisorLastRound)) { "Target must not have been chief or advisor last round" }
+            require(!target.wasChiefLastRound && !target.wasAdvisorLastRound) { "Target must not have been chief or advisor last round" }
             this.innerGameState = InnerGameState.AwaitingElectionResolution(
                 nominee = target.name
             )
@@ -182,84 +181,13 @@ suspend fun GameState.GameInProgress.passElection(advisor: GamePlayer) {
     this.chief.send(OutboundMessage.RequestChiefCardDiscard(cards))
 }
 
-suspend fun GameState.GameInProgress.failElection() {
-    // todo if chaos level xxx && check if game is over
+fun GameState.GameInProgress.failElection() {
     this.failedElections++
 
-    if (!this.isChaos) {
-        return this.idle()
-    }
-
-    val playersSize = this.players.size
-
-    when (this.failedElections) {
-        3 -> {
-            // force investigate
-            val actionablePlayers = this.alive.filter { it != this.chief }
-                .map { OutboundMessage.RequestActionChoice.ActionSupplementedPlayer.fromGamePlayer(playersSize, it) }
-
-            if (actionablePlayers.count(OutboundMessage.RequestActionChoice.ActionSupplementedPlayer::investigatable) == 0) {
-                // no players to investigate, just skip
-                return this.rotateChief()
-            }
-
-            this.innerGameState = InnerGameState.AwaitingPlayerActionChoice(
-                permittedActions = listOf(ActionChoice.INVESTIGATE),
-                cause = InnerGameState.AwaitingPlayerActionChoice.PlayerActionChoiceCause.CHAOS
-            )
-
-            this.chief.send(
-                OutboundMessage.RequestActionChoice(
-                    permittedActions = listOf(ActionChoice.INVESTIGATE),
-                    players = actionablePlayers,
-                )
-            )
-        }
-
-        4 -> {
-            // force kill
-            val actionablePlayers = this.alive.filter { it != this.chief }
-                .map { OutboundMessage.RequestActionChoice.ActionSupplementedPlayer.fromGamePlayer(playersSize, it) }
-
-            this.innerGameState = InnerGameState.AwaitingPlayerActionChoice(
-                permittedActions = listOf(ActionChoice.KILL),
-                cause = InnerGameState.AwaitingPlayerActionChoice.PlayerActionChoiceCause.CHAOS
-            )
-
-            this.chief.send(
-                OutboundMessage.RequestActionChoice(
-                    permittedActions = listOf(ActionChoice.KILL),
-                    players = actionablePlayers,
-                )
-            )
-        }
-
-        5 -> {
-            // force elect
-            val actionablePlayers = this.alive
-                .filter { it != this.chief }
-                .map { player ->
-                    OutboundMessage.RequestActionChoice.ActionSupplementedPlayer(
-                        name = player.name,
-                        icon = player.icon.iconName,
-                        investigatable = !player.isInvestigated,
-                        // in this case, we don't care if they were chief/advisor last round
-                        electable = true
-                    )
-                }
-
-            this.innerGameState = InnerGameState.AwaitingPlayerActionChoice(
-                permittedActions = listOf(ActionChoice.NOMINATE),
-                cause = InnerGameState.AwaitingPlayerActionChoice.PlayerActionChoiceCause.CHAOS,
-                forcedElection = true
-            )
-
-            this.chief.send(
-                OutboundMessage.RequestActionChoice(
-                    permittedActions = listOf(ActionChoice.NOMINATE),
-                    players = actionablePlayers,
-                )
-            )
-        }
+    if (this.isChaos) {
+        this.failedElections = 0
+        this.deck.playOne()
+    } else {
+        this.idle()
     }
 }

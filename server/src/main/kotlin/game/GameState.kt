@@ -145,16 +145,9 @@ sealed class InnerGameState {
     }
 
     class AwaitingPlayerActionChoice(
-        val permittedActions: List<ActionChoice> = ActionChoice.entries,
-        val cause: PlayerActionChoiceCause = PlayerActionChoiceCause.NORMAL_CHIEF,
-        val forcedElection: Boolean = false
+        val permittedActions: List<ActionChoice> = ActionChoice.entries
     ) : InnerGameState() {
         override val name: String = "awaiting_chief_action_choice"
-
-        enum class PlayerActionChoiceCause {
-            NORMAL_CHIEF,
-            CHAOS
-        }
     }
 
     class AwaitingChiefCardDiscard(val cards: List<Card>, val advisorName: String) : InnerGameState() {
