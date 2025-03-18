@@ -71,9 +71,9 @@ sealed class GameState {
         fun toGameOver(winner: SimpleRole, cause: GameOverReason) = GameOver(
             server,
             players.toMutableList(),
-            winner,
-            satan.stripped,
-            demons.map { StrippedPlayer(it.name, it.icon.iconName) },
+            winner.name,
+            satan.name,
+            demons.map(Player::name),
             cause
         )
 
@@ -111,9 +111,9 @@ sealed class GameState {
     class GameOver(
         override val server: SocketContentConverterSender<ServerOutboundMessage>,
         override val players: MutableList<Player>,
-        val winner: SimpleRole,
-        val satan: StrippedPlayer,
-        val demons: List<StrippedPlayer>,
+        val winner: PlayerName,
+        val satan: PlayerName,
+        val demons: List<PlayerName>,
         val reason: GameOverReason
     ) : GameState() {
         override val name: String = "game_over"
