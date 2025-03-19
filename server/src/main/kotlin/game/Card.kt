@@ -207,5 +207,20 @@ val cards = listOf(
         id = 27,
         description = "Buy dog",
         consequence = 0
+    ),
+    Card(
+        id = 28,
+        description = "Garfield birthday cake",
+        consequence = 1
+    ),
+    Card(
+        id = 29,
+        description = "Go to the Minecraft movie with the great merge",
+        consequence = 1
+    ),
+    Card(
+        id = 30,
+        description = "Get caught hitting a cart during the Minecraft movie",
+        consequence = -1
     )
 )
