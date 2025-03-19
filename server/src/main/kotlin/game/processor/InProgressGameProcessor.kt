@@ -38,7 +38,9 @@ suspend fun GameState.GameInProgress.rotateChief() {
         newChief.isChief = true
     }
 
-    val permittedActions = if (this.isLateGame) ActionChoice.entries else listOf(ActionChoice.NOMINATE)
+    val permittedActions = mutableListOf(ActionChoice.NOMINATE)
+    if (this.deck.absolutePoints >= MIN_ABS_POINTS_TO_INVESTIGATE) permittedActions.add(ActionChoice.INVESTIGATE)
+    if (this.deck.absolutePoints >= MIN_ABS_POINTS_TO_KILL) permittedActions.add(ActionChoice.KILL)
 
     this.innerGameState = InnerGameState.AwaitingPlayerActionChoice(
         permittedActions = permittedActions
@@ -68,11 +70,11 @@ fun GameState.GameInProgress.checkGameOverConditions() {
         }
     }
 
-    if (deck.points > 8) {
+    if (deck.points >= POSITIVE_THRESHOLD_WIN) {
         throw GameOverThrowable(winner = SimpleRole.ANGEL, reason = GameState.GameOverReason.POSITIVE_THRESHOLD_REACHED)
     }
 
-    if (deck.points < -4) {
+    if (deck.points <= NEGATIVE_THRESHOLD_WIN) {
         throw GameOverThrowable(winner = SimpleRole.DEMON, reason = GameState.GameOverReason.NEGATIVE_THRESHOLD_REACHED)
     }
 

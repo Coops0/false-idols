@@ -31,8 +31,6 @@ class CardDeck(totalCardCount: Int = 17) {
         if (cardStack.size >= len) return
 
         cardStack.addAll(playedCards)
-        playedCards.clear()
-
         cardStack.shuffle()
     }
 
