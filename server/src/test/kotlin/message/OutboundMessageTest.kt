@@ -1,6 +1,9 @@
 package com.cooper.message
 
-import com.cooper.game.*
+import com.cooper.game.ActionChoice
+import com.cooper.game.Card
+import com.cooper.game.ComplexRole
+import com.cooper.game.SimpleRole
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.module.kotlin.KotlinModule

@@ -60,7 +60,7 @@ suspend fun GameState.GameInProgress.rotateChief() {
 
 // throws GameOverThrowable
 fun GameState.GameInProgress.checkGameOverConditions() {
-    if (isLateGame) {
+    if (deck.points <= NEGATIVE_THRESHOLD_SATAN_WIN) {
         val igs = innerGameState
         if (igs is InnerGameState.AwaitingChiefCardDiscard && igs.advisorName == satan.name) {
             throw GameOverThrowable(
@@ -110,7 +110,7 @@ suspend fun GameState.GameInProgress.handlePlayerActionChoice(
 
     when (action) {
         ActionChoice.INVESTIGATE -> {
-            require(this.isLateGame) { "Must be late game to investigate" }
+            require(this.deck.absolutePoints >= MIN_ABS_POINTS_TO_INVESTIGATE) { "Must have enough absolute points to investigate" }
             require(!target.isInvestigated) { "Target must not have already been investigated" }
 
             target.isInvestigated = true
@@ -120,7 +120,7 @@ suspend fun GameState.GameInProgress.handlePlayerActionChoice(
         }
 
         ActionChoice.KILL -> {
-            require(this.isLateGame) { "Must be late game to kill" }
+            require(this.deck.absolutePoints >= MIN_ABS_POINTS_TO_KILL) { "Must have enough absolute points to kill" }
 
             target.isAlive = false
             if (target.role == ComplexRole.SATAN) {

@@ -9,6 +9,7 @@ const val MIN_ABS_POINTS_TO_INVESTIGATE = 4
 const val MIN_ABS_POINTS_TO_KILL = 8
 const val POSITIVE_THRESHOLD_WIN = 10
 const val NEGATIVE_THRESHOLD_WIN = -6
+const val NEGATIVE_THRESHOLD_SATAN_WIN = -2
 
 sealed class GameState(val name: String) {
     @get:JsonIgnore abstract val server: SocketContentConverterSender<ServerOutboundMessage>
@@ -66,9 +67,6 @@ sealed class GameState(val name: String) {
         val demons: List<GamePlayer> get() = players.filter { it.role == ComplexRole.DEMON }
         val angels: List<GamePlayer> get() = players.filter { it.role == ComplexRole.ANGEL }
         val alive: List<GamePlayer> get() = players.filter(GamePlayer::isAlive)
-
-        /// 4+ cards played
-        val isLateGame: Boolean get() = deck.playedCards.size >= 6
 
         /// 3 failed elections in a row
         val isChaos: Boolean get() = failedElections >= 3
