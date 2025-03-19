@@ -14,5 +14,6 @@ suspend fun GameState.handlePlayerInboundApplicationMessage(playerName: PlayerNa
         is InboundMessage.ChooseActionOnPlayer -> this.handlePlayerActionChoice(player, message.action, message.target)
         is InboundMessage.DiscardOneCard -> this.handleChiefDiscardCard(player, message.cardId)
         is InboundMessage.ChooseCard -> this.handleAdvisorChooseCard(player, message.cardId)
+        is InboundMessage.Ping -> {}
     }
 }

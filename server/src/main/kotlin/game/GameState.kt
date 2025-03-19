@@ -43,7 +43,7 @@ sealed class GameState(val name: String) {
         override val server: SocketContentConverterSender<ServerOutboundMessage>,
         override val players: MutableList<Player> = mutableListOf()
     ) : GameState("lobby") {
-        fun toGameInProgress() = GameInProgress(server, players)
+        fun toGameInProgress() = GameInProgress(server, players, _fakeArg = null)
     }
 
     class GameInProgress private constructor(
@@ -54,7 +54,7 @@ sealed class GameState(val name: String) {
             server: SocketContentConverterSender<ServerOutboundMessage>,
             originalPlayers: List<Player>,
             /// Need this to prevent constructor declaration clash
-            _fakeArg: Unit? = null
+            _fakeArg: Unit?
         ) : this(server, assignPlayerRoles(originalPlayers))
 
         var innerGameState: InnerGameState = InnerGameState.Idle()

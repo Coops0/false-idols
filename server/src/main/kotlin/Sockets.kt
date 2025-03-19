@@ -50,11 +50,18 @@ class SocketContentConverterSender<M>(
     }
 }
 
+val alphaNumericRegex by lazy { Regex("^[a-zA-Z0-9_]*$") }
+
 private fun Routing.ws() {
     webSocket("/ws") {
         val name = call.request.queryParameters["name"]?.trim() ?: throw IllegalArgumentException("No name provided")
         if (name.length > 15 || name.length < 3) {
             close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "Name length should be in 3..15"))
+            return@webSocket
+        }
+
+        if (!name.matches(alphaNumericRegex)) {
+            close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "Name had bad characters in it"))
             return@webSocket
         }
 

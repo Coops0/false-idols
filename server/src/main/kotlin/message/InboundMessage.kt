@@ -13,7 +13,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
 @JsonSubTypes(
     JsonSubTypes.Type(value = InboundMessage.ChooseActionOnPlayer::class, name = "choose_action"),
     JsonSubTypes.Type(value = InboundMessage.DiscardOneCard::class, name = "discard_one_card"),
-    JsonSubTypes.Type(value = InboundMessage.ChooseCard::class, name = "choose_card")
+    JsonSubTypes.Type(value = InboundMessage.ChooseCard::class, name = "choose_card"),
+    JsonSubTypes.Type(value = InboundMessage.Ping::class, name = "ping"),
 )
 sealed class InboundMessage {
     /// Chief chooses a player to investigate, kill, or nominate
@@ -28,4 +29,6 @@ sealed class InboundMessage {
 
     /// Advisor picks one of two cards to play
     class ChooseCard(val cardId: CardId) : InboundMessage()
+
+    class Ping : InboundMessage()
 }

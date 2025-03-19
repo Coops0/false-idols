@@ -13,7 +13,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
     JsonSubTypes.Type(value = ServerInboundMessage.StartGame::class, name = "start_game"),
     JsonSubTypes.Type(value = ServerInboundMessage.ResolveElection::class, name = "resolve_election"),
     JsonSubTypes.Type(value = ServerInboundMessage.Skip::class, name = "skip"),
-    JsonSubTypes.Type(value = ServerInboundMessage.GoBackToLobby::class, name = "go_back_to_lobby")
+    JsonSubTypes.Type(value = ServerInboundMessage.GoBackToLobby::class, name = "go_back_to_lobby"),
+    JsonSubTypes.Type(value = ServerInboundMessage.Ping::class, name = "ping"),
 )
 sealed class ServerInboundMessage {
     class ResetPlayers : ServerInboundMessage()
@@ -25,4 +26,6 @@ sealed class ServerInboundMessage {
     class Skip : ServerInboundMessage()
 
     class GoBackToLobby : ServerInboundMessage()
+
+    class Ping : ServerInboundMessage()
 }
