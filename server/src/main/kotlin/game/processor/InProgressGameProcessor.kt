@@ -188,7 +188,7 @@ fun GameState.GameInProgress.failElection() {
 
     if (this.isChaos) {
         this.failedElections = 0
-        this.deck.playOne()
+        this.deck.playOneBlind()
     } else {
         this.idle()
     }

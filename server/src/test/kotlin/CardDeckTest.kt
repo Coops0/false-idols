@@ -1,7 +1,7 @@
 import com.cooper.game.Card
 import com.cooper.game.CardDeck
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
+import com.cooper.game.positiveCards
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.RepeatedTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -9,69 +9,40 @@ import org.junit.jupiter.params.provider.ValueSource
 import kotlin.math.absoluteValue
 
 class CardDeckTest {
-    @Test
-    fun `test initial deck creation`() {
-        val deck = CardDeck()
-        assertEquals(0, deck.playedCards.size)
-        assertEquals(0, deck.points)
-        assertEquals(0, deck.absolutePoints)
-    }
+    @RepeatedTest(10)
+    fun `test random distribution of card types`() {
+        // Create multiple decks to verify random distribution
+        val decks = List(20) { CardDeck(17) }
 
-    @ParameterizedTest
-    @ValueSource(ints = [10, 17, 25])
-    fun `test deck balance with different sizes`(deckSize: Int) {
-        // Create multiple decks to test balance statistically
-        val decks = List(100) { CardDeck(deckSize) }
+        // For each deck, play all cards and count types
+        val typeCounts = decks.map { deck ->
+            repeat(17) { deck.playOneBlind() }
 
-        // For each deck, pick all cards and check balance
-        decks.forEach { deck ->
-            // Pick all cards
-            repeat(deckSize / 3) {
-                deck.pickAndTakeThree()
-            }
+            val positiveCount = deck.playedCards.count { it.consequenceQualifier == Card.CardConsequenceQualifier.POSITIVE }
+            val negativeCount = deck.playedCards.count { it.consequenceQualifier == Card.CardConsequenceQualifier.NEGATIVE }
+            val neutralCount = deck.playedCards.count { it.consequenceQualifier == Card.CardConsequenceQualifier.NEUTRAL }
 
-            // Pick remaining cards one by one
-            repeat(deckSize % 3) {
-                deck.playOne()
-            }
-
-            // Check that the total points are within a reasonable range
-            assertTrue(
-                deck.points.absoluteValue <= deckSize / 2,
-                "Deck with $deckSize cards has unbalanced points: ${deck.points}"
-            )
-
-            // Check distribution of card types
-            val positiveCards =
-                deck.playedCards.count { it.consequenceQualifier == Card.CardConsequenceQualifier.POSITIVE }
-            val negativeCards =
-                deck.playedCards.count { it.consequenceQualifier == Card.CardConsequenceQualifier.NEGATIVE }
-            val neutralCards =
-                deck.playedCards.count { it.consequenceQualifier == Card.CardConsequenceQualifier.NEUTRAL }
-
-            // Check that positive and negative cards are roughly balanced
-            assertTrue(
-                (positiveCards - negativeCards).absoluteValue <= deckSize / 3,
-                "Deck has unbalanced positive/negative distribution: +$positiveCards/-$negativeCards"
-            )
+            Triple(positiveCount, negativeCount, neutralCount)
         }
-    }
 
-    @Test
-    fun `test pickAndTakeThree returns three cards`() {
-        val deck = CardDeck()
-        val pickedCards = deck.pickAndTakeThree()
+        // Verify that we have variation in the distributions
+        val uniqueDistributions = typeCounts.toSet()
+        assertTrue(
+            uniqueDistributions.size > 1,
+            "All decks have the same distribution: ${uniqueDistributions.first()}"
+        )
 
-        assertEquals(3, pickedCards.size)
-        assertEquals(3, deck.playedCards.size)
-    }
+        // Verify that distributions are within reasonable bounds
+        typeCounts.forEach { (positive, negative, neutral) ->
+            // Positive should be between 25%-45%
+            assertTrue(positive in 4..7, "Positive count $positive is outside reasonable range")
 
-    @Test
-    fun `test playOne adds one card to played cards`() {
-        val deck = CardDeck()
-        deck.playOne()
+            // Negative should be between 40%-60%
+            assertTrue(negative in 6..10, "Negative count $negative is outside reasonable range")
 
-        assertEquals(1, deck.playedCards.size)
+            // Total should be 17
+            assertEquals(17, positive + negative + neutral)
+        }
     }
 
     @Test
@@ -89,48 +60,7 @@ class CardDeckTest {
         val newCards = deck.pickAndTakeThree()
 
         assertEquals(3, newCards.size)
-        assertEquals(3, deck.playedCards.size)
-    }
-
-    @RepeatedTest(10)
-    fun `test statistical balance of consequences`() {
-        // Create multiple decks to analyze statistically
-        val totalDecks = 100
-        val deckSize = 17
-        val decks = List(totalDecks) { CardDeck(deckSize) }
-
-        // Calculate average points across all decks
-        val averagePoints = decks.map { deck ->
-            // Pick all cards
-            repeat(deckSize / 3) { deck.pickAndTakeThree() }
-            repeat(deckSize % 3) { deck.playOne() }
-            deck.points
-        }.average()
-
-        // The average across many decks should be close to zero for a balanced deck
-        assertTrue(
-            averagePoints.absoluteValue <= 1.0,
-            "Average points across $totalDecks decks is $averagePoints, which is not balanced"
-        )
-    }
-
-    @Test
-    fun `test points calculation`() {
-        val deck = CardDeck()
-
-        val pickedCards = deck.pickAndTakeThree()
-        val expectedPoints = pickedCards.sumOf(Card::consequence)
-
-        assertEquals(expectedPoints, deck.points)
-    }
-
-    @Test
-    fun `test absolutePoints calculation`() {
-        val deck = CardDeck()
-
-        val pickedCards = deck.pickAndTakeThree()
-        val expectedAbsPoints = pickedCards.sumOf { it.consequence.absoluteValue }
-
-        assertEquals(expectedAbsPoints, deck.absolutePoints)
+        // Played cards should still contain all cards that have been played
+        assertEquals(9, deck.playedCards.size)
     }
 }

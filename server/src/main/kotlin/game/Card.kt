@@ -2,6 +2,7 @@ package com.cooper.game
 
 import com.cooper.game.Card.CardConsequenceQualifier.*
 import kotlin.math.absoluteValue
+import kotlin.random.Random
 
 typealias CardId = Int
 
@@ -23,13 +24,41 @@ data class Card(
     }
 }
 
+private const val VARIATION_RANGE = 0.1
+private fun randomVariation() = Random.nextDouble(-VARIATION_RANGE, VARIATION_RANGE)
+
+private const val BASE_POSITIVE_RATIO = 0.35
+private const val BASE_NEGATIVE_RATIO = 0.5
+
 class CardDeck(totalCardCount: Int = 17) {
-    private val cardStack: MutableList<Card> = shuffleNewDeck(totalCardCount).toMutableList()
+    private val cardStack: MutableList<Card> = mutableListOf()
     val playedCards = mutableListOf<Card>()
+
+    init {
+        val positiveRatio = BASE_POSITIVE_RATIO + randomVariation()
+        val negativeRatio = BASE_NEGATIVE_RATIO + randomVariation()
+
+        val positiveCount = (totalCardCount * positiveRatio).toInt()
+        val negativeCount = (totalCardCount * negativeRatio).toInt()
+        val neutralCount = totalCardCount - positiveCount - negativeCount
+
+        assert(positiveCount <= positiveCards.size) { "Not enough positive cards" }
+        assert(negativeCount <= negativeCards.size) { "Not enough negative cards" }
+        assert(neutralCount <= neutralCards.size) { "Not enough neutral cards" }
+
+        cardStack.addAll(positiveCards.shuffled().take(positiveCount))
+        cardStack.addAll(negativeCards.shuffled().take(negativeCount))
+        cardStack.addAll(neutralCards.shuffled().take(neutralCount))
+
+        assert(cardStack.size == totalCardCount) { "Card deck size mismatch" }
+
+        cardStack.shuffle()
+    }
 
     private fun checkEmptyStack(len: Int = 1) {
         if (cardStack.size >= len) return
 
+        // don't clear played cards, they are used for scoring
         cardStack.addAll(playedCards)
         cardStack.shuffle()
     }
@@ -45,25 +74,18 @@ class CardDeck(totalCardCount: Int = 17) {
         return cards
     }
 
-    fun playOne() {
+    fun playOneBlind() {
         checkEmptyStack()
         playedCards.add(cardStack.removeAt(0))
     }
 
     val points: Int get() = playedCards.sumOf(Card::consequence)
-
     val absolutePoints: Int get() = playedCards.sumOf { it.consequence.absoluteValue }
-
-    companion object {
-        private fun shuffleNewDeck(count: Int): List<Card> {
-            while (true) {
-                val deck = cards.shuffled().take(count)
-                val averageScore = deck.sumOf(Card::consequence) / count
-                if (averageScore in -3..3) return deck
-            }
-        }
-    }
 }
+
+val positiveCards get() = cards.filter { it.consequenceQualifier == POSITIVE }
+val negativeCards get() = cards.filter { it.consequenceQualifier == NEGATIVE }
+val neutralCards get() = cards.filter { it.consequenceQualifier == NEUTRAL }
 
 val cards = listOf(
     Card(
@@ -219,6 +241,11 @@ val cards = listOf(
     Card(
         id = 30,
         description = "Get caught hitting a cart during the Minecraft movie",
+        consequence = -1
+    ),
+    Card(
+        id = 31,
+        description = "Minions movie (GRU)",
         consequence = -1
     )
 )
