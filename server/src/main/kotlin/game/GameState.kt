@@ -49,8 +49,12 @@ sealed class GameState {
     ) : GameState() {
         override val name: String = "game_in_progress"
 
-        constructor(server: SocketContentConverterSender<ServerOutboundMessage>, originalPlayers: List<Player>) :
-                this(server, assignPlayerRoles(originalPlayers))
+        @Suppress("UNUSED_PARAMETER") constructor(
+            server: SocketContentConverterSender<ServerOutboundMessage>,
+            originalPlayers: List<Player>,
+            /// Need this to prevent constructor declaration clash
+            _fakeArg: Unit? = null
+        ) : this(server, assignPlayerRoles(originalPlayers))
 
         var innerGameState: InnerGameState = InnerGameState.Idle()
         val deck: CardDeck = CardDeck()
