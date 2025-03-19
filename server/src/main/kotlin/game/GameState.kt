@@ -10,8 +10,7 @@ const val MIN_ABS_POINTS_TO_KILL = 8
 const val POSITIVE_THRESHOLD_WIN = 10
 const val NEGATIVE_THRESHOLD_WIN = -6
 
-sealed class GameState {
-    abstract val name: String
+sealed class GameState(val name: String) {
     @get:JsonIgnore abstract val server: SocketContentConverterSender<ServerOutboundMessage>
     abstract val players: List<Player>
 
@@ -42,18 +41,14 @@ sealed class GameState {
     class Lobby(
         override val server: SocketContentConverterSender<ServerOutboundMessage>,
         override val players: MutableList<Player> = mutableListOf()
-    ) : GameState() {
-        override val name: String = "lobby"
-
+    ) : GameState("lobby") {
         fun toGameInProgress() = GameInProgress(server, players)
     }
 
     class GameInProgress private constructor(
         override val server: SocketContentConverterSender<ServerOutboundMessage>,
         override val players: MutableList<GamePlayer>
-    ) : GameState() {
-        override val name: String = "game_in_progress"
-
+    ) : GameState("game_in_progress") {
         @Suppress("UNUSED_PARAMETER", "LocalVariableName") constructor(
             server: SocketContentConverterSender<ServerOutboundMessage>,
             originalPlayers: List<Player>,
@@ -129,9 +124,7 @@ sealed class GameState {
         val satan: PlayerName,
         val demons: List<PlayerName>,
         val reason: GameOverReason
-    ) : GameState() {
-        override val name: String = "game_over"
-
+    ) : GameState("game_over") {
         fun toLobby() = Lobby(server, players)
     }
 
@@ -144,34 +137,21 @@ sealed class GameState {
     }
 }
 
-sealed class InnerGameState {
-    abstract val name: String
-
+sealed class InnerGameState(val name: String) {
     class Idle(
         val initialWaitPeriod: Boolean = false
-    ) : InnerGameState() {
-        override val name: String = "idle"
-    }
+    ) : InnerGameState("idle")
 
     class AwaitingPlayerActionChoice(
         val permittedActions: List<ActionChoice> = ActionChoice.entries
-    ) : InnerGameState() {
-        override val name: String = "awaiting_chief_action_choice"
-    }
+    ) : InnerGameState("awaiting_chief_action_choice")
 
-    class AwaitingChiefCardDiscard(val cards: List<Card>, val advisorName: String) : InnerGameState() {
-        override val name: String = "awaiting_chief_card_discard"
-    }
+    class AwaitingChiefCardDiscard(val cards: List<Card>, val advisorName: String) :
+            InnerGameState("awaiting_chief_card_discard")
 
-    class AwaitingAdvisorCardChoice(val cards: List<Card>, val advisorName: String) : InnerGameState() {
-        override val name: String = "awaiting_advisor_card_choice"
-    }
+    class AwaitingAdvisorCardChoice(val cards: List<Card>, val advisorName: String) :
+            InnerGameState("awaiting_advisor_card_choice")
 
-    class AwaitingElectionResolution(val nominee: PlayerName) : InnerGameState() {
-        override val name: String = "awaiting_election_outcome"
-    }
-
-    class AwaitingInvestigationAnalysis(val target: PlayerName) : InnerGameState() {
-        override val name: String = "awaiting_investigation_analysis"
-    }
+    class AwaitingElectionResolution(val nominee: PlayerName) : InnerGameState("awaiting_election_outcome")
+    class AwaitingInvestigationAnalysis(val target: PlayerName) : InnerGameState("awaiting_investigation_analysis")
 }

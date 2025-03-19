@@ -87,6 +87,7 @@ val positiveCards get() = cards.filter { it.consequenceQualifier == POSITIVE }
 val negativeCards get() = cards.filter { it.consequenceQualifier == NEGATIVE }
 val neutralCards get() = cards.filter { it.consequenceQualifier == NEUTRAL }
 
+// <editor-fold desc="Card definitions">
 val cards = listOf(
     Card(
         id = 0,
@@ -249,3 +250,4 @@ val cards = listOf(
         consequence = -1
     )
 )
+// </editor-fold>

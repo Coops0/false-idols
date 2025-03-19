@@ -1,12 +1,11 @@
+package game
+
 import com.cooper.game.Card
 import com.cooper.game.CardDeck
-import com.cooper.game.positiveCards
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.RepeatedTest
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.ValueSource
-import kotlin.math.absoluteValue
 
 class CardDeckTest {
     @RepeatedTest(10)
@@ -18,9 +17,12 @@ class CardDeckTest {
         val typeCounts = decks.map { deck ->
             repeat(17) { deck.playOneBlind() }
 
-            val positiveCount = deck.playedCards.count { it.consequenceQualifier == Card.CardConsequenceQualifier.POSITIVE }
-            val negativeCount = deck.playedCards.count { it.consequenceQualifier == Card.CardConsequenceQualifier.NEGATIVE }
-            val neutralCount = deck.playedCards.count { it.consequenceQualifier == Card.CardConsequenceQualifier.NEUTRAL }
+            val positiveCount =
+                deck.playedCards.count { it.consequenceQualifier == Card.CardConsequenceQualifier.POSITIVE }
+            val negativeCount =
+                deck.playedCards.count { it.consequenceQualifier == Card.CardConsequenceQualifier.NEGATIVE }
+            val neutralCount =
+                deck.playedCards.count { it.consequenceQualifier == Card.CardConsequenceQualifier.NEUTRAL }
 
             Triple(positiveCount, negativeCount, neutralCount)
         }
