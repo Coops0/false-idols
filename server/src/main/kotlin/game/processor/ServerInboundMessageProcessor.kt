@@ -57,6 +57,8 @@ suspend fun GameState.handleServerInboundApplicationMessage(message: ServerInbou
             require(this is GameState.GameOver) { "Game must be in progress to go back to lobby" }
             return ServerInboundMessageProcessorAction.BACK_TO_LOBBY
         }
+
+        is ServerInboundMessage.Ping -> {}
     }
 
     return null
