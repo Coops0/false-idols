@@ -7,8 +7,6 @@ sealed class OutboundMessage(val type: String) {
     /// Sent individually to each player at the start of the game
     class AssignRole(
         val role: ComplexRole,
-        /// After showing role, if this player will be chief
-        val isChief: Boolean,
 
         /// Excluding satan
         val demonCount: Int,

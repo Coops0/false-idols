@@ -1,0 +1,1 @@
+export const isNameValid = (name: string) => name.length >= 3 && name.length < 15 && /^[a-zA-Z0-9]+$/.test(name);

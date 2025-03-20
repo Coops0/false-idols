@@ -12,6 +12,8 @@ export const ICONS = [
 ] as const;
 
 export class PlayerIcon {
+    private static hasPreloadedIcons = false;
+
     private constructor() {
     }
 
@@ -40,6 +42,8 @@ export class PlayerIcon {
     }
 
     static async preload() {
+        if (this.hasPreloadedIcons) return;
+
         const promises = ICONS
             .flatMap(icon => ([
                 PlayerIcon.normal(icon),
@@ -60,6 +64,10 @@ export class PlayerIcon {
                 });
             });
 
-        await Promise.all(promises);
+        try {
+            await Promise.all(promises);
+        } finally {
+            this.hasPreloadedIcons = true;
+        }
     }
 }

@@ -141,13 +141,13 @@ suspend fun GameState.GameInProgress.sendPlayerRoles() {
         player.send(
             if (player.role == ComplexRole.DEMON) OutboundMessage.AssignRole(
                 role = player.role,
-                isChief = player.isChief,
                 demonCount = demons.size,
-                teammates = demons.map { it.stripped },
+                teammates = demons
+                    .filter { it != player }
+                    .map { it.stripped },
                 satan = satan.stripped
             ) else OutboundMessage.AssignRole(
                 role = player.role,
-                isChief = player.isChief,
                 demonCount = demons.size,
             ),
             queued = true

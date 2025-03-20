@@ -1,6 +1,6 @@
-import { setGame } from './main.ts';
-import { Game } from './game/game.ts';
-import { InboundMessage, OutboundMessages, Role } from './game/messages.ts';
+import { type InboundMessage, type OutboundMessage } from './messages.ts';
+import type { Ref } from 'vue';
+import { isNameValid } from '@/util';
 
 export class WebsocketOwner {
     // @ts-expect-error - Will be initialized immediately after construction
@@ -9,20 +9,31 @@ export class WebsocketOwner {
     private hasFailedToConnect: boolean = false;
     private lastConnectionAttempt: number = 0;
     private hasEverBeenConnected: boolean = false;
+    private wasManuallyDisconnectedLast: boolean = false;
 
     get isConnected() {
         return this.ws !== null && this.ws.readyState === WebSocket.OPEN;
     }
 
+    get hasEverBeenConnectedSuccessfully() {
+        return this.hasEverBeenConnected;
+    }
+
     connect() {
+        if (!isNameValid(this.name.value)) {
+            throw new Error('Name is invalid');
+        }
+
         return new Promise<void>((resolve, reject) => {
             const rejectOnError = (err: Event) => reject(err);
 
-            this.ws = new WebSocket(`ws://localhost:8080/ws?name=${this.name}`);
+            this.ws = new WebSocket(`ws://localhost:8080/ws?name=${this.name.value}`);
 
             this.ws.addEventListener('open', () => {
                 this.hasFailedToConnect = false;
                 this.hasEverBeenConnected = true;
+                this.wasManuallyDisconnectedLast = false;
+
                 this.ws.removeEventListener('error', rejectOnError);
 
                 resolve();
@@ -36,7 +47,10 @@ export class WebsocketOwner {
         });
     }
 
-    constructor(private readonly name: string) {
+    constructor(
+        private readonly name: Ref<string>,
+        private readonly messageCallback: (message: InboundMessage) => void
+    ) {
         window.addEventListener('online', () => this.attemptReconnection());
         window.addEventListener('focus', () => this.attemptReconnection());
         window.addEventListener('visibilitychange', () => {
@@ -52,46 +66,14 @@ export class WebsocketOwner {
 
     private handleMessage(event: MessageEvent) {
         const message = JSON.parse(event.data) as InboundMessage;
-        switch (message.type) {
-            case 'request_chief_card_discard':
-                console.log('Discard one card', message.cards);
-
-                break;
-            case 'request_action':
-                console.log('Request action', message.permittedActions, message.players);
-                break;
-            case 'request_advisor_card_choice':
-                console.log('Choose card', message.cards);
-                break;
-            case 'investigation_result':
-                console.log('Investigation result', message.target, message.simpleRole);
-                break;
-            case 'disconnect': {
-                console.log('Disconnecting', message.reason);
-                this.ws.close();
-                break;
-            }
-            case 'assign_role': {
-                console.log('Role assigned', message.role, message.isChief, message.demonCount);
-                if (message.role === Role.Demon) {
-                    console.log('Teammates', message.teammates);
-                    console.log('Satan', message.satan);
-                }
-
-                setGame(new Game(message));
-                break;
-            }
-            default: {
-                console.warn('Unhandled message', message);
-            }
-        }
+        this.messageCallback(message);
     }
 
-    private attemptReconnection() {
-        if (this.isConnected || Date.now() - this.lastConnectionAttempt < 100) return;
+    attemptReconnection(force: boolean = false) {
+        if (this.isConnected || (!force && Date.now() - this.lastConnectionAttempt < 100)) return;
         this.lastConnectionAttempt = Date.now();
 
-        const delay = this.hasFailedToConnect ? 100 : 0;
+        const delay = (this.hasFailedToConnect && !force) ? 100 : 0;
         console.log(`Trying to reconnect in ${delay}`);
 
         setTimeout(() => {
@@ -100,7 +82,7 @@ export class WebsocketOwner {
                 .catch(err => {
                     console.error('Failed to reconnect', err);
 
-                    if (this.hasEverBeenConnected) {
+                    if (this.hasEverBeenConnected && !this.wasManuallyDisconnectedLast) {
                         this.hasFailedToConnect = true;
                         this.attemptReconnection();
                     }
@@ -113,11 +95,19 @@ export class WebsocketOwner {
         this.attemptReconnection();
     }
 
-    send(message: OutboundMessages) {
+    send(message: OutboundMessage) {
         if (this.isConnected) {
             this.ws.send(JSON.stringify(message));
         }
     }
-}
 
-//@formatter:on
+    disconnect() {
+        this.wasManuallyDisconnectedLast = true;
+
+        try {
+            this.ws.close();
+        } catch {
+            /* ignored */
+        }
+    }
+}
