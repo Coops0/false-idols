@@ -23,9 +23,7 @@ export class WebsocketOwner {
             }
         });
 
-        setInterval(() => {
-            this.send({ type: 'ping' });
-        }, 1000);
+        setInterval(() => this.send({ type: 'ping' }), 1000);
     }
 
     get isConnected() {

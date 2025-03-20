@@ -31,7 +31,7 @@ private const val BASE_POSITIVE_RATIO = 0.35
 private const val BASE_NEGATIVE_RATIO = 0.5
 
 class CardDeck(totalCardCount: Int = 17) {
-    private val cardStack: MutableList<Card> = mutableListOf()
+    @Suppress("MemberVisibilityCanBePrivate") val cardStack: MutableList<Card> = mutableListOf()
     val playedCards = mutableListOf<Card>()
 
     init {
