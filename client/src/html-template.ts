@@ -1,7 +1,8 @@
-import { ActionChoice, ActionSupplementedPlayer } from './websocket-owner.ts';
+import { ActionChoice, ActionSupplementedPlayer } from './game/messages.ts';
 
 export class HtmlTemplate {
-    private constructor() {}
+    private constructor() {
+    }
 
     static login() {
         return `

@@ -1,7 +1,8 @@
 import './style.css';
 import { WebsocketOwner } from './websocket-owner.ts';
 import { HtmlTemplate } from './html-template.ts';
-import { Game } from './game.ts';
+import { Game } from './game/game.ts';
+import { PlayerIcon } from './game/player-icon.ts';
 
 const root: HTMLElement = document.getElementById('root')!;
 let isLoginMounted = false;
@@ -29,6 +30,8 @@ async function tryToConnect() {
     try {
         await ws.connect();
         unmountLogin();
+
+        setTimeout(() => PlayerIcon.preload());
     } catch (err) {
         console.error(err);
         if (!isLoginMounted) {

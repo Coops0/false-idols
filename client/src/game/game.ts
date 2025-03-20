@@ -1,4 +1,5 @@
-import { InboundMessage, Role } from './websocket-owner.ts';
+
+import { InboundMessage, Role } from './messages.ts';
 
 export class Game {
     readonly role: Role;

@@ -1,5 +1,6 @@
 import { setGame } from './main.ts';
-import { Game } from './game.ts';
+import { Game } from './game/game.ts';
+import { InboundMessage, OutboundMessages, Role } from './game/messages.ts';
 
 export class WebsocketOwner {
     // @ts-expect-error - Will be initialized immediately after construction
@@ -119,47 +120,4 @@ export class WebsocketOwner {
     }
 }
 
-export enum ActionChoice {
-    Investigate = 'INVESTIGATE',
-    Kill = 'KILL',
-    Nominate = 'NOMINATE'
-}
-
-export type OutboundMessages =
-    { type: 'choose_action', action: ActionChoice, target: string } |
-    { type: 'discard_one_card', card_id: number } |
-    { type: 'choose_card', card_id: number } |
-    { type: 'ping' };
-
-export type Player = { name: string, icon: string };
-
-export enum Role {
-    Satan = 'SATAN',
-    Demon = 'DEMON',
-    Angel = 'ANGEL',
-}
-
-export type SimpleRole = Role.Demon | Role.Angel;
-
-export type ActionSupplementedPlayer = Player & {
-    investigatable: boolean,
-    electable: boolean
-}
-
-export type Card = {
-    id: number;
-    description: string;
-    consequence: string;
-    consequence_qualifier: 'POSITIVE' | 'NEGATIVE' | 'NEUTRAL';
-}
-
-//@formatter:off
-export type InboundMessage =
-    { type: 'assign_role', role: Role.Satan | Role.Angel, isChief: boolean, demonCount: number } |
-    { type: 'assign_role', role: Role.Demon, isChief: boolean, demonCount: number, teammates: Player[], satan: Player } |
-    { type: 'request_action', permittedActions: ActionChoice[], players: ActionSupplementedPlayer[] } |
-    { type: 'request_chief_card_discard', cards: Card[] } |
-    { type: 'request_advisor_card_choice', cards: Card[] } |
-    { type: 'investigation_result', target: Player, simpleRole: SimpleRole } |
-    { type: 'disconnect', reason: string };
 //@formatter:on
