@@ -9,7 +9,11 @@ suspend fun GameState.GameInProgress.rotateChief() {
     val igs = this.innerGameState
     val wasInitialWaitPeriod = igs is InnerGameState.Idle && igs.initialWaitPeriod
 
-    this.players.forEach { player -> player.wasAdvisorLastRound = false }
+    this.players.forEach { player ->
+        player.wasAdvisorLastRound = false
+        player.clearQueue()
+    }
+
     if (igs is InnerGameState.AwaitingAdvisorCardChoice) {
         this[igs.advisorName]!!.wasAdvisorLastRound = true
     }
@@ -26,8 +30,7 @@ suspend fun GameState.GameInProgress.rotateChief() {
                 .indexOf(this.chief)
         }
 
-        val nextChief = this.alive[(currentChiefIndex + 1) % this.alive.size]
-        nextChief
+        this.alive[(currentChiefIndex + 1) % this.alive.size]
     }
 
     if (!wasInitialWaitPeriod) {
@@ -54,7 +57,8 @@ suspend fun GameState.GameInProgress.rotateChief() {
         OutboundMessage.RequestActionChoice(
             permittedActions = permittedActions,
             players = actionablePlayers,
-        )
+        ),
+        queued = true
     )
 }
 
@@ -89,6 +93,7 @@ fun GameState.GameInProgress.checkGameOverConditions() {
 
 fun GameState.GameInProgress.idle() {
     this.innerGameState = InnerGameState.Idle()
+    this.players.forEach(Player::clearQueue)
 }
 
 suspend fun GameState.GameInProgress.handlePlayerActionChoice(
@@ -116,7 +121,7 @@ suspend fun GameState.GameInProgress.handlePlayerActionChoice(
             target.isInvestigated = true
 
             this.innerGameState = InnerGameState.AwaitingInvestigationAnalysis(targetName)
-            aggressor.send(OutboundMessage.InvestigationResult(target.stripped, target.role.simple))
+            aggressor.send(OutboundMessage.InvestigationResult(target.stripped, target.role.simple), queued = true)
         }
 
         ActionChoice.KILL -> {
@@ -155,8 +160,10 @@ suspend fun GameState.GameInProgress.handleChiefDiscardCard(player: GamePlayer, 
     val newCards = cards.filter { it.id != cardId }
     this.innerGameState = InnerGameState.AwaitingAdvisorCardChoice(newCards, advisorName)
 
+    this.chief.clearQueue()
+
     val advisor = this[advisorName]!!
-    advisor.send(OutboundMessage.RequestAdvisorCardChoice(newCards))
+    advisor.send(OutboundMessage.RequestAdvisorCardChoice(newCards), queued = true)
 }
 
 fun GameState.GameInProgress.handleAdvisorChooseCard(player: GamePlayer, cardId: Int) {
@@ -180,7 +187,7 @@ suspend fun GameState.GameInProgress.passElection(advisor: GamePlayer) {
 
     this.checkGameOverConditions()
 
-    this.chief.send(OutboundMessage.RequestChiefCardDiscard(cards))
+    this.chief.send(OutboundMessage.RequestChiefCardDiscard(cards), queued = true)
 }
 
 fun GameState.GameInProgress.failElection() {

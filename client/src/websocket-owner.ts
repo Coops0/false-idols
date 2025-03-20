@@ -54,6 +54,7 @@ export class WebsocketOwner {
         switch (message.type) {
             case 'request_chief_card_discard':
                 console.log('Discard one card', message.cards);
+
                 break;
             case 'request_action':
                 console.log('Request action', message.permittedActions, message.players);

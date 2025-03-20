@@ -31,12 +31,8 @@ sealed class GameState(val name: String) {
         }
     }
 
-    suspend fun broadcast(message: OutboundMessage) {
-        players.forEach { it.send(message) }
-    }
-
-    suspend fun send(playerName: PlayerName, message: OutboundMessage) {
-        this[playerName]?.send(message)
+    suspend fun send(playerName: PlayerName, message: OutboundMessage, queued: Boolean = false) {
+        this[playerName]?.send(message, queued)
     }
 
     class Lobby(

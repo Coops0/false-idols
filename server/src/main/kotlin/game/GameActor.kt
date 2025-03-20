@@ -140,7 +140,8 @@ suspend fun GameState.GameInProgress.sendPlayerRoles() {
                 role = player.role,
                 isChief = player.isChief,
                 demonCount = demons.size,
-            )
+            ),
+            queued = true
         )
     }
 }

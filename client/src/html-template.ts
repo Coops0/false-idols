@@ -1,3 +1,5 @@
+import { ActionChoice, ActionSupplementedPlayer } from './websocket-owner.ts';
+
 export class HtmlTemplate {
     private constructor() {}
 
@@ -8,6 +10,30 @@ export class HtmlTemplate {
                 <input type="text" placeholder="Username" id="username">
                 <button type="submit">Login</button>
             </form>
+        `;
+    }
+
+    static chooseAction(targets: ActionSupplementedPlayer[], options: ActionChoice[]) {
+        return `
+            <div id="choose-action">
+                ${targets.map(HtmlTemplate.target).join('')}
+                ${options.map(HtmlTemplate.choice).join('')}
+            </div>
+        `;
+    }
+
+    private static target(t: ActionSupplementedPlayer) {
+        return `
+            <div>
+                <img src="${t.icon}" alt="${t.name}">
+                <p>${t.name}</p>
+            </div>
+        `;
+    }
+
+    private static choice(option: ActionChoice) {
+        return `
+            <button>${option}</button>
         `;
     }
 }
