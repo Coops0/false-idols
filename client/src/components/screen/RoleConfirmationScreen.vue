@@ -5,6 +5,10 @@
       <button @click="() => emit('confirm')">Confirm</button>
     </div>
     <div v-else>
+      <PlayerPreview
+          :player="{ name: playerName, icon: playerIcon }"
+                     :icon-variant="roleToVariant(game.role)"
+      />
       <p>Your role is: {{ game.role }}</p>
       <p v-if="game.role === Role.ANGEL">
         Try to pass positive cards and eliminate any demons.
@@ -20,13 +24,13 @@
       </p>
       <div v-if="gameState.demonExtras">
         <p>Your teammates:</p>
-        <p>Satan: {{ gameState.demonExtras.satan.name }}</p>
+        <p>Satan: <PlayerPreview :player="gameState.demonExtras.satan" icon-variant="satan"/></p>
         <ul v-if="gameState.demonExtras.teammates.length">
-          <li v-for="demon in gameState.demonExtras.teammates">{{ demon.name }}</li>
+          <li v-for="demon in gameState.demonExtras.teammates"><PlayerPreview :player="demon" icon-variant="demon"/></li>
         </ul>
       </div>
       <div v-else>
-        <p>There are {{ gameState.demonCount }} demon{{ gameState.demonCount == 1 ? '' : 's' }}</p>
+        <p>{{ gameState.demonCount }} demon{{ gameState.demonCount == 1 ? '' : 's' }}</p>
       </div>
       <button @click="() => emit('confirm')">Continue</button>
     </div>
@@ -37,8 +41,14 @@
 import type { Game, ViewRoleGameState } from '@/game';
 import { computed } from 'vue';
 import { Role } from '@/game/messages.ts';
+import PlayerPreview from '@/components/ui/PlayerPreview.vue';
+import { roleToVariant } from '@/util';
 
 const emit = defineEmits<{ confirm: []; }>();
-const props = defineProps<{ game: Game; }>();
+const props = defineProps<{
+  game: Game;
+  playerName: string;
+  playerIcon: string;
+}>();
 const gameState = computed(() => props.game.state as ViewRoleGameState);
 </script>

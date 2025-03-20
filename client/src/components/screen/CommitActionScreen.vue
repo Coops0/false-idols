@@ -7,7 +7,12 @@
     </ul>
     <ul>
       <li v-for="player in players" :key="player.name">
-        <button :disabled="!player.enabled" @click="() => commitPlayer(player.name)">{{ player.name }}</button>
+        <PlayerPreview
+            :player="player"
+            icon-variant="normal"
+            :disabled="!player.enabled"
+            @click="() => commitPlayer(player.name)"
+        />
       </li>
     </ul>
   </div>
@@ -17,6 +22,7 @@
 import type { CommitActionGameState, Game } from '@/game';
 import { computed, ref, watch } from 'vue';
 import { ActionChoice, type ActionSupplementedPlayer } from '@/game/messages.ts';
+import PlayerPreview from '@/components/ui/PlayerPreview.vue';
 
 const props = defineProps<{ game: Game; }>();
 const gameState = computed(() => props.game.state as CommitActionGameState);
@@ -30,15 +36,12 @@ watch(gameState, s => {
 
 const players = computed<(ActionSupplementedPlayer & { enabled: boolean })[]>(() => gameState.value.supplementedPlayers
     .map(p => {
-      if (
+      const enabled =
           (p.electable && selectedAction.value === ActionChoice.NOMINATE) ||
           (p.investigatable && selectedAction.value === ActionChoice.INVESTIGATE) ||
-          selectedAction.value === ActionChoice.KILL
-      ) {
-        return { ...p, enabled: true };
-      } else {
-        return { ...p, enabled: false };
-      }
+          selectedAction.value === ActionChoice.KILL;
+
+      return { ...p, enabled };
     }));
 
 function swapAction(action: ActionChoice) {

@@ -3,7 +3,7 @@
     <ErrorToast :message="error"/>
     <LoginScreen
         v-if="canShowLogin && !ws.isConnected"
-        v-model="name"
+        v-model="playerName"
         :is-rejoin="ws.hasEverBeenConnectedSuccessfully"
         @join="() => tryToConnect()"
     />
@@ -12,6 +12,8 @@
     />
     <RoleConfirmationScreen
         v-else-if="game.state.type === 'view_role'"
+        :player-name="playerName"
+        :icon="playerIcon"
         :game="game"
         @confirm="confirmRole"
     />
@@ -54,19 +56,19 @@ import ViewInvestigationResultsScreen from '@/components/screen/ViewInvestigatio
 import ChiefDiscardCardScreen from '@/components/screen/ChiefDiscardCardScreen.vue';
 import AdvisorChooseCardScreen from '@/components/screen/AdvisorChooseCardScreen.vue';
 
-const name = ref<string>('');
+const playerName = ref<string>('');
+const playerIcon = ref<string>('');
 const error = ref<string>('');
-const playerIcon = ref<PlayerIcon | null>(null);
 
-const ws = new WebsocketOwner(name, handleMessage);
+const ws = new WebsocketOwner(playerName, handleMessage);
 const game = ref<Game | null>(null);
 
 const canShowLogin = ref<boolean>(false);
 
 (async function () {
-  name.value = localStorage.getItem('name') ?? '';
+  playerName.value = localStorage.getItem('name') ?? '';
 
-  if (isNameValid(name.value)) {
+  if (isNameValid(playerName.value)) {
     await tryToConnect();
   } else {
     canShowLogin.value = true;
@@ -74,7 +76,7 @@ const canShowLogin = ref<boolean>(false);
 })();
 
 async function tryToConnect() {
-  localStorage.setItem('name', name.value);
+  localStorage.setItem('name', playerName.value);
 
   try {
     await ws.connect();
@@ -92,6 +94,7 @@ async function tryToConnect() {
 
 function handleMessage(message: InboundMessage) {
   console.log(message);
+
   switch (message.type) {
     case 'assign_icon':
       playerIcon.value = message.icon;
@@ -117,7 +120,7 @@ function handleMessage(message: InboundMessage) {
       break;
     case 'disconnect':
       game.value = null;
-      playerIcon.value = null;
+      playerIcon.value = '';
       ws.disconnect();
       break;
   }

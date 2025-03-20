@@ -14,12 +14,9 @@ export const ICONS = [
 export class PlayerIcon {
     private static hasPreloadedIcons = false;
 
-    private constructor() {
-    }
-
-    static dead(icon: string): string {
-        return PlayerIcon.normalize(`${icon}_dead`);
-    }
+    //@formatter:off
+    private constructor() {}
+    //@formatter:on
 
     static normal(icon: string): string {
         return PlayerIcon.normalize(icon);
@@ -43,7 +40,6 @@ export class PlayerIcon {
         const promises = ICONS
             .flatMap(icon => ([
                 PlayerIcon.normal(icon),
-                PlayerIcon.dead(icon),
                 PlayerIcon.angel(icon),
                 PlayerIcon.demon(icon),
                 PlayerIcon.satan(icon)
