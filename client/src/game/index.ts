@@ -1,4 +1,12 @@
-import { type InboundMessage, type Player, Role } from './messages.ts';
+import {
+    ActionChoice,
+    type ActionSupplementedPlayer,
+    type Card,
+    type InboundMessage,
+    type Player,
+    Role,
+    type SimpleRole
+} from './messages.ts';
 
 export type IdleGameState = {
     type: 'idle';
@@ -15,7 +23,35 @@ export type ViewRoleGameState = {
     } | null
 }
 
-export type GameState = IdleGameState | ViewRoleGameState;
+export type CommitActionGameState = {
+    type: 'commit_action';
+    permittedActions: ActionChoice[];
+    supplementedPlayers: ActionSupplementedPlayer[];
+}
+
+export type ChiefDiscardCardGameState = {
+    type: 'chief_discard_card';
+    cards: Card[];
+}
+
+export type AdvisorChooseCardGameState = {
+    type: 'advisor_choose_card';
+    cards: Card[];
+}
+
+export type ViewInvestigationResultsGameState = {
+    type: 'view_investigation_results';
+    player: Player;
+    role: SimpleRole;
+}
+
+export type GameState =
+    IdleGameState
+    | ViewRoleGameState
+    | CommitActionGameState
+    | ChiefDiscardCardGameState
+    | AdvisorChooseCardGameState
+    | ViewInvestigationResultsGameState;
 
 export class Game {
     readonly role: Role;

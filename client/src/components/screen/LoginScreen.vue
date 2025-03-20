@@ -5,7 +5,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 defineProps<{ isRejoin: boolean; }>();
 const name = defineModel<string>({ required: true });
 const emit = defineEmits<{ join: [] }>();

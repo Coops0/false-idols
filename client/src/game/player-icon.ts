@@ -17,10 +17,6 @@ export class PlayerIcon {
     private constructor() {
     }
 
-    private static normalize(icon: string): string {
-        return `/assets/icons/${icon}.png`;
-    }
-
     static dead(icon: string): string {
         return PlayerIcon.normalize(`${icon}_dead`);
     }
@@ -69,5 +65,9 @@ export class PlayerIcon {
         } finally {
             this.hasPreloadedIcons = true;
         }
+    }
+
+    private static normalize(icon: string): string {
+        return `/assets/icons/${icon}.png`;
     }
 }

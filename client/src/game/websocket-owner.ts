@@ -11,6 +11,23 @@ export class WebsocketOwner {
     private hasEverBeenConnected: boolean = false;
     private wasManuallyDisconnectedLast: boolean = false;
 
+    constructor(
+        private readonly name: Ref<string>,
+        private readonly messageCallback: (message: InboundMessage) => void
+    ) {
+        window.addEventListener('online', () => this.attemptReconnection());
+        window.addEventListener('focus', () => this.attemptReconnection());
+        window.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                this.attemptReconnection();
+            }
+        });
+
+        setInterval(() => {
+            this.send({ type: 'ping' });
+        }, 1000);
+    }
+
     get isConnected() {
         return this.ws !== null && this.ws.readyState === WebSocket.OPEN;
     }
@@ -47,28 +64,6 @@ export class WebsocketOwner {
         });
     }
 
-    constructor(
-        private readonly name: Ref<string>,
-        private readonly messageCallback: (message: InboundMessage) => void
-    ) {
-        window.addEventListener('online', () => this.attemptReconnection());
-        window.addEventListener('focus', () => this.attemptReconnection());
-        window.addEventListener('visibilitychange', () => {
-            if (document.visibilityState === 'visible') {
-                this.attemptReconnection();
-            }
-        });
-
-        setInterval(() => {
-            this.send({ type: 'ping' });
-        }, 1000);
-    }
-
-    private handleMessage(event: MessageEvent) {
-        const message = JSON.parse(event.data) as InboundMessage;
-        this.messageCallback(message);
-    }
-
     attemptReconnection(force: boolean = false) {
         if (this.isConnected || (!force && Date.now() - this.lastConnectionAttempt < 100)) return;
         this.lastConnectionAttempt = Date.now();
@@ -90,11 +85,6 @@ export class WebsocketOwner {
         }, delay);
     }
 
-    private handleClosure(event: CloseEvent) {
-        console.log('Connection closed', event);
-        this.attemptReconnection();
-    }
-
     send(message: OutboundMessage) {
         if (this.isConnected) {
             this.ws.send(JSON.stringify(message));
@@ -109,5 +99,15 @@ export class WebsocketOwner {
         } catch {
             /* ignored */
         }
+    }
+
+    private handleMessage(event: MessageEvent) {
+        const message = JSON.parse(event.data) as InboundMessage;
+        this.messageCallback(message);
+    }
+
+    private handleClosure(event: CloseEvent) {
+        console.log('Connection closed', event);
+        this.attemptReconnection();
     }
 }

@@ -2,7 +2,7 @@
   <div>
     <div v-if="!gameState.hasConfirmed">
       <p>We are about to reveal your secret role, please ensure no other player can see your screen.</p>
-      <button @click="confirm">Confirm</button>
+      <button @click="() => emit('confirm')">Confirm</button>
     </div>
     <div v-else>
       <p>Your role is: {{ game.role }}</p>
@@ -14,7 +14,8 @@
         Satan does not know who the demon are.
       </p>
       <p v-else>
-        The other demons know who you are, try to subtly work together to pass negative cards, and kill innocent players.
+        The other demons know who you are, try to subtly work together to pass negative cards, and kill innocent
+        players.
         <span class="bold">If you die, the game ends immediately.</span>
       </p>
       <div v-if="gameState.demonExtras">
@@ -27,12 +28,12 @@
       <div v-else>
         <p>There are {{ gameState.demonCount }} demon{{ gameState.demonCount == 1 ? '' : 's' }}</p>
       </div>
-      <button @click="confirm">Continue</button>
+      <button @click="() => emit('confirm')">Continue</button>
     </div>
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import type { Game, ViewRoleGameState } from '@/game';
 import { computed } from 'vue';
 import { Role } from '@/game/messages.ts';
@@ -40,12 +41,4 @@ import { Role } from '@/game/messages.ts';
 const emit = defineEmits<{ confirm: []; }>();
 const props = defineProps<{ game: Game; }>();
 const gameState = computed(() => props.game.state as ViewRoleGameState);
-
-function confirm() {
-  if (gameState.value.hasConfirmed) {
-    emit('confirm');
-  } else {
-    gameState.value.hasConfirmed = true;
-  }
-}
 </script>
