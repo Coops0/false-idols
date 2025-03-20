@@ -96,12 +96,18 @@ suspend fun launchGameActor(server: SocketContentConverterSender<ServerOutboundM
 }
 
 private suspend fun GameState.handlePlayerJoin(message: PlayerJoinInnerApplicationMessage) {
+    val channel = message.channel
     val existingPlayer = this[message.playerName]
 
     val sessionId = NanoId.generate()
 
     if (existingPlayer != null) {
-        existingPlayer.connect(sessionId, message.channel)
+        existingPlayer.connect(sessionId, channel)
+        // If player already exists, send them (important) queued messages
+        existingPlayer.queue.forEach { channel.send(it) }
+        // And also send them their icon
+        channel.send(OutboundMessage.AssignIcon(existingPlayer.icon))
+
         return message.callback.send(Result.success(sessionId))
     }
 
@@ -111,8 +117,11 @@ private suspend fun GameState.handlePlayerJoin(message: PlayerJoinInnerApplicati
 
     val playerIcon = PlayerIcon[this.players.size]
 
-    val player = Player(message.playerName, playerIcon, PlayerConnection(sessionId, message.channel))
+    val player = Player(message.playerName, playerIcon, PlayerConnection(sessionId, channel))
     this.players.add(player)
+
+    // Send them their icon
+    channel.send(OutboundMessage.AssignIcon(playerIcon))
 
     message.callback.send(Result.success(sessionId))
 }

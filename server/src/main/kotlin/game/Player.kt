@@ -18,7 +18,7 @@ open class Player(
     val channels: MutableList<PlayerConnection>
 ) {
     /// These messages are important enough to re-send on any future reconnection
-    private val queue = mutableListOf<OutboundMessage>()
+    val queue = mutableListOf<OutboundMessage>()
 
     constructor(name: PlayerName, icon: PlayerIcon, connection: PlayerConnection) :
             this(name, icon, mutableListOf(connection))
@@ -30,9 +30,8 @@ open class Player(
 
     override fun hashCode() = name.hashCode()
 
-    suspend fun connect(sessionId: SessionId, channel: SocketContentConverterSender<OutboundMessage>) {
+    fun connect(sessionId: SessionId, channel: SocketContentConverterSender<OutboundMessage>) {
         channels.add(PlayerConnection(sessionId, channel))
-        queue.forEach { channel.send(it) }
     }
 
     suspend fun disconnectAll(reason: OutboundMessage.Disconnect.DisconnectionReason) {

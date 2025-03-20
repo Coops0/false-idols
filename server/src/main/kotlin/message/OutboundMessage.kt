@@ -81,6 +81,9 @@ sealed class OutboundMessage(val type: String) {
         }
     }
 
+    /// Sent on first join, 'welcome' message
+    class AssignIcon(val icon: PlayerIcon) : OutboundMessage("assign_icon")
+
     /// Utility class to serialize player name & icon
     open class StrippedPlayer(val name: String, val icon: String) {
         companion object {
