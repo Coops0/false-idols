@@ -34,6 +34,10 @@ export class PlayerIcon {
         return PlayerIcon.normalize(`${icon}_satan`);
     }
 
+    static dead(icon: string): string {
+        return PlayerIcon.normalize(`${icon}_dead`);
+    }
+
     static async preload() {
         if (this.hasPreloadedIcons) return;
 
@@ -42,7 +46,8 @@ export class PlayerIcon {
                 PlayerIcon.normal(icon),
                 PlayerIcon.angel(icon),
                 PlayerIcon.demon(icon),
-                PlayerIcon.satan(icon)
+                PlayerIcon.satan(icon),
+                PlayerIcon.dead(icon)
             ]))
             .map(icon => {
                 const img = new Image();
