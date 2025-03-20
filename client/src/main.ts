@@ -1,89 +1,49 @@
+import van from 'vanjs-core';
 import './style.css';
 import { WebsocketOwner } from './websocket-owner.ts';
-import { HtmlTemplate } from './html-template.ts';
 import { Game } from './game/game.ts';
 import { PlayerIcon } from './game/player-icon.ts';
+import { App, InitialState } from './components/App.ts';
 
-const root: HTMLElement = document.getElementById('root')!;
-let isLoginMounted = false;
+// @ts-expect-error - Will be init before any other classes try to access
+export let ws: WebsocketOwner = null;
 
-root.addEventListener('submit', handleSubmit);
-root.addEventListener('click', handleClick);
-
-export let ws: WebsocketOwner | null = null;
-export let game: Game | null = null;
-export function setGame(g: Game) { game = g }
+let mounted = false;
 
 let name: string = localStorage.getItem('name') ?? '';
 
 if (name.length) {
     tryToConnect();
 } else {
-    mountLogin();
+    van.add(App(InitialState.NEED_LOGIN));
 }
 
-async function tryToConnect() {
+export async function tryToConnect() {
     if (ws === null) {
         ws = new WebsocketOwner(name);
     }
 
     try {
         await ws.connect();
-        unmountLogin();
+        if (!mounted) {
+            van.add(App(InitialState.CONNECTED));
+        }
 
         setTimeout(() => PlayerIcon.preload());
     } catch (err) {
         console.error(err);
-        if (!isLoginMounted) {
-            mountLogin();
+        if (!mounted) {
+            van.add(App(InitialState.CONNECTION_FAILED));
         }
 
-        // @ts-ignore
-        showError(err.message ?? 'Failed to connect');
-    }
-}
-
-function handleSubmit(event: Event) {
-    event.preventDefault();
-    const target = event.target as HTMLElement;
-
-    if (target.id === 'login-form') {
-        name = (target.querySelector('#username') as HTMLInputElement).value;
-        if (!name.length || name.length < 3 || name.length > 15 || !/^[a-zA-Z0-9]+$/.test(name)) {
-            return;
-        }
-
-        tryToConnect();
-    }
-}
-
-function handleClick(event: Event) {
-    const target = event.target as HTMLElement;
-    if (target.matches('.delete-button')) {
-
-    }
-}
-
-function mountLogin() {
-    isLoginMounted = true;
-    root.insertAdjacentHTML('beforeend', HtmlTemplate.login());
-}
-
-function unmountLogin() {
-    isLoginMounted = false;
-    root.querySelector('#login-form')?.remove();
-}
-
-function showError(message: string) {
-    const form = document.querySelector('#login-form')!;
-
-    let error = form.querySelector('#error');
-    if (!error) {
-        error = document.createElement('div');
-        error.id = 'error';
-        error.classList.add('text-red-500');
-        form.appendChild(error);
+        // todo err.message
     }
 
-    error.textContent = message;
+    mounted = true;
 }
+
+//     name = (target.querySelector('#username') as HTMLInputElement).value;
+//         if (!name.length || name.length < 3 || name.length > 15 || !/^[a-zA-Z0-9]+$/.test(name)) {
+//             return;
+//         }
+
