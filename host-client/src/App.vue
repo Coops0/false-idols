@@ -6,6 +6,8 @@
     <LobbyScreen v-else-if="game.type === 'lobby'" :game="game"/>
     <InProgressScreen v-else-if="game.type === 'game_in_progress'" :game="game"/>
     <GameOverScreen v-else-if="game.type === 'game_over'" :game="game"/>
+
+    <KeybindDisplay v-if="game && showKeybindDisplay" :game="game"/>
   </div>
 </template>
 
@@ -17,9 +19,13 @@ import type { GameState } from '@/game/state.ts';
 import LobbyScreen from '@/components/screens/LobbyScreen.vue';
 import InProgressScreen from '@/components/screens/InProgressScreen.vue';
 import GameOverScreen from '@/components/screens/GameOverScreen.vue';
+import KeybindDisplay from '@/components/ui/KeybindDisplay.vue';
+import { useLocalStorage } from '@/util/use-local-storage.ts';
 
 const ws = new WebsocketOwner(onMessage);
 const game = ref<GameState | null>(null);
+
+const showKeybindDisplay = useLocalStorage('show-keybind-display', true);
 
 function onMessage(message: ServerInboundMessage) {
   game.value = message.game_state;
@@ -39,6 +45,13 @@ onUnmounted(() => document.removeEventListener('keydown', onKeyPress));
 function onKeyPress(event: KeyboardEvent) {
   if (game.value === null) return;
 
+  const key = event.key.toLowerCase();
+  if (key === 'h') {
+    event.preventDefault();
+    showKeybindDisplay.value = !showKeybindDisplay.value;
+    return;
+  }
+
   const s = (message: ServerOutboundMessage) => {
     ws.send(message);
     event.preventDefault();
@@ -46,9 +59,9 @@ function onKeyPress(event: KeyboardEvent) {
 
   switch (game.value.type) {
     case 'lobby':
-      if (event.key === 'Enter') {
+      if (key === 'enter') {
         s({ type: 'start_game' });
-      } else if (event.key === 'Escape') {
+      } else if (key === 'escape') {
         s({ type: 'reset_players' });
       }
       break;
@@ -59,21 +72,21 @@ function onKeyPress(event: KeyboardEvent) {
         case 'idle':
         case 'awaiting_investigation_analysis':
         case 'awaiting_player_action_choice':
-          if (event.key === ' ') {
+          if (key === ' ') {
             s({ type: 'skip' });
           }
           break;
         case 'awaiting_election_resolution':
-          if (event.key === 'Enter' || event.key === 'y') {
+          if (key === 'enter' || key === 'y') {
             s({ type: 'resolve_election', passed: true });
-          } else if (event.key === 'Backspace' || event.key === 'n') {
+          } else if (key === 'backspace' || key === 'n') {
             s({ type: 'resolve_election', passed: false });
           }
           break;
       }
       break;
     case 'game_over':
-      if (event.key === 'Enter') {
+      if (key === 'enter') {
         s({ type: 'go_back_to_lobby' });
       }
       break;

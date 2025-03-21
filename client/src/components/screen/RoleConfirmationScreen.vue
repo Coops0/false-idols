@@ -7,7 +7,7 @@
     <div v-else>
       <PlayerPreview
           :player="{ name: playerName, icon: playerIcon }"
-                     :icon-variant="roleToVariant(game.role)"
+          :icon-variant="roleToVariant(game.role)"
       />
       <p>Your role is: {{ game.role }}</p>
       <p v-if="game.role === Role.ANGEL">
@@ -24,13 +24,17 @@
       </p>
       <div v-if="gameState.demonExtras">
         <p>Your teammates:</p>
-        <p>Satan: <PlayerPreview :player="gameState.demonExtras.satan" icon-variant="satan"/></p>
+        <p>Satan:
+          <PlayerPreview :player="gameState.demonExtras.satan" icon-variant="satan"/>
+        </p>
         <ul v-if="gameState.demonExtras.teammates.length">
-          <li v-for="demon in gameState.demonExtras.teammates"><PlayerPreview :player="demon" icon-variant="demon"/></li>
+          <li v-for="demon in gameState.demonExtras.teammates">
+            <PlayerPreview :player="demon" icon-variant="demon"/>
+          </li>
         </ul>
       </div>
-      <div v-else>
-        <p>{{ gameState.demonCount }} demon{{ gameState.demonCount == 1 ? '' : 's' }}</p>
+      <div v-else-if="demonsText !== null">
+        <p>{{ demonsText }}</p>
       </div>
       <button @click="() => emit('confirm')">Continue</button>
     </div>
@@ -51,4 +55,11 @@ const props = defineProps<{
   playerIcon: string;
 }>();
 const gameState = computed(() => props.game.state as ViewRoleGameState);
+
+const demonsText = computed(() => {
+  const c = gameState.value.demonCount;
+  if (c === 0) return null;
+  if (c === 1) return 'There is 1 demon';
+  return `There are ${c} demons`;
+});
 </script>

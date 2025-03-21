@@ -21,6 +21,7 @@ suspend fun GameState.handleServerInboundApplicationMessage(message: ServerInbou
 
         is ServerInboundMessage.StartGame -> {
             require(this is GameState.Lobby) { "Game must be in lobby to start" }
+            require(this.players.size >= 4) { "Must have at least 4 players to start a game" }
             return ServerInboundMessageProcessorAction.START_GAME
         }
 
