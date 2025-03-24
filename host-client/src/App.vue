@@ -3,11 +3,11 @@
     <div v-if="game === null">
       <p>Loading...</p>
     </div>
-    <LobbyScreen v-else-if="game.type === 'lobby'" :game="game"/>
-    <InProgressScreen v-else-if="game.type === 'game_in_progress'" :game="game"/>
-    <GameOverScreen v-else-if="game.type === 'game_over'" :game="game"/>
+    <LobbyScreen v-else-if="game.type === 'lobby'" :game/>
+    <InProgressScreen v-else-if="game.type === 'game_in_progress'" :game/>
+    <GameOverScreen v-else-if="game.type === 'game_over'" :game/>
 
-    <KeybindDisplay v-if="game && showKeybindDisplay" :game="game"/>
+    <KeybindDisplay v-if="game !== null && showKeybindDisplay" :game/>
   </div>
 </template>
 
@@ -21,6 +21,9 @@ import InProgressScreen from '@/components/screens/InProgressScreen.vue';
 import GameOverScreen from '@/components/screens/GameOverScreen.vue';
 import KeybindDisplay from '@/components/ui/KeybindDisplay.vue';
 import { useLocalStorage } from '@/util/use-local-storage.ts';
+
+// TODO show animations/transitions in between in game states
+// TODO show notifications when absolute card value unlocks investigation and kill
 
 const ws = new WebsocketOwner(onMessage);
 const game = ref<GameState | null>(null);
@@ -37,6 +40,8 @@ function onMessage(message: ServerInboundMessage) {
   } catch (err) {
     console.error('failed to request wake lock', err);
   }
+
+  await ws.connect();
 })();
 
 onMounted(() => document.addEventListener('keydown', onKeyPress));

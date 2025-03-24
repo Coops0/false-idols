@@ -14,7 +14,7 @@ export type IconVariant = 'normal' | 'angel' | 'demon' | 'satan';
 
 const props = withDefaults(defineProps<{
   player: Player;
-  iconVariant: IconVariant;
+  iconVariant?: IconVariant;
 }>(), { iconVariant: 'normal' });
 
 const icon = computed(() => {

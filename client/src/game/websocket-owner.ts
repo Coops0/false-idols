@@ -10,20 +10,23 @@ export class WebsocketOwner {
     private lastConnectionAttempt: number = 0;
     private hasEverBeenConnected: boolean = false;
     private wasManuallyDisconnectedLast: boolean = false;
+    private initialMessageBuffer: MessageEvent[] = [];
 
     constructor(
         private readonly name: Ref<string>,
         private readonly messageCallback: (message: InboundMessage) => void
     ) {
-        window.addEventListener('online', () => this.attemptReconnection());
-        window.addEventListener('focus', () => this.attemptReconnection());
+        const self = this;
+
+        window.addEventListener('online', () => self.attemptReconnection());
+        window.addEventListener('focus', () => self.attemptReconnection());
         window.addEventListener('visibilitychange', () => {
             if (document.visibilityState === 'visible') {
-                this.attemptReconnection();
+                self.attemptReconnection();
             }
         });
 
-        setInterval(() => this.send({ type: 'ping' }), 1000);
+        setInterval(() => self.send({ type: 'ping' }), 1000);
     }
 
     get isConnected() {
@@ -39,26 +42,42 @@ export class WebsocketOwner {
             throw new Error('Name is invalid');
         }
 
+        const self = this;
         return new Promise<void>((resolve, reject) => {
             const rejectOnError = (err: Event) => reject(err);
+            const resolveOnOpen = (event: MessageEvent) => {
+                const message = JSON.parse(event.data) as InboundMessage;
+                // This should be the first immediate message received
+                if (message.type !== 'assign_icon') {
+                    console.warn('Got initial message not of type assign icon', message);
+                    self.initialMessageBuffer.push(event);
+                    return;
+                }
 
-            this.ws = new WebSocket(`ws://localhost:8080/ws?name=${this.name.value}`);
+                // Remove our temporary initial event listeners
+                self.ws.removeEventListener('message', (event) => resolveOnOpen(event));
+                self.ws.removeEventListener('error', err => rejectOnError(err));
+                self.ws.removeEventListener('close', err => rejectOnError(err));
 
-            this.ws.addEventListener('open', () => {
-                this.hasFailedToConnect = false;
-                this.hasEverBeenConnected = true;
-                this.wasManuallyDisconnectedLast = false;
-
-                this.ws.removeEventListener('error', rejectOnError);
+                // Add the real event listeners
+                self.ws.addEventListener('message', message => this.handleMessage(message));
+                self.ws.addEventListener('close', event => this.handleClosure(event));
+                self.ws.addEventListener('error', err => console.warn(err));
 
                 resolve();
-            });
 
-            this.ws.addEventListener('error', err => rejectOnError(err));
+                // Finally fall back to real message handling
+                self.handleMessage(event);
 
-            this.ws.addEventListener('message', message => this.handleMessage(message));
-            this.ws.addEventListener('close', event => this.handleClosure(event));
-            this.ws.addEventListener('error', err => console.warn(err));
+                // Any other messages in the buffer we also send through
+                self.initialMessageBuffer.forEach(event => self.handleMessage(event));
+                self.initialMessageBuffer = [];
+            };
+
+            self.ws = new WebSocket(`ws://localhost:8080/ws?name=${this.name.value}`);
+            self.ws.addEventListener('message', event => resolveOnOpen(event));
+            self.ws.addEventListener('error', err => rejectOnError(err));
+            self.ws.addEventListener('close', err => rejectOnError(err));
         });
     }
 
@@ -69,15 +88,16 @@ export class WebsocketOwner {
         const delay = (this.hasFailedToConnect && !force) ? 100 : 0;
         console.log(`Trying to reconnect in ${delay}`);
 
+        const self = this;
         setTimeout(() => {
-            this.connect()
+            self.connect()
                 .then(() => console.log('Reconnected'))
                 .catch(err => {
                     console.error('Failed to reconnect', err);
 
-                    if (this.hasEverBeenConnected && !this.wasManuallyDisconnectedLast) {
-                        this.hasFailedToConnect = true;
-                        this.attemptReconnection();
+                    if (self.hasEverBeenConnected && !self.wasManuallyDisconnectedLast) {
+                        self.hasFailedToConnect = true;
+                        self.attemptReconnection();
                     }
                 });
         }, delay);

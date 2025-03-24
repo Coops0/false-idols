@@ -12,28 +12,29 @@
     />
     <RoleConfirmationScreen
         v-else-if="game.state.type === 'view_role'"
-        :player-name="playerName"
-        :icon="playerIcon"
-        :game="game"
+        :player-name
+        :player-icon
+        :game
         @confirm="confirmRole"
     />
     <CommitActionScreen
         v-else-if="game.state.type === 'commit_action'"
-        :game="game"
-        @commit="commitAction"/>
+        :game
+        @commit="commitAction"
+    />
     <ViewInvestigationResultsScreen
         v-else-if="game.state.type === 'view_investigation_results'"
-        :game="game"
+        :game
         @emit="confirmInvestigation"
     />
     <ChiefDiscardCardScreen
         v-else-if="game.state.type === 'chief_discard_card'"
-        :game="game"
+        :game
         @discard="discardCard"
     />
     <AdvisorChooseCardScreen
         v-else-if="game.state.type === 'advisor_choose_card'"
-        :game="game"
+        :game
         @choose="chooseCard"
     />
     <IdleScreen v-else/>
@@ -80,6 +81,7 @@ async function tryToConnect() {
 
   try {
     await ws.connect();
+
     setTimeout(() => PlayerIcon.preload());
   } catch (err) {
     console.error(err);

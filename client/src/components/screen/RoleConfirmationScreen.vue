@@ -9,7 +9,7 @@
           :player="{ name: playerName, icon: playerIcon }"
           :icon-variant="roleToVariant(game.role)"
       />
-      <p>Your role is: {{ game.role }}</p>
+      <p>Your role is: {{ roleName(game.role) }}</p>
       <p v-if="game.role === Role.ANGEL">
         Try to pass positive cards and eliminate any demons.
       </p>
@@ -44,7 +44,7 @@
 <script lang="ts" setup>
 import type { Game, ViewRoleGameState } from '@/game';
 import { computed } from 'vue';
-import { Role } from '@/game/messages.ts';
+import { Role, roleName } from '@/game/messages.ts';
 import PlayerPreview from '@/components/ui/PlayerPreview.vue';
 import { roleToVariant } from '@/util';
 

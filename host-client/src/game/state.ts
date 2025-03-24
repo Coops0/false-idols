@@ -4,6 +4,17 @@ export enum Role {
     ANGEL = 'ANGEL',
 }
 
+export const roleName = (role: Role) => {
+    switch (role) {
+        case Role.ANGEL:
+            return 'Angel';
+        case Role.DEMON:
+            return 'Demon';
+        case Role.SATAN:
+            return 'Satan';
+    }
+}
+
 export type Player = {
     name: string;
     icon: string;
@@ -37,8 +48,8 @@ export enum ActionChoice {
 
 export type IdleInnerGameState = { type: 'idle' };
 export type AwaitingPlayerActionChoiceInnerGameState = { type: 'awaiting_player_action_choice', permitted_actions: ActionChoice[] };
-export type AwaitingChiefCardDiscardInnerGameState = { type: 'awaiting_chief_card_discard', cards: Card[] };
-export type AwaitingAdvisorCardChoiceInnerGameState = { type: 'awaiting_advisor_card_choice', cards: Card[] };
+export type AwaitingChiefCardDiscardInnerGameState = { type: 'awaiting_chief_card_discard', cards: Card[], advisor_name: string };
+export type AwaitingAdvisorCardChoiceInnerGameState = { type: 'awaiting_advisor_card_choice', cards: Card[], advisor_name: string };
 export type AwaitingElectionResolutionInnerGameState = { type: 'awaiting_election_resolution', nominee: string };
 export type AwaitingInvestigationAnalysisInnerGameState = { type: 'awaiting_investigation_analysis', target: string };
 
@@ -61,7 +72,7 @@ export type InProgressGameState = {
 export type GameOverGameState = {
     type: 'game_over';
     players: Player[];
-    winner: string;
+    winner: 'ANGELS' | 'DEMONS';
     satan: string;
     demons: string[];
     reason: 'SATAN_KILLED' | 'SATAN_ELECTED_ADVISOR_LATE_GAME' | 'POSITIVE_THRESHOLD_REACHED' | 'NEGATIVE_THRESHOLD_REACHED' | 'ALL_ANGELS_DEAD';

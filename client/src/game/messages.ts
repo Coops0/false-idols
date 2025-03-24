@@ -14,6 +14,17 @@ export enum Role {
 
 export type SimpleRole = Role.DEMON | Role.ANGEL;
 
+export const roleName = (role: Role | SimpleRole) => {
+    switch (role) {
+        case Role.ANGEL:
+            return 'Angel';
+        case Role.DEMON:
+            return 'Demon';
+        case Role.SATAN:
+            return 'Satan';
+    }
+}
+
 export type ActionSupplementedPlayer = Player & {
     investigatable: boolean,
     electable: boolean
