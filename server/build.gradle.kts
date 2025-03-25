@@ -31,11 +31,10 @@ dependencies {
     implementation(libs.logback.classic)
     testImplementation(libs.ktor.server.test.host)
     testImplementation(libs.kotlin.test.junit)
-    testImplementation("org.junit.platform:junit-platform-launcher:1.12.1")
-    implementation("io.viascom.nanoid:nanoid:1.0.1")
+    testImplementation("org.junit.platform:junit-platform-launcher:1.13.0-M2")
 
     // resolve vulnerable version
-    implementation("commons-codec:commons-codec:1.13")
+    implementation("commons-codec:commons-codec:1.18.0")
 }
 
 tasks.test {

@@ -9,8 +9,8 @@ import com.cooper.message.OutboundMessage
 import com.cooper.message.OutboundMessage.StrippedPlayer.Companion.stripped
 import com.cooper.message.server.ServerInboundMessage
 import com.cooper.message.server.ServerOutboundMessage
-import io.viascom.nanoid.NanoId
 import kotlinx.coroutines.channels.Channel
+import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 
 abstract class InnerApplicationMessage
@@ -99,7 +99,7 @@ private suspend fun GameState.handlePlayerJoin(message: PlayerJoinInnerApplicati
     val channel = message.channel
     val existingPlayer = this[message.playerName]
 
-    val sessionId = NanoId.generate()
+    val sessionId = UUID.randomUUID()
 
     if (existingPlayer != null) {
         existingPlayer.connect(sessionId, channel)

@@ -3,8 +3,9 @@ package com.cooper.game
 import com.cooper.SocketContentConverterSender
 import com.cooper.message.OutboundMessage
 import com.fasterxml.jackson.annotation.JsonIgnore
+import java.util.*
 
-typealias SessionId = String
+typealias SessionId = UUID
 typealias PlayerName = String
 
 class PlayerConnection(
