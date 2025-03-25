@@ -1,5 +1,6 @@
 <template>
   <div>
+    <p>{{ game?.type ?? 'no game' }}</p>
     <div v-if="game === null">
       <p>Loading...</p>
     </div>

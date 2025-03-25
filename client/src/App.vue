@@ -1,5 +1,6 @@
 <template>
   <div>
+    <p>{{ game?.state?.type ?? 'no game' }}</p>
     <ErrorToast :message="error"/>
     <LoginScreen
         v-if="canShowLogin && !ws.isConnected"

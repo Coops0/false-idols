@@ -80,13 +80,16 @@ private fun Routing.ws() {
             )
         )
 
+        println("Player $name waiting for one shot...")
         val oneShotResponse = oneShot.receive()
         if (oneShotResponse.isFailure) {
+            println("Player $name failed to join: ${oneShotResponse.exceptionOrNull()}")
             close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, oneShotResponse.exceptionOrNull()!!.toString()))
             return@webSocket
         }
 
         val sessionId = oneShotResponse.getOrThrow()
+        println("Player $name joined with session ID $sessionId")
 
         runCatching {
             incoming.consumeEach { frame ->
@@ -100,6 +103,8 @@ private fun Routing.ws() {
 
                 globalInnerApplicationChannel.send(PlayerInboundApplicationMessage(sessionId, message))
             }
+
+            println("incoming stopped?")
         }.onFailure { exception ->
             println("WebSocket exception: ${exception.message}")
         }.also {

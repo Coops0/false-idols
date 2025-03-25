@@ -44,10 +44,13 @@ private val isActorActive: AtomicBoolean = AtomicBoolean(false)
 
 suspend fun launchGameActor(server: SocketContentConverterSender<ServerOutboundMessage>) {
     if (!isActorActive.compareAndSet(false, true)) {
+        println("game actor already active")
         return globalInnerApplicationChannel.send(
             NewServerConnectionInnerApplicationMessage(server)
         )
     }
+
+    println("launched game actor")
 
     var gameState: GameState = GameState.Lobby(server)
 
@@ -108,6 +111,8 @@ private suspend fun GameState.handlePlayerJoin(message: PlayerJoinInnerApplicati
     val existingPlayer = this[message.playerName]
 
     val sessionId = UUID.randomUUID()
+
+    println("player ${message.playerName} joined with session ID $sessionId (existing: ${existingPlayer != null})")
 
     if (existingPlayer != null) {
         existingPlayer.connect(sessionId, channel)
