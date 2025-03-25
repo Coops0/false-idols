@@ -12,7 +12,7 @@ const val NEGATIVE_THRESHOLD_WIN = -6
 const val NEGATIVE_THRESHOLD_SATAN_WIN = -2
 
 sealed class GameState(val name: String) {
-    @get:JsonIgnore abstract val server: SocketContentConverterSender<ServerOutboundMessage>
+    @get:JsonIgnore abstract var server: SocketContentConverterSender<ServerOutboundMessage>
     abstract val players: List<Player>
 
     suspend fun sendServer(message: ServerOutboundMessage) {
@@ -36,14 +36,14 @@ sealed class GameState(val name: String) {
     }
 
     class Lobby(
-        override val server: SocketContentConverterSender<ServerOutboundMessage>,
+        override var server: SocketContentConverterSender<ServerOutboundMessage>,
         override val players: MutableList<Player> = mutableListOf()
     ) : GameState("lobby") {
         fun toGameInProgress() = GameInProgress(server, players, _fakeArg = null)
     }
 
     class GameInProgress private constructor(
-        override val server: SocketContentConverterSender<ServerOutboundMessage>,
+        override var server: SocketContentConverterSender<ServerOutboundMessage>,
         override val players: MutableList<GamePlayer>
     ) : GameState("game_in_progress") {
         @Suppress("UNUSED_PARAMETER", "LocalVariableName") constructor(
@@ -112,7 +112,7 @@ sealed class GameState(val name: String) {
     }
 
     class GameOver(
-        override val server: SocketContentConverterSender<ServerOutboundMessage>,
+        override var server: SocketContentConverterSender<ServerOutboundMessage>,
         override val players: MutableList<Player>,
         val winner: PlayerName,
         val satan: PlayerName,

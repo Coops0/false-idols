@@ -2,7 +2,7 @@
   <div></div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import type { InProgressGameState } from '@/game/state.ts';
 
 /*const props = */

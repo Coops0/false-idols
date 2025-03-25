@@ -2,7 +2,7 @@
   <div>
     <ul>
       <li v-for="player in game.players" :key="player.name">
-        <PlayerPreview :player="player" :icon-variant="player.is_alive ? 'normal' : 'normal'"/>
+        <PlayerPreview :icon-variant="player.is_alive ? 'normal' : 'normal'" :player="player"/>
       </li>
     </ul>
 
@@ -15,7 +15,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import type { InProgressGameState } from '@/game/state.ts';
 import PlayerPreview from '@/components/ui/PlayerPreview.vue';
 import AwaitingAdvisorCardChoiceScreen from '@/components/screens/game-screens/AwaitingAdvisorCardChoiceScreen.vue';

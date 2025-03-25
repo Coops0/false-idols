@@ -1,11 +1,11 @@
 <template>
-<div>
-  <Card v-if="cards.length > 0" :card="cards[cards.length - 1]"/>
-  <Card v-if="cards.length > 1" :card="cards[cards.length - 2]"/>
-</div>
+  <div>
+    <Card v-if="cards.length > 0" :card="cards[cards.length - 1]"/>
+    <Card v-if="cards.length > 1" :card="cards[cards.length - 2]"/>
+  </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import type { InProgressGameState } from '@/game/state.ts';
 import Card from '@/components/ui/Card.vue';
 import { computed } from 'vue';

@@ -13,7 +13,7 @@ export const roleName = (role: Role) => {
         case Role.SATAN:
             return 'Satan';
     }
-}
+};
 
 export type Player = {
     name: string;
@@ -47,14 +47,31 @@ export enum ActionChoice {
 }
 
 export type IdleInnerGameState = { type: 'idle' };
-export type AwaitingPlayerActionChoiceInnerGameState = { type: 'awaiting_player_action_choice', permitted_actions: ActionChoice[] };
-export type AwaitingChiefCardDiscardInnerGameState = { type: 'awaiting_chief_card_discard', cards: Card[], advisor_name: string };
-export type AwaitingAdvisorCardChoiceInnerGameState = { type: 'awaiting_advisor_card_choice', cards: Card[], advisor_name: string };
+export type AwaitingPlayerActionChoiceInnerGameState = {
+    type: 'awaiting_player_action_choice',
+    permitted_actions: ActionChoice[]
+};
+export type AwaitingChiefCardDiscardInnerGameState = {
+    type: 'awaiting_chief_card_discard',
+    cards: Card[],
+    advisor_name: string
+};
+export type AwaitingAdvisorCardChoiceInnerGameState = {
+    type: 'awaiting_advisor_card_choice',
+    cards: Card[],
+    advisor_name: string
+};
 export type AwaitingElectionResolutionInnerGameState = { type: 'awaiting_election_resolution', nominee: string };
 export type AwaitingInvestigationAnalysisInnerGameState = { type: 'awaiting_investigation_analysis', target: string };
 
 
-export type InnerGameState = IdleInnerGameState | AwaitingPlayerActionChoiceInnerGameState | AwaitingChiefCardDiscardInnerGameState | AwaitingAdvisorCardChoiceInnerGameState | AwaitingElectionResolutionInnerGameState | AwaitingInvestigationAnalysisInnerGameState;
+export type InnerGameState =
+    IdleInnerGameState
+    | AwaitingPlayerActionChoiceInnerGameState
+    | AwaitingChiefCardDiscardInnerGameState
+    | AwaitingAdvisorCardChoiceInnerGameState
+    | AwaitingElectionResolutionInnerGameState
+    | AwaitingInvestigationAnalysisInnerGameState;
 
 export type LobbyGameState = {
     type: 'lobby';

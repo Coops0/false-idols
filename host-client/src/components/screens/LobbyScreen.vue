@@ -9,7 +9,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import type { LobbyGameState } from '@/game/state.ts';
 import PlayerPreview from '@/components/ui/PlayerPreview.vue';
 import { computed } from 'vue';

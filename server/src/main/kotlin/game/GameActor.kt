@@ -30,6 +30,9 @@ class PlayerJoinInnerApplicationMessage(
 class PlayerDisconnectInnerApplicationMessage(val playerName: PlayerName, val sessionId: SessionId) :
         InnerApplicationMessage()
 
+class NewServerConnectionInnerApplicationMessage(val server: SocketContentConverterSender<ServerOutboundMessage>) :
+        InnerApplicationMessage()
+
 val globalInnerApplicationChannel = Channel<InnerApplicationMessage>()
 
 class GameOverThrowable(
@@ -41,7 +44,9 @@ private val isActorActive: AtomicBoolean = AtomicBoolean(false)
 
 suspend fun launchGameActor(server: SocketContentConverterSender<ServerOutboundMessage>) {
     if (!isActorActive.compareAndSet(false, true)) {
-        throw IllegalStateException("Game actor is already active")
+        return globalInnerApplicationChannel.send(
+            NewServerConnectionInnerApplicationMessage(server)
+        )
     }
 
     var gameState: GameState = GameState.Lobby(server)
@@ -87,6 +92,9 @@ suspend fun launchGameActor(server: SocketContentConverterSender<ServerOutboundM
 
             is PlayerJoinInnerApplicationMessage -> gameState.handlePlayerJoin(message)
             is PlayerDisconnectInnerApplicationMessage -> gameState.handlePlayerDisconnect(message)
+            is NewServerConnectionInnerApplicationMessage -> {
+                gameState.server = message.server
+            }
         }
 
         gameState.sendServer(ServerOutboundMessage.UpdateGameState(gameState))

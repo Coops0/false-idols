@@ -8,23 +8,23 @@ export class WebsocketOwner {
         setInterval(() => this.send({ type: 'ping' }), 1000);
     }
 
-    async connect() {
-        this.ws = new WebSocket('ws://localhost:8080/server-ws');
-        this.ws.addEventListener('message', this.onMessage);
-    }
-
     get isConnected() {
         return this.ws !== null && this.ws.readyState === WebSocket.OPEN;
     }
 
-    private onMessage = (event: MessageEvent) => {
-        const message = JSON.parse(event.data) as ServerInboundMessage;
-        this.onMessageCallback(message);
-    };
+    async connect() {
+        this.ws = new WebSocket('ws://localhost:8080/server-ws');
+        this.ws.addEventListener('message', this.onMessage);
+    }
 
     send(message: ServerOutboundMessage) {
         if (this.isConnected) {
             this.ws.send(JSON.stringify(message));
         }
     }
+
+    private onMessage = (event: MessageEvent) => {
+        const message = JSON.parse(event.data) as ServerInboundMessage;
+        this.onMessageCallback(message);
+    };
 }

@@ -1,11 +1,11 @@
 <template>
   <div>
     <p>{{ player.name }}</p>
-    <img :src="icon" :alt="`${player.icon} ${iconVariant}`"/>
+    <img :alt="`${player.icon} ${iconVariant}`" :src="icon"/>
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { PlayerIcon } from '@/game/player-icon.ts';
 import { computed } from 'vue';
 import type { Player } from '@/game/state.ts';

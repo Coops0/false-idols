@@ -18,7 +18,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { type GameOverGameState, Role, roleName } from '@/game/state.ts';
 import { computed } from 'vue';
 import PlayerPreview from '@/components/ui/PlayerPreview.vue';

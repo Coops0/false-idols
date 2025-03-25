@@ -7,7 +7,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import type { AwaitingChiefCardDiscardInnerGameState, InProgressGameState } from '@/game/state.ts';
 import { computed } from 'vue';
 import PlayerPreview from '@/components/ui/PlayerPreview.vue';

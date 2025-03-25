@@ -4,7 +4,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 // todo show score with threshold of negative and positive
 import type { InProgressGameState } from '@/game/state.ts';
 import { computed } from 'vue';

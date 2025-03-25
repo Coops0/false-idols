@@ -11,7 +11,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { WebsocketOwner } from '@/game/websocket-owner.ts';
 import type { ServerInboundMessage, ServerOutboundMessage } from '@/game/messages.ts';
 import { onMounted, onUnmounted, ref } from 'vue';
