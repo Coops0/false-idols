@@ -17,10 +17,7 @@ export default defineConfig({
     },
     server: {
         port: 3001,
+        hmr: false,
         ws: false
-    },
-    base: './',
-    preview: {
-        port: 3001
     }
 });

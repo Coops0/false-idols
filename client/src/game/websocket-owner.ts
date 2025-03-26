@@ -46,6 +46,8 @@ export class WebsocketOwner {
         return new Promise<void>((resolve, reject) => {
             const rejectOnError = (err: Event) => reject(err);
             const resolveOnOpen = (event: MessageEvent) => {
+                this.hasEverBeenConnected = true;
+
                 const message = JSON.parse(event.data) as InboundMessage;
                 // This should be the first immediate message received
                 if (message.type !== 'assign_icon') {
@@ -55,7 +57,7 @@ export class WebsocketOwner {
                 }
 
                 // Remove our temporary initial event listeners
-                self.ws.removeEventListener('message', (event) => resolveOnOpen(event));
+                self.ws.removeEventListener('message', event => resolveOnOpen(event));
                 self.ws.removeEventListener('error', err => rejectOnError(err));
                 self.ws.removeEventListener('close', err => rejectOnError(err));
 
@@ -82,7 +84,7 @@ export class WebsocketOwner {
     }
 
     attemptReconnection(force: boolean = false) {
-        if (this.isConnected || (!force && Date.now() - this.lastConnectionAttempt < 100)) return;
+        if (this.isConnected || (!force && (!this.hasEverBeenConnectedSuccessfully || Date.now() - this.lastConnectionAttempt < 100))) return;
         this.lastConnectionAttempt = Date.now();
 
         const delay = (this.hasFailedToConnect && !force) ? 100 : 0;
@@ -105,6 +107,9 @@ export class WebsocketOwner {
 
     send(message: OutboundMessage) {
         if (this.isConnected) {
+            if (message.type !== 'ping') {
+                console.log('sending', message);
+            }
             this.ws.send(JSON.stringify(message));
         }
     }

@@ -19,6 +19,9 @@ export class WebsocketOwner {
 
     send(message: ServerOutboundMessage) {
         if (this.isConnected) {
+            if (message.type !== 'ping') {
+                console.log('sending', message);
+            }
             this.ws.send(JSON.stringify(message));
         }
     }

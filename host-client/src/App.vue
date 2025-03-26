@@ -22,6 +22,7 @@ import InProgressScreen from '@/components/screens/InProgressScreen.vue';
 import GameOverScreen from '@/components/screens/GameOverScreen.vue';
 import KeybindDisplay from '@/components/ui/KeybindDisplay.vue';
 import { useLocalStorage } from '@/util/use-local-storage.ts';
+import { PlayerIcon } from '@/game/player-icon.ts';
 
 // TODO show animations/transitions in between in game states
 // TODO show notifications when absolute card value unlocks investigation and kill
@@ -32,6 +33,7 @@ const game = ref<GameState | null>(null);
 const showKeybindDisplay = useLocalStorage('show-keybind-display', true);
 
 function onMessage(message: ServerInboundMessage) {
+  console.log(message);
   game.value = message.game_state;
 }
 
@@ -41,6 +43,8 @@ function onMessage(message: ServerInboundMessage) {
   } catch (err) {
     console.error('failed to request wake lock', err);
   }
+
+  setTimeout(() => PlayerIcon.preload());
 
   await ws.connect();
 })();
