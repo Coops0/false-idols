@@ -44,15 +44,15 @@ private val isActorActive: AtomicBoolean = AtomicBoolean(false)
 
 suspend fun launchGameActor(server: SocketContentConverterSender<ServerOutboundMessage>) {
     if (!isActorActive.compareAndSet(false, true)) {
-        println("game actor already active")
         return globalInnerApplicationChannel.send(
             NewServerConnectionInnerApplicationMessage(server)
         )
     }
 
-    println("launched game actor")
-
     var gameState: GameState = GameState.Lobby(server)
+
+    // send initial game state
+    server.send(ServerOutboundMessage.UpdateGameState(gameState))
 
     for (message in globalInnerApplicationChannel) {
         when (message) {
@@ -64,7 +64,9 @@ suspend fun launchGameActor(server: SocketContentConverterSender<ServerOutboundM
                 } catch (e: GameOverThrowable) {
                     gameState = (gameState as GameState.GameInProgress).toGameOver(e.winner, e.reason)
                 } catch (e: IllegalStateException) {
-                    println("Failed to process player message ${e.message}")
+                    println("Player illegal state exception -> ${e.message}")
+                } catch (e: IllegalArgumentException) {
+                    println("Player illegal argument exception -> ${e.message}")
                 }
             }
 
@@ -75,7 +77,10 @@ suspend fun launchGameActor(server: SocketContentConverterSender<ServerOutboundM
                     gameState = (gameState as GameState.GameInProgress).toGameOver(e.winner, e.reason)
                     null
                 } catch (e: IllegalStateException) {
-                    println("Failed to process server message ${e.message}")
+                    println("Server illegal state exception -> ${e.message}")
+                    null
+                } catch (e: IllegalArgumentException) {
+                    println("Server illegal argument exception -> ${e.message}")
                     null
                 }
 
@@ -97,7 +102,16 @@ suspend fun launchGameActor(server: SocketContentConverterSender<ServerOutboundM
             is PlayerDisconnectInnerApplicationMessage -> gameState.handlePlayerDisconnect(message)
             is NewServerConnectionInnerApplicationMessage -> {
                 gameState.server = message.server
+                message.server.send(ServerOutboundMessage.UpdateGameState(gameState))
             }
+        }
+
+        // if it is ping, no change -> no need to resend state
+        if (
+            (message is PlayerInboundApplicationMessage && message.inboundMessage is InboundMessage.Ping) ||
+            (message is ServerInboundApplicationMessage && message.serverInboundMessage is ServerInboundMessage.Ping)
+        ) {
+            continue
         }
 
         gameState.sendServer(ServerOutboundMessage.UpdateGameState(gameState))

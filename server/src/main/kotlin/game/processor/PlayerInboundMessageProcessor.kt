@@ -7,6 +7,10 @@ import com.cooper.message.InboundMessage
 
 @Throws(GameOverThrowable::class)
 suspend fun GameState.handlePlayerInboundApplicationMessage(playerName: PlayerName, message: InboundMessage) {
+    if (message is InboundMessage.Ping) {
+        return
+    }
+
     require(this is GameState.GameInProgress) { "Game must be in progress to process player inbound messages" }
 
     val player = this[playerName]!!
@@ -14,6 +18,6 @@ suspend fun GameState.handlePlayerInboundApplicationMessage(playerName: PlayerNa
         is InboundMessage.ChooseActionOnPlayer -> this.handlePlayerActionChoice(player, message.action, message.target)
         is InboundMessage.DiscardOneCard -> this.handleChiefDiscardCard(player, message.cardId)
         is InboundMessage.ChooseCard -> this.handleAdvisorChooseCard(player, message.cardId)
-        is InboundMessage.Ping -> {}
+        else -> throw IllegalArgumentException("Unknown message type: $message")
     }
 }

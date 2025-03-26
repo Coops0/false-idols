@@ -11,7 +11,7 @@ const val POSITIVE_THRESHOLD_WIN = 10
 const val NEGATIVE_THRESHOLD_WIN = -6
 const val NEGATIVE_THRESHOLD_SATAN_WIN = -2
 
-sealed class GameState(val name: String) {
+sealed class GameState(val type: String) {
     @get:JsonIgnore abstract var server: SocketContentConverterSender<ServerOutboundMessage>
     abstract val players: List<Player>
 

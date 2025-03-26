@@ -5,6 +5,8 @@ import com.cooper.message.InboundMessage
 import com.cooper.message.OutboundMessage
 import com.cooper.message.server.ServerInboundMessage
 import com.cooper.message.server.ServerOutboundMessage
+import com.fasterxml.jackson.databind.PropertyNamingStrategies
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.ktor.serialization.*
 import io.ktor.serialization.jackson.*
 import io.ktor.server.application.*
@@ -25,7 +27,12 @@ fun Application.configureSockets() {
         timeout = Duration.INFINITE
         maxFrameSize = 1024 * 1024
         masking = false
-        contentConverter = JacksonWebsocketContentConverter()
+
+        val objectMapper = jacksonObjectMapper()
+        objectMapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
+
+        contentConverter = JacksonWebsocketContentConverter(objectmapper = objectMapper)
+
     }
 
     routing {
@@ -55,6 +62,7 @@ val alphaNumericRegex by lazy { Regex("^[a-zA-Z0-9_]*$") }
 private fun Routing.ws() {
     webSocket("/ws") {
         val name = call.request.queryParameters["name"]?.trim() ?: throw IllegalArgumentException("No name provided")
+        println("Player $name init connection")
         if (name.length > 15 || name.length < 3) {
             close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "Name length should be in 3..15"))
             return@webSocket
@@ -64,6 +72,8 @@ private fun Routing.ws() {
             close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "Name had bad characters in it"))
             return@webSocket
         }
+
+        println("Player $name connected")
 
         val channel = SocketContentConverterSender<OutboundMessage>(
             channel = outgoing,
@@ -121,7 +131,7 @@ private fun Routing.serverWs() {
             typeInfo = TypeInfo(ServerOutboundMessage::class),
         )
 
-        val gameActor = launch { launchGameActor(channel) }
+        launch { launchGameActor(channel) }
 
         runCatching {
             incoming.consumeEach { frame ->
@@ -137,8 +147,6 @@ private fun Routing.serverWs() {
             }
         }.onFailure { exception ->
             println("WebSocket exception: ${exception.message}")
-        }.also {
-            gameActor.cancel()
         }
     }
 }

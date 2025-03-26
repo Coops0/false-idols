@@ -20,13 +20,12 @@ fun Application.module() {
         anyHost() // TODO Remove this
     }
 
-    configureSockets()
-
     install(ContentNegotiation) {
         jackson {
             setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
         }
     }
 
+    configureSockets()
     configureRouting()
 }
