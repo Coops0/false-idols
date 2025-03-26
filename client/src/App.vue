@@ -1,9 +1,11 @@
 <template>
   <div>
     <p>{{ game?.state?.type ?? 'no game' }}</p>
+    <p>is connected: {{ ws.isConnected }}</p>
+    <p>manual is connected {{ manualIsConnected }}</p>
     <ErrorToast :message="error"/>
     <LoginScreen
-        v-if="canShowLogin && !ws.isConnected"
+        v-if="canShowLogin && !manualIsConnected"
         v-model="playerName"
         :is-rejoin="ws.hasEverBeenConnectedSuccessfully"
         @join="() => tryToConnect()"
@@ -61,8 +63,10 @@ import AdvisorChooseCardScreen from '@/components/screen/AdvisorChooseCardScreen
 const playerName = ref<string>('');
 const playerIcon = ref<string>('');
 const error = ref<string>('');
+// Weirdness with websockets and get function properties not triggering a rerender on connection
+const manualIsConnected = ref(false);
 
-const ws = new WebsocketOwner(playerName, handleMessage);
+const ws = new WebsocketOwner(playerName, handleMessage, manualIsConnected);
 const game = ref<Game | null>(null);
 
 const canShowLogin = ref<boolean>(false);

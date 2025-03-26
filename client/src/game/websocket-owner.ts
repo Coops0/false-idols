@@ -14,7 +14,8 @@ export class WebsocketOwner {
 
     constructor(
         private readonly name: Ref<string>,
-        private readonly messageCallback: (message: InboundMessage) => void
+        private readonly messageCallback: (message: InboundMessage) => void,
+        private readonly manualIsConnected: Ref<boolean>
     ) {
         const self = this;
 
@@ -55,6 +56,8 @@ export class WebsocketOwner {
                     self.initialMessageBuffer.push(event);
                     return;
                 }
+
+                self.manualIsConnected.value = true;
 
                 // Remove our temporary initial event listeners
                 self.ws.removeEventListener('message', event => resolveOnOpen(event));
@@ -131,6 +134,7 @@ export class WebsocketOwner {
 
     private handleClosure(event: CloseEvent) {
         console.log('Connection closed', event);
+        this.manualIsConnected.value = false;
         this.attemptReconnection();
     }
 }

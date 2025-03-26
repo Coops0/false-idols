@@ -45,7 +45,6 @@ function onMessage(message: ServerInboundMessage) {
   }
 
   setTimeout(() => PlayerIcon.preload());
-
   await ws.connect();
 })();
 
@@ -55,7 +54,13 @@ onUnmounted(() => document.removeEventListener('keydown', onKeyPress));
 function onKeyPress(event: KeyboardEvent) {
   if (game.value === null) return;
 
-  const key = event.key.toLowerCase();
+  let key = event.code.toLowerCase();
+  if (key.startsWith('key')) {
+    key = event.key.toLowerCase();
+  }
+
+  console.log(game.value);
+
   if (key === 'h') {
     event.preventDefault();
     showKeybindDisplay.value = !showKeybindDisplay.value;
@@ -81,8 +86,8 @@ function onKeyPress(event: KeyboardEvent) {
         case 'awaiting_advisor_card_choice':
         case 'idle':
         case 'awaiting_investigation_analysis':
-        case 'awaiting_player_action_choice':
-          if (key === ' ') {
+        case 'awaiting_chief_action_choice':
+          if (key === 'space') {
             s({ type: 'skip' });
           }
           break;

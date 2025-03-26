@@ -53,7 +53,7 @@ sealed class GameState(val type: String) {
             _fakeArg: Unit?
         ) : this(server, assignPlayerRoles(originalPlayers))
 
-        var innerGameState: InnerGameState = InnerGameState.Idle()
+        var innerGameState: InnerGameState = InnerGameState.Idle(initialWaitPeriod = true)
         val deck: CardDeck = CardDeck()
 
         var failedElections: Int = 0
@@ -131,12 +131,12 @@ sealed class GameState(val type: String) {
     }
 }
 
-sealed class InnerGameState(val name: String) {
+sealed class InnerGameState(val type: String) {
     class Idle(
         val initialWaitPeriod: Boolean = false
     ) : InnerGameState("idle")
 
-    class AwaitingPlayerActionChoice(
+    class AwaitingChiefActionChoice(
         val permittedActions: List<ActionChoice> = ActionChoice.entries
     ) : InnerGameState("awaiting_chief_action_choice")
 

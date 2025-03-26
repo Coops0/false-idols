@@ -47,8 +47,8 @@ export enum ActionChoice {
 }
 
 export type IdleInnerGameState = { type: 'idle' };
-export type AwaitingPlayerActionChoiceInnerGameState = {
-    type: 'awaiting_player_action_choice',
+export type AwaitingChiefActionChoiceInnerGameState = {
+    type: 'awaiting_chief_action_choice',
     permitted_actions: ActionChoice[]
 };
 export type AwaitingChiefCardDiscardInnerGameState = {
@@ -67,7 +67,7 @@ export type AwaitingInvestigationAnalysisInnerGameState = { type: 'awaiting_inve
 
 export type InnerGameState =
     IdleInnerGameState
-    | AwaitingPlayerActionChoiceInnerGameState
+    | AwaitingChiefActionChoiceInnerGameState
     | AwaitingChiefCardDiscardInnerGameState
     | AwaitingAdvisorCardChoiceInnerGameState
     | AwaitingElectionResolutionInnerGameState

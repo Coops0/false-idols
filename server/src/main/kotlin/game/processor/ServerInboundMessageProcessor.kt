@@ -48,9 +48,9 @@ suspend fun GameState.handleServerInboundApplicationMessage(message: ServerInbou
                 is InnerGameState.AwaitingAdvisorCardChoice ->
                     this.handleAdvisorChooseCard(this[igs.advisorName]!!, igs.cards.random().id)
 
-                is InnerGameState.AwaitingPlayerActionChoice -> this.rotateChief()
+                is InnerGameState.AwaitingChiefActionChoice -> this.rotateChief()
                 is InnerGameState.AwaitingInvestigationAnalysis -> this.rotateChief()
-                else -> throw IllegalStateException("Cannot skip in state ${igs.name}")
+                else -> throw IllegalStateException("Cannot skip in state ${igs.type}")
             }
         }
 

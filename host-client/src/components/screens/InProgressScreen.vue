@@ -10,7 +10,7 @@
     <AwaitingChiefCardDiscardScreen v-else-if="game.inner_game_state.type === 'awaiting_chief_card_discard'" :game/>
     <AwaitingElectionResolutionScreen v-else-if="game.inner_game_state.type === 'awaiting_election_resolution'" :game/>
     <AwaitingInvestigationAnalysis v-else-if="game.inner_game_state.type === 'awaiting_investigation_analysis'" :game/>
-    <AwaitingPlayerActionChoiceScreen v-else-if="game.inner_game_state.type === 'awaiting_player_action_choice'" :game/>
+    <AwaitingPlayerActionChoiceScreen v-else-if="game.inner_game_state.type === 'awaiting_chief_action_choice'" :game/>
     <IdleScreen v-else-if="game.inner_game_state.type === 'idle'" :game/>
   </div>
 </template>

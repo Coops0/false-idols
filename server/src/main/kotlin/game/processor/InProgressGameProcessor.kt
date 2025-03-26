@@ -45,7 +45,7 @@ suspend fun GameState.GameInProgress.rotateChief() {
     if (this.deck.absolutePoints >= MIN_ABS_POINTS_TO_INVESTIGATE) permittedActions.add(ActionChoice.INVESTIGATE)
     if (this.deck.absolutePoints >= MIN_ABS_POINTS_TO_KILL) permittedActions.add(ActionChoice.KILL)
 
-    this.innerGameState = InnerGameState.AwaitingPlayerActionChoice(
+    this.innerGameState = InnerGameState.AwaitingChiefActionChoice(
         permittedActions = permittedActions
     )
 
@@ -103,7 +103,7 @@ suspend fun GameState.GameInProgress.handlePlayerActionChoice(
 ) {
     val igs = this.innerGameState
 
-    require(igs is InnerGameState.AwaitingPlayerActionChoice) { "Game must be awaiting player action choice to choose action" }
+    require(igs is InnerGameState.AwaitingChiefActionChoice) { "Game must be awaiting player action choice to choose action" }
     require(this.chief == aggressor) { "Player must be chief to execute action" }
 
     val permittedActions = igs.permittedActions
