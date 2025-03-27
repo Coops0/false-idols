@@ -1,27 +1,57 @@
 <template>
-  <div>
-    <p>{{ roleName(game.winner as Role) }}</p>
-    <p>{{ reasonText }}</p>
+  <div class="space-y-8">
+    <DivineCard>
+      <div class="text-center space-y-4">
+        <h1 :class="[
+          game.winner === 'ANGELS' ? 'text-blue-600' : 'text-red-600'
+        ]" class="text-4xl font-bold">
+          {{ game.winner === 'ANGELS' ? 'Divine Victory' : 'Demonic Triumph' }}
+        </h1>
+        <p class="text-xl text-amber-900">{{ reasonText }}</p>
+      </div>
+    </DivineCard>
 
-    <div v-if="demons.length">
-      <p>Demons</p>
-      <ul>
-        <li v-for="player in demons" :key="player.name">
-          <PlayerPreview :player="player" icon-variant="demon"/>
-        </li>
-      </ul>
-    </div>
-    <div>
-      <p>Satan</p>
-      <PlayerPreview :player="satan" icon-variant="satan"/>
-    </div>
+    <DivineCard>
+      <div class="space-y-6">
+        <div class="text-center">
+          <h2 class="text-2xl font-semibold text-amber-900 mb-4">The Fallen</h2>
+          <div class="flex flex-col items-center gap-4">
+            <div class="relative">
+              <div class="w-24 h-24 rounded-full overflow-hidden border-4 border-red-600 shadow-lg">
+                <img :alt="satan.name" :src="satan.icon" class="w-full h-full object-cover"/>
+              </div>
+              <div
+                  class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-red-600 text-white px-3 py-1 rounded-full text-sm font-medium">
+                Satan
+              </div>
+            </div>
+            <p class="text-lg text-amber-900">{{ satan.name }}</p>
+          </div>
+        </div>
+
+        <div v-if="demons.length" class="text-center">
+          <h3 class="text-xl font-semibold text-amber-900 mb-4">The Demons</h3>
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div v-for="player in demons" :key="player.name" class="relative">
+              <div class="w-20 h-20 rounded-full overflow-hidden border-4 border-red-500 shadow-lg">
+                <img :alt="player.name" :src="player.icon" class="w-full h-full object-cover"/>
+              </div>
+              <div
+                  class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                {{ player.name }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </DivineCard>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { type GameOverGameState, Role, roleName } from '@/game/state.ts';
+import { type GameOverGameState } from '@/game/state.ts';
 import { computed } from 'vue';
-import PlayerPreview from '@/components/ui/PlayerPreview.vue';
+import DivineCard from '@/components/ui/DivineCard.vue';
 
 const props = defineProps<{ game: GameOverGameState }>();
 

@@ -8,7 +8,7 @@
       class="w-64 p-4 rounded-lg shadow-md border-2 transition-all duration-200 hover:shadow-lg"
   >
     <div class="space-y-2">
-      <p class="text-gray-800 font-medium">{{ card.description }}</p>
+      <p class="text-gray-800 text-xs font-medium">{{ card.description }}</p>
       <p
           :class="{
           'text-gray-600': card.consequence_qualifier === 'NEUTRAL',

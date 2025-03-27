@@ -49,7 +49,7 @@ sealed class GameState(val type: String) {
         @Suppress("UNUSED_PARAMETER", "LocalVariableName") constructor(
             server: SocketContentConverterSender<ServerOutboundMessage>,
             originalPlayers: List<Player>,
-            /// Need this to prevent constructor declaration clash
+            // Need this to prevent constructor declaration clash
             _fakeArg: Unit?
         ) : this(server, assignPlayerRoles(originalPlayers))
 
