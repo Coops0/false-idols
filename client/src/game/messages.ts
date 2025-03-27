@@ -23,7 +23,7 @@ export const roleName = (role: Role | SimpleRole) => {
         case Role.SATAN:
             return 'Satan';
     }
-}
+};
 
 export type ActionSupplementedPlayer = Player & {
     investigatable: boolean,

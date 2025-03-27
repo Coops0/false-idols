@@ -1,11 +1,17 @@
 <template>
-  <div>
-    <p>{{ player.name }}</p>
-    <img :src="icon" :alt="`${player.icon} ${iconVariant}`"/>
+  <div class="flex flex-col items-center space-y-2">
+    <p class="text-lg font-medium text-gray-800">{{ player.name }}</p>
+    <div class="relative w-16 h-16 rounded-full overflow-hidden border-2 border-gray-200 shadow-md">
+      <img
+          :alt="`${player.icon} ${iconVariant}`"
+          :src="icon"
+          class="w-full h-full object-cover"
+      />
+    </div>
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import type { Player } from '@/game/messages.ts';
 import { PlayerIcon } from '@/game/player-icon.ts';
 import { computed } from 'vue';

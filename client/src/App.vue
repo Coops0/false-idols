@@ -15,9 +15,9 @@
     />
     <RoleConfirmationScreen
         v-else-if="game.state.type === 'view_role'"
-        :player-name
-        :player-icon
         :game
+        :player-icon
+        :player-name
         @confirm="confirmRole"
     />
     <CommitActionScreen

@@ -1,7 +1,24 @@
 <template>
-  <div>
-    <p>Choose one card to <span class="bold">discard</span></p>
-    <CardPreview v-for="card in gameState.cards" :key="card.id" :card="card" @click="() => discard(card)"/>
+  <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-4">
+    <BaseCard class="w-full max-w-4xl">
+      <template #header>
+        <h1 class="text-2xl font-bold text-gray-800 text-center">Chief's Decision</h1>
+        <p class="text-gray-600 text-center mt-2">
+          Choose one card to <span class="font-bold text-red-600">discard</span>
+        </p>
+      </template>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div
+            v-for="card in gameState.cards"
+            :key="card.id"
+            class="cursor-pointer transition-all duration-200 hover:scale-105"
+            @click="() => discard(card)"
+        >
+          <CardPreview :card="card"/>
+        </div>
+      </div>
+    </BaseCard>
   </div>
 </template>
 
@@ -10,6 +27,7 @@ import CardPreview from '@/components/ui/CardPreview.vue';
 import { computed } from 'vue';
 import { type ChiefDiscardCardGameState, Game } from '@/game';
 import type { Card } from '@/game/messages.ts';
+import BaseCard from '@/components/ui/BaseCard.vue';
 
 const props = defineProps<{ game: Game; }>();
 const gameState = computed(() => props.game.state as ChiefDiscardCardGameState);
