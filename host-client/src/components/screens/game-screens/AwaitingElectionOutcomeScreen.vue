@@ -21,12 +21,12 @@
 </template>
 
 <script lang="ts" setup>
-import type { AwaitingElectionResolutionInnerGameState, InProgressGameState } from '@/game/state.ts';
+import type { AwaitingElectionOutcomeInnerGameState, InProgressGameState } from '@/game/state.ts';
 import { computed } from 'vue';
 import DivineCard from '@/components/ui/DivineCard.vue';
 
 const props = defineProps<{ game: InProgressGameState }>();
-const gameState = computed(() => props.game.inner_game_state as AwaitingElectionResolutionInnerGameState);
+const gameState = computed(() => props.game.inner_game_state as AwaitingElectionOutcomeInnerGameState);
 
 const nominee = computed(() => props.game.players.find(p => p.name === gameState.value.nominee)!);
 </script>

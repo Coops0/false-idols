@@ -16,7 +16,7 @@ class PlayerConnection(
 open class Player(
     val name: PlayerName,
     val icon: PlayerIcon,
-    val channels: MutableList<PlayerConnection>
+    @JsonIgnore val channels: MutableList<PlayerConnection>
 ) {
     /// These messages are important enough to re-send on any future reconnection
     val queue = mutableListOf<OutboundMessage>()

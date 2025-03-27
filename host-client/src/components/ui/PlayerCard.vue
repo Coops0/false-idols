@@ -1,7 +1,7 @@
 <template>
   <div class="relative group">
     <div
-        class="absolute inset-0 bg-gradient-to-br from-amber-100 to-amber-200 rounded-lg shadow-lg transform transition-all duration-300 group-hover:scale-105 group-hover:shadow-xl"></div>
+        class="absolute inset-0 bg-gradient-to-br from-amber-100 to-amber-200 rounded-lg shadow-lg transform transition-all duration-300"/>
     <div class="relative p-4 border-2 border-amber-300 rounded-lg bg-gradient-to-br from-amber-50 to-amber-100">
       <div class="flex items-center gap-4">
         <div class="relative">
@@ -17,13 +17,6 @@
         <div class="flex-1">
           <h3 class="text-lg font-semibold text-amber-900">{{ player.name }}</h3>
           <div class="flex items-center gap-2 mt-1">
-            <span :class="[
-              player.role === 'ANGEL' && 'bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 border border-blue-300',
-              player.role === 'DEMON' && 'bg-gradient-to-r from-red-100 to-red-200 text-red-800 border border-red-300',
-              player.role === 'SATAN' && 'bg-gradient-to-r from-purple-100 to-purple-200 text-purple-800 border border-purple-300'
-            ]" class="text-sm px-2 py-1 rounded-full shadow-sm">
-              {{ roleName(player.role) }}
-            </span>
             <span v-if="!player.is_alive"
                   class="text-sm px-2 py-1 rounded-full bg-gradient-to-r from-gray-100 to-gray-200 text-gray-800 border border-gray-300 shadow-sm">
               Deceased

@@ -29,7 +29,7 @@
       </template>
 
       <template
-          v-if="game.type === 'game_in_progress' && game.inner_game_state.type === 'awaiting_election_resolution'">
+          v-if="game.type === 'game_in_progress' && game.inner_game_state.type === 'awaiting_election_outcome'">
         <div class="flex items-center gap-2">
           <kbd class="px-2 py-1 bg-amber-800 rounded text-amber-200">Enter</kbd>
           <span>or</span>
@@ -66,7 +66,7 @@ const isSkippableState = computed(() => {
   }
 
   // all other inner game states are skippable except for election resolution
-  return props.game.inner_game_state.type !== 'awaiting_election_resolution';
+  return props.game.inner_game_state.type !== 'awaiting_election_outcome';
 });
 </script>
 

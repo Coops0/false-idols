@@ -20,22 +20,6 @@
         <p class="text-xl text-amber-700">The current chief</p>
       </div>
     </DivineCard>
-
-    <DivineCard>
-      <div class="space-y-6">
-        <h3 class="text-xl font-semibold text-amber-900 text-center">Game Status</h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div class="text-center p-4 bg-amber-50 rounded-lg border-2 border-amber-200">
-            <div class="text-2xl font-bold text-amber-900">{{ game.failed_elections }}</div>
-            <div class="text-amber-700">Failed Elections</div>
-          </div>
-          <div class="text-center p-4 bg-amber-50 rounded-lg border-2 border-amber-200">
-            <div class="text-2xl font-bold text-amber-900">{{ game.deck.card_stack.length }}</div>
-            <div class="text-amber-700">Cards Remaining</div>
-          </div>
-        </div>
-      </div>
-    </DivineCard>
   </div>
 </template>
 

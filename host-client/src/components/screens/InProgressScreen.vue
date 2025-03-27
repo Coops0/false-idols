@@ -13,7 +13,7 @@
                                        :game/>
       <AwaitingChiefCardDiscardScreen v-else-if="game.inner_game_state.type === 'awaiting_chief_card_discard'"
                                       :game/>
-      <AwaitingElectionResolutionScreen v-else-if="game.inner_game_state.type === 'awaiting_election_resolution'"
+      <AwaitingElectionOutcomeScreen v-else-if="game.inner_game_state.type === 'awaiting_election_outcome'"
                                         :game/>
       <AwaitingInvestigationAnalysis v-else-if="game.inner_game_state.type === 'awaiting_investigation_analysis'"
                                      :game/>
@@ -21,9 +21,9 @@
                                         :game/>
       <IdleScreen v-else-if="game.inner_game_state.type === 'idle'" :game/>
     </Transition>
-    
+
     <ScoreBar :game/>
-    <ChaosBar :game/>
+    <ChaosBar v-if="game.failed_elections > 0" :game/>
   </div>
 </template>
 
@@ -32,7 +32,7 @@ import PlayerCard from '@/components/ui/PlayerCard.vue';
 import DivineCard from '@/components/ui/DivineCard.vue';
 import AwaitingAdvisorCardChoiceScreen from '@/components/screens/game-screens/AwaitingAdvisorCardChoiceScreen.vue';
 import AwaitingChiefCardDiscardScreen from '@/components/screens/game-screens/AwaitingChiefCardDiscardScreen.vue';
-import AwaitingElectionResolutionScreen from '@/components/screens/game-screens/AwaitingElectionResolutionScreen.vue';
+import AwaitingElectionOutcomeScreen from '@/components/screens/game-screens/AwaitingElectionOutcomeScreen.vue';
 import AwaitingInvestigationAnalysis from '@/components/screens/game-screens/AwaitingInvestigationAnalysis.vue';
 import AwaitingPlayerActionChoiceScreen from '@/components/screens/game-screens/AwaitingPlayerActionChoiceScreen.vue';
 import IdleScreen from '@/components/screens/game-screens/IdleScreen.vue';

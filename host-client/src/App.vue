@@ -86,8 +86,6 @@ function onKeyPress(event: KeyboardEvent) {
     key = event.key.toLowerCase();
   }
 
-  console.log(game.value);
-
   if (key === 'h') {
     event.preventDefault();
     showKeybindDisplay.value = !showKeybindDisplay.value;
@@ -118,7 +116,7 @@ function onKeyPress(event: KeyboardEvent) {
             s({ type: 'skip' });
           }
           break;
-        case 'awaiting_election_resolution':
+        case 'awaiting_election_outcome':
           if (key === 'enter' || key === 'y') {
             s({ type: 'resolve_election', passed: true });
           } else if (key === 'backspace' || key === 'n') {

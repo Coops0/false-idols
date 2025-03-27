@@ -16,7 +16,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <div v-for="player in game.players" :key="player.name" class="relative group">
             <div
-                class="absolute inset-0 bg-gradient-to-br from-amber-100 to-amber-200 rounded-lg shadow-lg transform transition-all duration-300 group-hover:scale-105 group-hover:shadow-xl"></div>
+                class="absolute inset-0 bg-gradient-to-br from-amber-100 to-amber-200 rounded-lg shadow-lg transform transition-all duration-300"/>
             <div class="relative p-4 border-2 border-amber-300 rounded-lg bg-gradient-to-br from-amber-50 to-amber-100">
               <div class="flex items-center gap-4">
                 <div class="w-12 h-12 rounded-full overflow-hidden border-2 border-amber-400 shadow-lg">

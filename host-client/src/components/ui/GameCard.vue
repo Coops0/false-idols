@@ -1,7 +1,7 @@
 <template>
   <div class="relative group cursor-pointer">
     <div
-        class="absolute inset-0 bg-gradient-to-br from-amber-100 to-amber-200 rounded-lg shadow-lg transform transition-all duration-300 group-hover:scale-105 group-hover:shadow-xl"/>
+        class="absolute inset-0 bg-gradient-to-br from-amber-100 to-amber-200 rounded-lg shadow-lg transform transition-all duration-300"/>
     <div class="relative p-6 border-2 border-amber-300 rounded-lg bg-gradient-to-br from-amber-50 to-amber-100">
       <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-400 to-amber-200"/>
       <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-amber-200 to-amber-400"/>

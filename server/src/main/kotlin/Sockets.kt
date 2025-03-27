@@ -113,8 +113,6 @@ private fun Routing.ws() {
 
                 globalInnerApplicationChannel.send(PlayerInboundApplicationMessage(sessionId, message))
             }
-
-            println("incoming stopped?")
         }.onFailure { exception ->
             println("WebSocket exception: ${exception.message}")
         }.also {

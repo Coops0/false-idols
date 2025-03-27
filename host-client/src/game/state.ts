@@ -61,7 +61,7 @@ export type AwaitingAdvisorCardChoiceInnerGameState = {
     cards: Card[],
     advisor_name: string
 };
-export type AwaitingElectionResolutionInnerGameState = { type: 'awaiting_election_resolution', nominee: string };
+export type AwaitingElectionOutcomeInnerGameState = { type: 'awaiting_election_outcome', nominee: string };
 export type AwaitingInvestigationAnalysisInnerGameState = { type: 'awaiting_investigation_analysis', target: string };
 
 
@@ -70,7 +70,7 @@ export type InnerGameState =
     | AwaitingChiefActionChoiceInnerGameState
     | AwaitingChiefCardDiscardInnerGameState
     | AwaitingAdvisorCardChoiceInnerGameState
-    | AwaitingElectionResolutionInnerGameState
+    | AwaitingElectionOutcomeInnerGameState
     | AwaitingInvestigationAnalysisInnerGameState;
 
 export type LobbyGameState = {
