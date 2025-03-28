@@ -1,5 +1,6 @@
 package com.cooper.game
 
+import com.cooper.FalseIdolsError
 import com.cooper.SocketContentConverterSender
 import com.cooper.game.processor.ServerInboundMessageProcessorAction
 import com.cooper.game.processor.handlePlayerInboundApplicationMessage
@@ -64,9 +65,11 @@ suspend fun launchGameActor(server: SocketContentConverterSender<ServerOutboundM
                 } catch (e: GameOverThrowable) {
                     gameState = (gameState as GameState.GameInProgress).toGameOver(e.winner, e.reason)
                 } catch (e: IllegalStateException) {
-                    println("Player illegal state exception -> ${e.message}")
+                    server.send(ServerOutboundMessage.Error(FalseIdolsError.illegalState(player.name, e.message)))
                 } catch (e: IllegalArgumentException) {
-                    println("Player illegal argument exception -> ${e.message}")
+                    server.send(ServerOutboundMessage.Error(FalseIdolsError.illegalArgument(player.name, e.message)))
+                } catch (e: AssertionError) {
+                    server.send(ServerOutboundMessage.Error(FalseIdolsError.assertionError(player.name, e.message)))
                 }
             }
 
@@ -77,10 +80,13 @@ suspend fun launchGameActor(server: SocketContentConverterSender<ServerOutboundM
                     gameState = (gameState as GameState.GameInProgress).toGameOver(e.winner, e.reason)
                     null
                 } catch (e: IllegalStateException) {
-                    println("Server illegal state exception -> ${e.message}")
+                    server.send(ServerOutboundMessage.Error(FalseIdolsError.illegalState(message = e.message)))
                     null
                 } catch (e: IllegalArgumentException) {
-                    println("Server illegal argument exception -> ${e.message}")
+                    server.send(ServerOutboundMessage.Error(FalseIdolsError.illegalArgument(message = e.message)))
+                    null
+                } catch (e: AssertionError) {
+                    server.send(ServerOutboundMessage.Error(FalseIdolsError.assertionError(message = e.message)))
                     null
                 }
 

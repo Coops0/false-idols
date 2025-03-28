@@ -1,5 +1,13 @@
 import type { GameState } from '@/game/state.ts';
 
+export type FalseIdolsErrorType = 'ASSERTION' | 'ILLEGAL_ARGUMENT' | 'ILLEGAL_STATE';
+
+export type FalseIdolsError = {
+    error_type: FalseIdolsErrorType;
+    player_name: string | null;
+    message: string;
+}
+
 export type ServerOutboundMessage =
     { type: 'reset_players' } |
     { type: 'start_game' } |
@@ -8,4 +16,7 @@ export type ServerOutboundMessage =
     { type: 'go_back_to_lobby' } |
     { type: 'ping' };
 
-export type ServerInboundMessage = { type: 'update_game_state', game_state: GameState };
+
+export type ServerInboundMessage =
+    { type: 'update_game_state', game_state: GameState } |
+    { type: 'error', error: FalseIdolsError };

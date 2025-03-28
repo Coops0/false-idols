@@ -61,7 +61,11 @@ const showKeybindDisplay = useLocalStorage('show-keybind-display', true);
 
 function onMessage(message: ServerInboundMessage) {
   console.log(message);
-  game.value = message.game_state;
+  if (message.type === 'update_game_state') {
+    game.value = message.game_state;
+  } else {
+    console.warn('server error', message.error);
+  }
 }
 
 (async function () {

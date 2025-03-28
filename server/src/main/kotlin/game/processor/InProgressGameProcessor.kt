@@ -9,16 +9,7 @@ suspend fun GameState.GameInProgress.rotateChief() {
     val igs = this.innerGameState
     val wasInitialWaitPeriod = igs is InnerGameState.Idle && igs.initialWaitPeriod
 
-    this.players.forEach { player ->
-        player.wasAdvisorLastRound = false
-        player.clearQueue()
-    }
-
-    // This should be handled in the handle advisor choice method, since
-    // it sets us to idle after running.
-    if (igs is InnerGameState.AwaitingAdvisorCardChoice) {
-        this[igs.advisorName]!!.wasAdvisorLastRound = true
-    }
+    this.players.forEach { player -> player.clearQueue() }
 
     val newChief = if (wasInitialWaitPeriod) {
         // Chief has already been randomly assigned
@@ -144,9 +135,11 @@ suspend fun GameState.GameInProgress.handlePlayerActionChoice(
                 nominee = target.name
             )
 
-            // now the server will decide outcome
+            // now the host will decide outcome
         }
     }
+
+    this.players.forEach { player -> player.wasAdvisorLastRound = false }
 }
 
 suspend fun GameState.GameInProgress.handleChiefDiscardCard(player: GamePlayer, cardId: Int) {
@@ -177,6 +170,8 @@ fun GameState.GameInProgress.handleAdvisorChooseCard(player: GamePlayer, cardId:
 
     this.deck.playedCards.add(card)
     this.checkGameOverConditions()
+
+    this.players.forEach { p -> p.wasAdvisorLastRound = false }
 
     player.wasAdvisorLastRound = true
 
