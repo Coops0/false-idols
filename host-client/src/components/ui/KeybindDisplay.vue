@@ -1,53 +1,49 @@
 <template>
-  <div class="bg-amber-900/90 backdrop-blur-sm rounded-lg shadow-xl p-4 text-amber-50">
-    <div class="flex items-center justify-between mb-3">
-      <h3 class="text-sm font-medium">Keybinds</h3>
-    </div>
-
-    <div class="space-y-2 text-sm">
+  <div class="bg-gray-900/50 backdrop-blur-sm rounded-xl shadow-lg p-6 text-gray-50">
+    <div class="space-y-3 text-sm">
       <div class="flex items-center gap-2">
-        <kbd class="px-2 py-1 bg-amber-800 rounded text-amber-200">H</kbd>
-        <span>Hide commands</span>
+        <kbd class="px-2.5 py-1.5 bg-gray-800/50 rounded-lg text-gray-200 border border-gray-700/50">H</kbd>
+        <span class="text-gray-300">Hide commands</span>
       </div>
 
       <template v-if="game.type === 'lobby'">
         <div class="flex items-center gap-2">
-          <kbd class="px-2 py-1 bg-amber-800 rounded text-amber-200">Enter</kbd>
-          <span>Start game</span>
+          <kbd class="px-2.5 py-1.5 bg-gray-800/50 rounded-lg text-gray-200 border border-gray-700/50">Enter</kbd>
+          <span class="text-gray-300">Start game</span>
         </div>
         <div class="flex items-center gap-2">
-          <kbd class="px-2 py-1 bg-amber-800 rounded text-amber-200">Escape</kbd>
-          <span>Reset players</span>
+          <kbd class="px-2.5 py-1.5 bg-gray-800/50 rounded-lg text-gray-200 border border-gray-700/50">Escape</kbd>
+          <span class="text-gray-300">Reset players</span>
         </div>
       </template>
 
       <template v-if="isSkippableState">
         <div class="flex items-center gap-2">
-          <kbd class="px-2 py-1 bg-amber-800 rounded text-amber-200">Space</kbd>
-          <span>Skip</span>
+          <kbd class="px-2.5 py-1.5 bg-gray-800/50 rounded-lg text-gray-200 border border-gray-700/50">Space</kbd>
+          <span class="text-gray-300">Skip</span>
         </div>
       </template>
 
       <template
           v-if="game.type === 'game_in_progress' && game.inner_game_state.type === 'awaiting_election_outcome'">
         <div class="flex items-center gap-2">
-          <kbd class="px-2 py-1 bg-amber-800 rounded text-amber-200">Enter</kbd>
-          <span>or</span>
-          <kbd class="px-2 py-1 bg-amber-800 rounded text-amber-200">Y</kbd>
-          <span>Pass election</span>
+          <kbd class="px-2.5 py-1.5 bg-gray-800/50 rounded-lg text-gray-200 border border-gray-700/50">Enter</kbd>
+          <span class="text-gray-300">or</span>
+          <kbd class="px-2.5 py-1.5 bg-gray-800/50 rounded-lg text-gray-200 border border-gray-700/50">Y</kbd>
+          <span class="text-gray-300">Pass election</span>
         </div>
         <div class="flex items-center gap-2">
-          <kbd class="px-2 py-1 bg-amber-800 rounded text-amber-200">Backspace</kbd>
-          <span>or</span>
-          <kbd class="px-2 py-1 bg-amber-800 rounded text-amber-200">N</kbd>
-          <span>Reject election</span>
+          <kbd class="px-2.5 py-1.5 bg-gray-800/50 rounded-lg text-gray-200 border border-gray-700/50">Backspace</kbd>
+          <span class="text-gray-300">or</span>
+          <kbd class="px-2.5 py-1.5 bg-gray-800/50 rounded-lg text-gray-200 border border-gray-700/50">N</kbd>
+          <span class="text-gray-300">Reject election</span>
         </div>
       </template>
 
       <template v-if="game.type === 'game_over'">
         <div class="flex items-center gap-2">
-          <kbd class="px-2 py-1 bg-amber-800 rounded text-amber-200">Enter</kbd>
-          <span>Return to lobby</span>
+          <kbd class="px-2.5 py-1.5 bg-gray-800/50 rounded-lg text-gray-200 border border-gray-700/50">Enter</kbd>
+          <span class="text-gray-300">Return to lobby</span>
         </div>
       </template>
     </div>

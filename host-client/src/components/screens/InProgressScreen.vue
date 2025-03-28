@@ -1,12 +1,12 @@
 <template>
   <div class="space-y-8">
-    <DivineCard>
-      <div class="space-y-4">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <ModernCard>
+      <div class="space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <PlayerCard v-for="player in game.players" :key="player.name" :player/>
         </div>
       </div>
-    </DivineCard>
+    </ModernCard>
 
     <Transition mode="out-in" name="fade">
       <AwaitingAdvisorCardChoiceScreen v-if="game.inner_game_state.type === 'awaiting_advisor_card_choice'"
@@ -30,7 +30,7 @@
 
 <script lang="ts" setup>
 import PlayerCard from '@/components/ui/PlayerCard.vue';
-import DivineCard from '@/components/ui/DivineCard.vue';
+import ModernCard from '@/components/ui/ModernCard.vue';
 import AwaitingAdvisorCardChoiceScreen from '@/components/screens/game-screens/AwaitingAdvisorCardChoiceScreen.vue';
 import AwaitingChiefCardDiscardScreen from '@/components/screens/game-screens/AwaitingChiefCardDiscardScreen.vue';
 import AwaitingElectionOutcomeScreen from '@/components/screens/game-screens/AwaitingElectionOutcomeScreen.vue';

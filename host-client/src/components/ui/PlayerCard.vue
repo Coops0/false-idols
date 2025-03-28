@@ -1,27 +1,22 @@
 <template>
-  <div class="relative group">
-    <div
-        class="absolute inset-0 bg-gradient-to-br from-amber-100 to-amber-200 rounded-lg shadow-lg transform transition-all duration-300"/>
-    <div class="relative p-4 border-2 border-amber-300 rounded-lg bg-gradient-to-br from-amber-50 to-amber-100">
-      <div class="flex items-center gap-4">
-        <div class="relative">
-          <div
-              class="w-16 h-16 rounded-full overflow-hidden border-2 border-amber-400 shadow-lg bg-gradient-to-br from-amber-200 to-amber-300">
-            <img :alt="player.name" :src="icon" class="w-full h-full object-cover"/>
-          </div>
-          <div v-if="player.is_chief"
-               class="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-md border border-yellow-300">
-            👑
-          </div>
+  <div class="group relative bg-white/50 backdrop-blur-sm rounded-xl p-6 border border-gray-100/50 hover:border-gray-200/50 transition-all duration-300">
+    <div class="flex items-center gap-4">
+      <div class="relative">
+        <div class="w-16 h-16 rounded-2xl overflow-hidden border-2 border-gray-100 shadow-sm bg-white">
+          <img :alt="player.name" :src="icon" class="w-full h-full object-cover"/>
         </div>
-        <div class="flex-1">
-          <h3 class="text-lg font-semibold text-amber-900">{{ player.name }}</h3>
-          <div class="flex items-center gap-2 mt-1">
-            <span v-if="!player.is_alive"
-                  class="text-sm px-2 py-1 rounded-full bg-gradient-to-r from-gray-100 to-gray-200 text-gray-800 border border-gray-300 shadow-sm">
-              Deceased
-            </span>
-          </div>
+        <div v-if="player.is_chief"
+             class="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-md border border-blue-400">
+          👑
+        </div>
+      </div>
+      <div class="flex-1">
+        <h3 class="text-lg font-medium text-gray-900">{{ player.name }}</h3>
+        <div class="flex items-center gap-2 mt-1">
+          <span v-if="!player.is_alive"
+                class="text-sm px-2.5 py-1 rounded-full bg-gray-100/50 text-gray-600 border border-gray-200/50">
+            Deceased
+          </span>
         </div>
       </div>
     </div>

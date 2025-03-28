@@ -1,22 +1,22 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-amber-50 to-amber-100 p-4 md:p-8">
+  <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 md:p-8">
+    <Toast v-model="errorMessage"/>
     <div class="max-w-7xl mx-auto">
       <div class="relative">
         <div class="absolute inset-0 pointer-events-none">
           <div
-              class="absolute top-0 left-0 w-64 h-64 bg-amber-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"/>
+              class="absolute top-0 left-0 w-96 h-96 bg-blue-100/30 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob"/>
           <div
-              class="absolute top-0 right-0 w-64 h-64 bg-amber-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"/>
+              class="absolute top-0 right-0 w-96 h-96 bg-purple-100/30 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000"/>
           <div
-              class="absolute -bottom-8 left-20 w-64 h-64 bg-amber-400 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"/>
+              class="absolute -bottom-8 left-20 w-96 h-96 bg-pink-100/30 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-4000"/>
         </div>
 
         <div class="relative">
           <div v-if="game === null" class="flex items-center justify-center min-h-[60vh]">
             <div class="text-center">
-              <div
-                  class="w-16 h-16 border-4 border-amber-400 border-t-transparent rounded-full animate-spin mx-auto"/>
-              <p class="mt-4 text-amber-800 text-lg">Loading...</p>
+              <div class="w-16 h-16 border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin mx-auto"/>
+              <p class="mt-4 text-gray-600 text-lg font-medium">Loading...</p>
             </div>
           </div>
 
@@ -32,7 +32,9 @@
             </template>
           </Transition>
 
-          <KeybindDisplay v-if="game !== null && showKeybindDisplay" :game class="fixed bottom-4 right-4"/>
+          <Transition mode="out-in" name="fade">
+            <KeybindDisplay v-if="game !== null && showKeybindDisplay" :game class="fixed bottom-4 right-4"/>
+          </Transition>
         </div>
       </div>
     </div>
@@ -48,11 +50,13 @@ import LobbyScreen from '@/components/screens/LobbyScreen.vue';
 import InProgressScreen from '@/components/screens/InProgressScreen.vue';
 import GameOverScreen from '@/components/screens/GameOverScreen.vue';
 import KeybindDisplay from '@/components/ui/KeybindDisplay.vue';
+import Toast from '@/components/ui/Toast.vue';
 import { useLocalStorage } from '@/util/use-local-storage.ts';
 import { PlayerIcon } from '@/game/player-icon.ts';
 
 const ws = new WebsocketOwner(onMessage);
 const game = ref<GameState | null>(null);
+const errorMessage = ref<string | null>(null);
 
 const showKeybindDisplay = useLocalStorage('show-keybind-display', true);
 
@@ -61,7 +65,11 @@ function onMessage(message: ServerInboundMessage) {
   if (message.type === 'update_game_state') {
     game.value = message.game_state;
   } else {
-    console.warn('server error', message.error);
+    let m = message.error.error_type;
+    if (message.error.player_name) {
+      m += ` (${message.error.player_name})`;
+    }
+    errorMessage.value = `${m}: ${message.error.message}`;
   }
 }
 

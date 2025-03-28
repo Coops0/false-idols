@@ -43,17 +43,17 @@ class GameOverThrowable(
 
 private val isActorActive: AtomicBoolean = AtomicBoolean(false)
 
-suspend fun launchGameActor(server: SocketContentConverterSender<ServerOutboundMessage>) {
+suspend fun launchGameActor(initialServer: SocketContentConverterSender<ServerOutboundMessage>) {
     if (!isActorActive.compareAndSet(false, true)) {
         return globalInnerApplicationChannel.send(
-            NewServerConnectionInnerApplicationMessage(server)
+            NewServerConnectionInnerApplicationMessage(initialServer)
         )
     }
 
-    var gameState: GameState = GameState.Lobby(server)
+    var gameState: GameState = GameState.Lobby(initialServer)
 
     // send initial game state
-    server.send(ServerOutboundMessage.UpdateGameState(gameState))
+    gameState.sendServer(ServerOutboundMessage.UpdateGameState(gameState))
 
     for (message in globalInnerApplicationChannel) {
         when (message) {
@@ -65,11 +65,11 @@ suspend fun launchGameActor(server: SocketContentConverterSender<ServerOutboundM
                 } catch (e: GameOverThrowable) {
                     gameState = (gameState as GameState.GameInProgress).toGameOver(e.winner, e.reason)
                 } catch (e: IllegalStateException) {
-                    server.send(ServerOutboundMessage.Error(FalseIdolsError.illegalState(player.name, e.message)))
+                    gameState.sendServer(ServerOutboundMessage.Error(FalseIdolsError.illegalState(player.name, e.message)))
                 } catch (e: IllegalArgumentException) {
-                    server.send(ServerOutboundMessage.Error(FalseIdolsError.illegalArgument(player.name, e.message)))
+                    gameState.sendServer(ServerOutboundMessage.Error(FalseIdolsError.illegalArgument(player.name, e.message)))
                 } catch (e: AssertionError) {
-                    server.send(ServerOutboundMessage.Error(FalseIdolsError.assertionError(player.name, e.message)))
+                    gameState.sendServer(ServerOutboundMessage.Error(FalseIdolsError.assertionError(player.name, e.message)))
                 }
             }
 
@@ -80,13 +80,13 @@ suspend fun launchGameActor(server: SocketContentConverterSender<ServerOutboundM
                     gameState = (gameState as GameState.GameInProgress).toGameOver(e.winner, e.reason)
                     null
                 } catch (e: IllegalStateException) {
-                    server.send(ServerOutboundMessage.Error(FalseIdolsError.illegalState(message = e.message)))
+                    gameState.sendServer(ServerOutboundMessage.Error(FalseIdolsError.illegalState(message = e.message)))
                     null
                 } catch (e: IllegalArgumentException) {
-                    server.send(ServerOutboundMessage.Error(FalseIdolsError.illegalArgument(message = e.message)))
+                    gameState.sendServer(ServerOutboundMessage.Error(FalseIdolsError.illegalArgument(message = e.message)))
                     null
                 } catch (e: AssertionError) {
-                    server.send(ServerOutboundMessage.Error(FalseIdolsError.assertionError(message = e.message)))
+                    gameState.sendServer(ServerOutboundMessage.Error(FalseIdolsError.assertionError(message = e.message)))
                     null
                 }
 
@@ -108,7 +108,7 @@ suspend fun launchGameActor(server: SocketContentConverterSender<ServerOutboundM
             is PlayerDisconnectInnerApplicationMessage -> gameState.handlePlayerDisconnect(message)
             is NewServerConnectionInnerApplicationMessage -> {
                 gameState.server = message.server
-                message.server.send(ServerOutboundMessage.UpdateGameState(gameState))
+                gameState.sendServer(ServerOutboundMessage.UpdateGameState(gameState))
             }
         }
 

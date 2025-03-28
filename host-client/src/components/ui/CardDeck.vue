@@ -1,20 +1,18 @@
 <template>
   <div class="relative w-full max-w-md mx-auto">
-    <div class="absolute inset-0 bg-gradient-to-br from-amber-100 to-amber-200 rounded-lg shadow-lg"></div>
-    <div class="relative p-4 border-2 border-amber-300 rounded-lg bg-gradient-to-br from-amber-50 to-amber-100">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <div
-              class="w-8 h-8 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-white font-bold shadow-md border border-amber-300">
+    <div class="bg-white/50 backdrop-blur-sm rounded-xl p-6 border border-gray-100/50">
+      <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center text-white font-bold shadow-sm border border-purple-400/50">
             🎴
           </div>
-          <span class="text-amber-900 font-semibold">Played Cards</span>
+          <span class="text-gray-900 font-medium text-lg">Played Cards</span>
         </div>
-        <div class="text-sm text-amber-800">
+        <div class="text-sm text-gray-600">
           {{ cards.length }} cards played
         </div>
       </div>
-      <div class="mt-4 relative h-32">
+      <div class="relative h-32">
         <div v-for="(card, index) in cards.slice(-3).reverse()"
              :key="index"
              :style="{

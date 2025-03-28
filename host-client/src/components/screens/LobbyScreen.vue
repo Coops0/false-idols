@@ -1,42 +1,40 @@
 <template>
   <div class="space-y-8">
-    <DivineCard>
+    <ModernCard>
       <div class="text-center">
-        <h1 class="text-3xl font-bold text-amber-900 mb-2">False Idols</h1>
-        <p class="text-amber-700">Join at</p>
-        <div class="mt-2 p-3 bg-amber-100 rounded-lg inline-block">
-          <code class="text-lg font-mono text-amber-900">{{ domain }}</code>
+        <h1 class="text-4xl font-bold text-gray-900 mb-3 tracking-tight">False Idols</h1>
+        <p class="text-gray-600 text-lg mb-4">Join at</p>
+        <div class="mt-2 p-4 bg-gray-50/50 backdrop-blur-sm rounded-xl inline-block border border-gray-100/50">
+          <code class="text-xl font-mono text-gray-900">{{ domain }}</code>
         </div>
       </div>
-    </DivineCard>
+    </ModernCard>
 
-    <DivineCard>
-      <div class="space-y-4">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div v-for="player in game.players" :key="player.name" class="relative group">
-            <div
-                class="absolute inset-0 bg-gradient-to-br from-amber-100 to-amber-200 rounded-lg shadow-lg transform transition-all duration-300"/>
-            <div class="relative p-4 border-2 border-amber-300 rounded-lg bg-gradient-to-br from-amber-50 to-amber-100">
-              <div class="flex items-center gap-4">
-                <div class="w-12 h-12 rounded-full overflow-hidden border-2 border-amber-400 shadow-lg">
-                  <img :alt="player.name" :src="player.icon" class="w-full h-full object-cover"/>
-                </div>
-                <div>
-                  <h3 class="font-medium text-amber-900">{{ player.name }}</h3>
-                </div>
+    <ModernCard>
+      <div class="space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div v-for="player in game.players" :key="player.name"
+               class="group relative bg-white/50 backdrop-blur-sm rounded-xl p-6 border border-gray-100/50 hover:border-gray-200/50 transition-all duration-300">
+            <div class="flex items-center gap-4">
+              <div class="w-16 h-16 rounded-2xl overflow-hidden border-2 border-gray-100 shadow-sm">
+                <img :alt="player.name" :src="PlayerIcon.normal(player.icon)" class="w-full h-full object-cover"/>
+              </div>
+              <div>
+                <h3 class="text-lg font-medium text-gray-900">{{ player.name }}</h3>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </DivineCard>
+    </ModernCard>
   </div>
 </template>
 
 <script lang="ts" setup>
 import type { LobbyGameState } from '@/game/state.ts';
 import { computed } from 'vue';
-import DivineCard from '@/components/ui/DivineCard.vue';
+import ModernCard from '@/components/ui/ModernCard.vue';
+import { PlayerIcon } from '@/game/player-icon.ts';
 
 defineProps<{ game: LobbyGameState }>();
 const domain = computed(() => window?.location?.hostname ?? 'LOADING');
