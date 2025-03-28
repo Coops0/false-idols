@@ -62,25 +62,25 @@ fun GameState.GameInProgress.checkGameOverConditions() {
         if (igs is InnerGameState.AwaitingChiefCardDiscard && igs.advisorName == satan.name) {
             throw GameOverThrowable(
                 winner = SimpleRole.DEMON,
-                reason = GameState.GameOverReason.SATAN_ELECTED_ADVISOR_LATE_GAME
+                reason = GameState.GameOver.Reason.SATAN_ELECTED_ADVISOR_LATE_GAME
             )
         }
     }
 
     if (deck.points >= POSITIVE_THRESHOLD_WIN) {
-        throw GameOverThrowable(winner = SimpleRole.ANGEL, reason = GameState.GameOverReason.POSITIVE_THRESHOLD_REACHED)
+        throw GameOverThrowable(winner = SimpleRole.ANGEL, reason = GameState.GameOver.Reason.POSITIVE_THRESHOLD_REACHED)
     }
 
     if (deck.points <= NEGATIVE_THRESHOLD_WIN) {
-        throw GameOverThrowable(winner = SimpleRole.DEMON, reason = GameState.GameOverReason.NEGATIVE_THRESHOLD_REACHED)
+        throw GameOverThrowable(winner = SimpleRole.DEMON, reason = GameState.GameOver.Reason.NEGATIVE_THRESHOLD_REACHED)
     }
 
     if (angels.isEmpty()) {
-        throw GameOverThrowable(winner = SimpleRole.DEMON, reason = GameState.GameOverReason.ALL_ANGELS_DEAD)
+        throw GameOverThrowable(winner = SimpleRole.DEMON, reason = GameState.GameOver.Reason.ALL_ANGELS_DEAD)
     }
 
     if (!satan.isAlive) {
-        throw GameOverThrowable(winner = SimpleRole.ANGEL, reason = GameState.GameOverReason.SATAN_KILLED)
+        throw GameOverThrowable(winner = SimpleRole.ANGEL, reason = GameState.GameOver.Reason.SATAN_KILLED)
     }
 }
 
@@ -122,7 +122,7 @@ suspend fun GameState.GameInProgress.handlePlayerActionChoice(
 
             target.isAlive = false
             if (target.role == ComplexRole.SATAN) {
-                throw GameOverThrowable(winner = SimpleRole.DEMON, reason = GameState.GameOverReason.SATAN_KILLED)
+                throw GameOverThrowable(winner = SimpleRole.DEMON, reason = GameState.GameOver.Reason.SATAN_KILLED)
             }
 
             this.checkGameOverConditions()

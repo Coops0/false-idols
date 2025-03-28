@@ -38,8 +38,8 @@ val globalInnerApplicationChannel = Channel<InnerApplicationMessage>()
 
 class GameOverThrowable(
     val winner: SimpleRole,
-    val reason: GameState.GameOverReason
-) : Throwable("game over")
+    val reason: GameState.GameOver.Reason
+) : Throwable()
 
 private val isActorActive: AtomicBoolean = AtomicBoolean(false)
 

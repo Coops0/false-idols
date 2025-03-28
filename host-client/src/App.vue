@@ -51,9 +51,6 @@ import KeybindDisplay from '@/components/ui/KeybindDisplay.vue';
 import { useLocalStorage } from '@/util/use-local-storage.ts';
 import { PlayerIcon } from '@/game/player-icon.ts';
 
-// TODO show animations/transitions in between in game states
-// TODO show notifications when absolute card value unlocks investigation and kill
-
 const ws = new WebsocketOwner(onMessage);
 const game = ref<GameState | null>(null);
 

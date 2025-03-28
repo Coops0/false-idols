@@ -73,7 +73,7 @@ enum class PlayerIcon(val iconName: String) {
     CAT("cat"),
     MOUSE("mouse"),
     FOX("fox"),
-    RACOON("racoon"),
+    RACCOON("raccoon"),
     RABBIT("rabbit"),
     DOG("dog"),
     PIG("pig"),

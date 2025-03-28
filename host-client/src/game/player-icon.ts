@@ -3,7 +3,7 @@ export const ICONS = [
     'cat',
     'mouse',
     'fox',
-    'racoon',
+    'raccoon',
     'rabbit',
     'dog',
     'pig',

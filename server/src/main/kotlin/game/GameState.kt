@@ -67,7 +67,7 @@ sealed class GameState(val type: String) {
         /// 3 failed elections in a row
         val isChaos: Boolean get() = failedElections >= 3
 
-        fun toGameOver(winner: SimpleRole, cause: GameOverReason) = GameOver(
+        fun toGameOver(winner: SimpleRole, cause: GameOver.Reason) = GameOver(
             server,
             players.toMutableList(),
             winner.name,
@@ -117,28 +117,25 @@ sealed class GameState(val type: String) {
         val winner: PlayerName,
         val satan: PlayerName,
         val demons: List<PlayerName>,
-        val reason: GameOverReason
+        val reason: Reason
     ) : GameState("game_over") {
         fun toLobby() = Lobby(server, players)
-    }
 
-    enum class GameOverReason {
-        SATAN_KILLED,
-        SATAN_ELECTED_ADVISOR_LATE_GAME,
-        POSITIVE_THRESHOLD_REACHED,
-        NEGATIVE_THRESHOLD_REACHED,
-        ALL_ANGELS_DEAD
+        enum class Reason {
+            SATAN_KILLED,
+            SATAN_ELECTED_ADVISOR_LATE_GAME,
+            POSITIVE_THRESHOLD_REACHED,
+            NEGATIVE_THRESHOLD_REACHED,
+            ALL_ANGELS_DEAD
+        }
     }
 }
 
 sealed class InnerGameState(val type: String) {
-    class Idle(
-        val initialWaitPeriod: Boolean = false
-    ) : InnerGameState("idle")
+    class Idle(val initialWaitPeriod: Boolean = false) : InnerGameState("idle")
 
-    class AwaitingChiefActionChoice(
-        val permittedActions: List<ActionChoice> = ActionChoice.entries
-    ) : InnerGameState("awaiting_chief_action_choice")
+    class AwaitingChiefActionChoice(val permittedActions: List<ActionChoice> = ActionChoice.entries) :
+            InnerGameState("awaiting_chief_action_choice")
 
     class AwaitingChiefCardDiscard(val cards: List<Card>, val advisorName: String) :
             InnerGameState("awaiting_chief_card_discard")
