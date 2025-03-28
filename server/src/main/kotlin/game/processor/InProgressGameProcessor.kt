@@ -68,11 +68,17 @@ fun GameState.GameInProgress.checkGameOverConditions() {
     }
 
     if (deck.points >= POSITIVE_THRESHOLD_WIN) {
-        throw GameOverThrowable(winner = SimpleRole.ANGEL, reason = GameState.GameOver.Reason.POSITIVE_THRESHOLD_REACHED)
+        throw GameOverThrowable(
+            winner = SimpleRole.ANGEL,
+            reason = GameState.GameOver.Reason.POSITIVE_THRESHOLD_REACHED
+        )
     }
 
     if (deck.points <= NEGATIVE_THRESHOLD_WIN) {
-        throw GameOverThrowable(winner = SimpleRole.DEMON, reason = GameState.GameOver.Reason.NEGATIVE_THRESHOLD_REACHED)
+        throw GameOverThrowable(
+            winner = SimpleRole.DEMON,
+            reason = GameState.GameOver.Reason.NEGATIVE_THRESHOLD_REACHED
+        )
     }
 
     if (angels.isEmpty()) {

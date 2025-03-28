@@ -1,23 +1,14 @@
 <template>
   <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-4">
     <BaseCard class="w-full max-w-md">
-      <template #header>
-        <h1 class="text-2xl font-bold text-gray-800 text-center">
-          {{ isRejoin ? 'Rejoin Game' : 'Join Game' }}
-        </h1>
-      </template>
-
       <div class="space-y-4">
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1" for="name">
-            Your Name
-          </label>
           <input
-              id="name"
               v-model="name"
               class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
-              placeholder="Enter your name"
+              placeholder="Name"
               type="text"
+              @keydown.enter="join"
           />
         </div>
 

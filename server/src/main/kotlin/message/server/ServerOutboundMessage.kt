@@ -8,6 +8,5 @@ sealed class ServerOutboundMessage(val type: String) {
             ServerOutboundMessage("update_game_state")
 
     class Error(val error: FalseIdolsError) :
-            ServerOutboundMessage("error") {
-    }
+            ServerOutboundMessage("error")
 }

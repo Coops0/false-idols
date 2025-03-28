@@ -24,10 +24,7 @@ open class Player(
     constructor(name: PlayerName, icon: PlayerIcon, connection: PlayerConnection) :
             this(name, icon, mutableListOf(connection))
 
-    override operator fun equals(other: Any?): Boolean {
-        if (other !is Player) return false
-        return this.name == other.name
-    }
+    override operator fun equals(other: Any?): Boolean = other is Player && this.name == other.name
 
     override fun hashCode() = name.hashCode()
 
