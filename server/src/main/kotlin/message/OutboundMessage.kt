@@ -36,8 +36,13 @@ sealed class OutboundMessage(val type: String) {
         ) : StrippedPlayer(name, icon) {
             companion object {
                 fun fromGamePlayer(playersSize: Int, player: GamePlayer): ActionSupplementedPlayer {
-                    val electable =
-                        if (playersSize <= 5) !player.wasAdvisorLastRound else (!player.wasChiefLastRound && !player.wasAdvisorLastRound)
+                    val electable = if (playersSize <= 5) {
+                        // if player size <= 5, then we only care if they were advisor last round
+                        !player.wasAdvisorLastRound
+                    } else {
+                        (!player.wasChiefLastRound && !player.wasAdvisorLastRound)
+                    }
+
                     return ActionSupplementedPlayer(
                         player.name,
                         player.icon.iconName,

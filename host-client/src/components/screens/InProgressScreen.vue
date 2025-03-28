@@ -14,7 +14,7 @@
       <AwaitingChiefCardDiscardScreen v-else-if="game.inner_game_state.type === 'awaiting_chief_card_discard'"
                                       :game/>
       <AwaitingElectionOutcomeScreen v-else-if="game.inner_game_state.type === 'awaiting_election_outcome'"
-                                        :game/>
+                                     :game/>
       <AwaitingInvestigationAnalysis v-else-if="game.inner_game_state.type === 'awaiting_investigation_analysis'"
                                      :game/>
       <AwaitingPlayerActionChoiceScreen v-else-if="game.inner_game_state.type === 'awaiting_chief_action_choice'"
@@ -22,6 +22,7 @@
       <IdleScreen v-else-if="game.inner_game_state.type === 'idle'" :game/>
     </Transition>
 
+    <CardDeck :game/>
     <ScoreBar :game/>
     <ChaosBar v-if="game.failed_elections > 0" :game/>
   </div>
@@ -39,6 +40,7 @@ import IdleScreen from '@/components/screens/game-screens/IdleScreen.vue';
 import type { InProgressGameState } from '@/game/state.ts';
 import ScoreBar from '@/components/ui/ScoreBar.vue';
 import ChaosBar from '@/components/ui/ChaosBar.vue';
+import CardDeck from '@/components/ui/CardDeck.vue';
 
 defineProps<{ game: InProgressGameState }>();
 </script>

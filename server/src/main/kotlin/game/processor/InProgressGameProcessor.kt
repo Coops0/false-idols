@@ -14,6 +14,8 @@ suspend fun GameState.GameInProgress.rotateChief() {
         player.clearQueue()
     }
 
+    // This should be handled in the handle advisor choice method, since
+    // it sets us to idle after running.
     if (igs is InnerGameState.AwaitingAdvisorCardChoice) {
         this[igs.advisorName]!!.wasAdvisorLastRound = true
     }
@@ -175,6 +177,8 @@ fun GameState.GameInProgress.handleAdvisorChooseCard(player: GamePlayer, cardId:
 
     this.deck.playedCards.add(card)
     this.checkGameOverConditions()
+
+    player.wasAdvisorLastRound = true
 
     this.idle()
 }

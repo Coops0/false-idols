@@ -1,8 +1,5 @@
 <template>
   <div>
-    <p>{{ game?.state?.type ?? 'no game' }}</p>
-    <p>is connected: {{ ws.isConnected }}</p>
-    <p>manual is connected {{ manualIsConnected }}</p>
     <ErrorToast :message="error"/>
     <LoginScreen
         v-if="canShowLogin && !manualIsConnected"

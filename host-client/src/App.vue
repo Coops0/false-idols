@@ -4,18 +4,18 @@
       <div class="relative">
         <div class="absolute inset-0 pointer-events-none">
           <div
-              class="absolute top-0 left-0 w-64 h-64 bg-amber-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
+              class="absolute top-0 left-0 w-64 h-64 bg-amber-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"/>
           <div
-              class="absolute top-0 right-0 w-64 h-64 bg-amber-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
+              class="absolute top-0 right-0 w-64 h-64 bg-amber-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"/>
           <div
-              class="absolute -bottom-8 left-20 w-64 h-64 bg-amber-400 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
+              class="absolute -bottom-8 left-20 w-64 h-64 bg-amber-400 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"/>
         </div>
 
         <div class="relative">
           <div v-if="game === null" class="flex items-center justify-center min-h-[60vh]">
             <div class="text-center">
               <div
-                  class="w-16 h-16 border-4 border-amber-400 border-t-transparent rounded-full animate-spin mx-auto"></div>
+                  class="w-16 h-16 border-4 border-amber-400 border-t-transparent rounded-full animate-spin mx-auto"/>
               <p class="mt-4 text-amber-800 text-lg">Loading...</p>
             </div>
           </div>
