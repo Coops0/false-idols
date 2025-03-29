@@ -32,6 +32,7 @@ private const val BASE_NEGATIVE_RATIO = 0.5
 
 class CardDeck(totalCardCount: Int = 17) {
     @Suppress("MemberVisibilityCanBePrivate") val cardStack: MutableList<Card> = mutableListOf()
+    private var originalCards = listOf<Card>()
     val playedCards = mutableListOf<Card>()
 
     init {
@@ -53,13 +54,14 @@ class CardDeck(totalCardCount: Int = 17) {
         assert(cardStack.size == totalCardCount) { "Card deck size mismatch" }
 
         cardStack.shuffle()
+        originalCards = cardStack.toList()
     }
 
     private fun checkEmptyStack(len: Int = 1) {
         if (cardStack.size >= len) return
 
         // don't clear played cards, they are used for scoring
-        cardStack.addAll(playedCards)
+        cardStack.addAll(originalCards)
         cardStack.shuffle()
     }
 
@@ -70,7 +72,6 @@ class CardDeck(totalCardCount: Int = 17) {
             cardStack.removeAt(0)
         }
 
-        playedCards.addAll(cards)
         return cards
     }
 

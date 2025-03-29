@@ -7,10 +7,15 @@
 
       <div class="space-y-6">
         <div class="text-center space-y-2">
-          <h2 class="text-xl font-semibold text-gray-700">{{ gameState.player.name }}</h2>
-          <p class="text-lg text-gray-600">
-            Role: <span class="font-medium">{{ roleName(gameState.role) }}</span>
-          </p>
+          <PlayerPreview :player="gameState.player" :game="props.game"
+                         :icon-variant="gameState.role === Role.DEMON ? 'demon' : 'angel'" class="w-40 h-40 mx-auto"/>
+          <p class="text-lg"
+             :class="gameState.role === Role.DEMON ? 'text-red-500 font-bold' : 'font-medium text-blue-400'">
+            {{ roleName(gameState.role) }}</p>
+        </div>
+
+        <div class="text-center space-y-2">
+          <p class="text-sm text-gray-800 font-bold">You cannot show anyone this screen</p>
         </div>
 
         <div class="flex justify-center">
@@ -26,9 +31,10 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
 import type { Game, ViewInvestigationResultsGameState } from '@/game';
-import { roleName } from '@/game/messages.ts';
+import { Role, roleName } from '@/game/messages.ts';
 import BaseButton from '@/components/ui/BaseButton.vue';
 import BaseCard from '@/components/ui/BaseCard.vue';
+import PlayerPreview from '@/components/ui/PlayerPreview.vue';
 
 const emit = defineEmits<{ confirm: []; }>();
 const props = defineProps<{ game: Game; }>();

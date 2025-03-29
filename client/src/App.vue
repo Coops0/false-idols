@@ -25,7 +25,7 @@
     <ViewInvestigationResultsScreen
         v-else-if="game.state.type === 'view_investigation_results'"
         :game
-        @emit="confirmInvestigation"
+        @confirm="confirmInvestigation"
     />
     <ChiefDiscardCardScreen
         v-else-if="game.state.type === 'chief_discard_card'"

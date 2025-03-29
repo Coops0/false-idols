@@ -43,6 +43,8 @@ export class WebsocketOwner {
             throw new Error('Name is invalid');
         }
 
+        this.wasManuallyDisconnectedLast = true;
+
         const self = this;
         return new Promise<void>((resolve, reject) => {
             const rejectOnError = (err: Event) => reject(err);
@@ -87,7 +89,14 @@ export class WebsocketOwner {
     }
 
     attemptReconnection(force: boolean = false) {
-        if (this.isConnected || (!force && (!this.hasEverBeenConnectedSuccessfully || Date.now() - this.lastConnectionAttempt < 100))) return;
+        if (this.isConnected) return;
+        if (!force) {
+            if (
+                !this.hasEverBeenConnectedSuccessfully ||
+                Date.now() - this.lastConnectionAttempt < 100 ||
+                this.wasManuallyDisconnectedLast
+            ) return;
+        }
         this.lastConnectionAttempt = Date.now();
 
         const delay = (this.hasFailedToConnect && !force) ? 100 : 0;

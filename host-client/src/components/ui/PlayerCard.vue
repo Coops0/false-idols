@@ -1,5 +1,5 @@
 <template>
-  <div class="group relative bg-white/50 backdrop-blur-sm rounded-xl p-6 border border-gray-100/50 hover:border-gray-200/50 transition-all duration-300">
+  <div class="group relative bg-white/50 backdrop-blur-sm -z-1 rounded-xl p-6 border border-gray-100/50  transition-all duration-300">
     <div class="flex items-center gap-4">
       <div class="relative">
         <div class="w-16 h-16 rounded-2xl overflow-hidden border-2 border-gray-100 shadow-sm bg-white">

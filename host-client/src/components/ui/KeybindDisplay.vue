@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-gray-900/50 backdrop-blur-sm rounded-xl shadow-lg p-6 text-gray-50">
+  <div class="bg-gray-900/50 backdrop-blur-sm rounded-xl shadow-lg p-6 text-gray-50 z-20">
     <div class="space-y-3 text-sm">
       <div class="flex items-center gap-2">
         <kbd class="px-2.5 py-1.5 bg-gray-800/50 rounded-lg text-gray-200 border border-gray-700/50">H</kbd>
