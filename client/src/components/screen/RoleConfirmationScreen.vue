@@ -3,7 +3,7 @@
     <BaseCard class="w-full max-w-2xl">
       <div v-if="!gameState.hasConfirmed" class="space-y-6">
         <div class="text-center space-y-4">
-          <h2 class="text-2xl font-bold text-gray-800">Important: Role Reveal</h2>
+          <h2 class="text-2xl font-bold text-gray-800">Important</h2>
           <p class="text-gray-600 text-base">
             You are about to see your secret role. Ensure nobody else can see your screen. Do not show it to anyone.
           </p>

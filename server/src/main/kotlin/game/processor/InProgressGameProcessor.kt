@@ -81,7 +81,7 @@ fun GameState.GameInProgress.checkGameOverConditions() {
         )
     }
 
-    if (angels.isEmpty()) {
+    if (angels.filterNot(GamePlayer::isAlive).isEmpty()) {
         throw GameOverThrowable(winner = SimpleRole.DEMON, reason = GameState.GameOver.Reason.ALL_ANGELS_DEAD)
     }
 
@@ -136,7 +136,11 @@ suspend fun GameState.GameInProgress.handlePlayerActionChoice(
         }
 
         ActionChoice.NOMINATE -> {
-            require(!target.wasChiefLastRound && !target.wasAdvisorLastRound) { "Target must not have been chief or advisor last round" }
+            if (this.players.size <= 5) {
+                require(!target.wasChiefLastRound) { "Target must not have been chief last round" }
+            } else {
+                require(!target.wasChiefLastRound && !target.wasAdvisorLastRound) { "Target must not have been chief or advisor last round" }
+            }
             this.innerGameState = InnerGameState.AwaitingElectionResolution(
                 nominee = target.name
             )

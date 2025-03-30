@@ -2,7 +2,7 @@
   <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-4">
     <BaseCard class="w-full max-w-4xl">
       <template #header>
-        <h1 class="text-2xl font-bold text-gray-800 text-center">Choose An Action</h1>
+        <h1 class="text-2xl font-bold text-gray-800 text-center">Do Something</h1>
       </template>
 
       <div class="space-y-8">
@@ -26,7 +26,7 @@
           <div
               v-for="player in players"
               :key="player.name"
-              :class="player.enabled && 'opacity-50'"
+              :class="!player.enabled && 'opacity-50'"
               class="transition-all duration-200"
               @click="() => player.enabled && commitPlayer(player.name)"
           >

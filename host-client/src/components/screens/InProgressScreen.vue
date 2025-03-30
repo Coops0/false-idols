@@ -22,11 +22,12 @@
       <IdleScreen v-else-if="game.inner_game_state.type === 'idle'" :game/>
     </Transition>
 
-    <CardDeck :game/>
+    <CardDeck :game class="transition-opacity duration-200"
+              :class="game.deck.played_cards.length === 0 && 'opacity-0'"/>
     <ScoreBar :game/>
 
-    <Transition mode="out-in" name="fade">
-      <ChaosBar v-if="game.failed_elections > 0" :game/>
+    <Transition mode="out-in" name="fade" appear>
+      <ChaosBar v-show="game.failed_elections > 0" :game/>
     </Transition>
   </div>
 </template>

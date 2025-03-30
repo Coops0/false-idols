@@ -43,7 +43,7 @@
 
 <script lang="ts" setup>
 import { WebsocketOwner } from '@/game/websocket-owner.ts';
-import { ActionChoice, type InboundMessage } from '@/game/messages.ts';
+import { ActionChoice, type InboundMessage, Role } from '@/game/messages.ts';
 import { PlayerIcon } from '@/game/player-icon.ts';
 import { Game, type ViewInvestigationResultsGameState, type ViewRoleGameState } from '@/game';
 import { onMounted, ref } from 'vue';
@@ -108,6 +108,24 @@ function handleMessage(message: InboundMessage) {
     case 'assign_role':
       game.value = new Game(message);
       break;
+    case 'disconnect':
+      game.value = null;
+      playerIcon.value = '';
+      ws.disconnect();
+      break;
+  }
+
+  if (game.value === null) {
+    game.value = new Game({
+      type: 'assign_role',
+      demon_count: 0,
+      role: Role.ANGEL
+    });
+
+    game.value.state = { type: 'idle' };
+  }
+
+  switch (message.type) {
     case 'request_action':
       game.value!.state = {
         type: 'commit_action',
@@ -129,11 +147,7 @@ function handleMessage(message: InboundMessage) {
         hasConfirmed: false
       };
       break;
-    case 'disconnect':
-      game.value = null;
-      playerIcon.value = '';
-      ws.disconnect();
-      break;
+
   }
 }
 
