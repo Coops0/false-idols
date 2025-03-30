@@ -157,6 +157,21 @@ function onKeyPress(event: KeyboardEvent) {
   opacity: 0;
 }
 
+.toast-enter-active,
+.toast-leave-active {
+  transition: all 0.3s ease;
+}
+
+.toast-enter-from {
+  opacity: 0;
+  transform: translateX(30px);
+}
+
+.toast-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
+}
+
 @keyframes blob {
   0% {
     transform: translate(0px, 0px) scale(1);

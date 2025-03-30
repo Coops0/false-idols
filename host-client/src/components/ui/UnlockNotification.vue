@@ -14,20 +14,3 @@ defineProps<{
   color: string;
 }>();
 </script>
-
-<style scoped>
-.toast-enter-active,
-.toast-leave-active {
-  transition: all 0.3s ease;
-}
-
-.toast-enter-from {
-  opacity: 0;
-  transform: translateX(30px);
-}
-
-.toast-leave-to {
-  opacity: 0;
-  transform: translateX(30px);
-}
-</style>
