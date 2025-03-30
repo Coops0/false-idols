@@ -6,13 +6,13 @@
         <p class="text-gray-600 text-center mt-2">
           Choose one card to <span class="font-bold text-red-600">discard</span>
         </p>
+        <p class="text-gray-300 text-center mt-1">(Nobody will see the card you discard)</p>
       </template>
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <div
             v-for="card in gameState.cards"
             :key="card.id"
-            class="cursor-pointer transition-all duration-200 hover:scale-105"
             @click="() => discard(card)"
         >
           <CardPreview :card="card"/>

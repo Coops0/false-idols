@@ -1,6 +1,6 @@
 <template>
   <div class="relative group">
-    <div class="bg-white/50 backdrop-blur-sm rounded-xl p-6 border border-gray-100/50  transition-all duration-300">
+    <div class="bg-white/50 backdrop-blur-sm rounded-xl p-6 border border-gray-100/50">
       <div class="space-y-4">
         <div class="flex justify-between items-start">
           <div :class="[

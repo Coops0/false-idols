@@ -8,16 +8,13 @@
       'active:translate-y-0.5': !disabled && !loading
     }"
       :disabled="disabled || loading"
-      class="relative px-6 py-3 rounded-lg font-semibold transition-all duration-200 overflow-hidden shadow-md hover:shadow-lg active:shadow-sm disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"
+      class="relative px-6 py-3 rounded-lg font-semibold transition-all duration-200 overflow-hidden shadow-md active:shadow-sm disabled:opacity-70 disabled:transform-none disabled:shadow-none"
   >
     <span class="relative z-10">
       <slot/>
     </span>
-    <span
-        v-if="loading"
-        class="absolute inset-0 flex items-center justify-center"
-    >
-      <span class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+    <span v-if="loading" class="absolute inset-0 flex items-center justify-center">
+      <span class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"/>
     </span>
   </button>
 </template>

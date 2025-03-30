@@ -1,7 +1,7 @@
 <template>
   <div class="relative group">
     <div
-        class="absolute inset-0 bg-white/80 backdrop-blur-lg rounded-2xl shadow-lg transform transition-all duration-300"
+        class="absolute inset-0 bg-white/80 backdrop-blur-lg rounded-2xl shadow-lg"
         :class="{
         'shadow-[0_8px_30px_rgb(0,0,0,0.04)]': !variant || variant === 'default',
         'shadow-[0_8px_30px_rgb(0,0,0,0.08)]': variant === 'highlighted',

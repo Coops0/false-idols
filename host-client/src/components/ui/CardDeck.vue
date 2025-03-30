@@ -17,7 +17,7 @@
                transform: `translateY(${index * 4}px)`,
                zIndex: cards.length - index
              }"
-             class="absolute w-full transition-all duration-300">
+             class="absolute w-full">
           <GameCard :card/>
         </div>
       </div>

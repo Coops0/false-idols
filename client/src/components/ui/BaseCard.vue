@@ -4,7 +4,7 @@
         'p-6': !noPadding,
         'p-0': noPadding
     }"
-      class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden transition-all duration-200 hover:shadow-xl"
+      class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden"
   >
     <div v-if="slots.header && slots.header()" class="p-4">
       <slot name="header"/>

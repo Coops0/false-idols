@@ -12,7 +12,7 @@
               :key="action"
               :class="{
               'bg-blue-500 text-white shadow-lg': selectedAction === action,
-              'bg-gray-100 text-gray-700 hover:bg-gray-200': selectedAction !== action
+              'bg-gray-100 text-gray-700': selectedAction !== action
             }"
               class="px-6 py-3 rounded-lg font-semibold transition-all duration-200"
               @click="() => swapAction(action)"
@@ -25,11 +25,8 @@
           <div
               v-for="player in players"
               :key="player.name"
-              :class="{
-              'opacity-50 cursor-not-allowed': !player.enabled,
-              'hover:scale-105': player.enabled
-            }"
-              class="cursor-pointer transition-all duration-200"
+              :class="player.enabled && 'opacity-50'"
+              class="transition-all duration-200"
               @click="() => player.enabled && commitPlayer(player.name)"
           >
             <PlayerPreview

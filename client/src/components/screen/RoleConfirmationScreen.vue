@@ -4,14 +4,14 @@
       <div v-if="!gameState.hasConfirmed" class="space-y-6">
         <div class="text-center space-y-4">
           <h2 class="text-2xl font-bold text-gray-800">Important: Role Reveal</h2>
-          <p class="text-gray-600 text-lg">
-            We are about to reveal your secret role. Please ensure no other player can see your screen.
+          <p class="text-gray-600 text-base">
+            You are about to see your secret role. Ensure nobody else can see your screen. Do not show it to anyone.
           </p>
         </div>
 
         <div class="flex justify-center">
           <BaseButton variant="primary" @click="() => emit('confirm')">
-            I'm Ready
+            Continue
           </BaseButton>
         </div>
       </div>
@@ -31,15 +31,14 @@
 
           <div class="bg-gray-50 rounded-lg p-6 space-y-4">
             <p v-if="game.role === Role.ANGEL" class="text-gray-700">
-              Try to pass positive cards and eliminate any demons.
+              Play positive scores and try to eliminate all demons.
             </p>
             <p v-else-if="game.role === Role.DEMON" class="text-gray-700">
-              You must work together with the other demons and try to pass negative cards, and kill innocent players.
+              Work together with the other demons to kill angels and play negative cards.
               Satan does not know who the demons are.
             </p>
             <p v-else class="text-gray-700">
-              The other demons know who you are, try to subtly work together to pass negative cards, and kill innocent
-              players.
+              The other demons know who you are, try to subtly work together to pass negative cards, and kill angels.
               <span class="font-bold text-red-600">If you die, the game ends immediately.</span>
             </p>
           </div>
@@ -95,7 +94,13 @@ const gameState = computed(() => props.game.state as ViewRoleGameState);
 const demonsText = computed(() => {
   const c = gameState.value.demonCount;
   if (c === 0) return null;
-  if (c === 1) return 'There is 1 demon';
-  return `There are ${c} demons`;
+
+  const other = props.game.role === Role.SATAN ? ' other ' : ' ';
+
+  if (c === 1) {
+    return `There is 1${other}demon`;
+  } else {
+    return `There are ${c}${other}demons`;
+  }
 });
 </script>

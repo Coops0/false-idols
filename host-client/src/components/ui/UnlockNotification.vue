@@ -1,5 +1,5 @@
 <template>
-  <div class="fixed bottom-0 right-0 p-4">
+  <div class="fixed bottom-0 right-0 p-4 z-50">
     <Transition name="toast" mode="out-in">
       <div v-if="show" class="text-white p-4 rounded-lg shadow-lg" :class="color">
         <slot/>
@@ -9,8 +9,5 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{
-  show: boolean;
-  color: string;
-}>();
+defineProps<{ show: boolean; color: string; }>();
 </script>

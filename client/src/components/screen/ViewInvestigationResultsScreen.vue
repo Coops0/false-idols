@@ -2,7 +2,7 @@
   <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-4">
     <BaseCard class="w-full max-w-md">
       <template #header>
-        <h1 class="text-2xl font-bold text-gray-800 text-center">Investigation Results</h1>
+        <h1 class="text-2xl font-bold text-gray-800 text-center">Investigation</h1>
       </template>
 
       <div class="space-y-6">

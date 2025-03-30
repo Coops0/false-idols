@@ -1,5 +1,5 @@
 <template>
-  <div class="group relative bg-white/50 backdrop-blur-sm -z-1 rounded-xl p-6 border border-gray-100/50  transition-all duration-300">
+  <div class="group relative bg-white/50 backdrop-blur-sm -z-1 rounded-xl p-6 border border-gray-100/50">
     <div class="flex items-center gap-4">
       <div class="relative">
         <div class="w-16 h-16 rounded-2xl overflow-hidden border-2 border-gray-100 shadow-sm bg-white">
@@ -15,7 +15,7 @@
         <div class="flex items-center gap-2 mt-1">
           <span v-if="!player.is_alive"
                 class="text-sm px-2.5 py-1 rounded-full bg-gray-100/50 text-gray-600 border border-gray-200/50">
-            Deceased
+            Dead
           </span>
         </div>
       </div>
@@ -25,7 +25,6 @@
 
 <script lang="ts" setup>
 import type { GamePlayer } from '@/game/state.ts';
-import { roleName } from '@/game/state.ts';
 import { computed } from 'vue';
 import { PlayerIcon } from '@/game/player-icon.ts';
 

@@ -12,7 +12,6 @@
         <div
             v-for="card in gameState.cards"
             :key="card.id"
-            class="cursor-pointer transition-all duration-200 hover:scale-105"
             @click="() => choose(card)"
         >
           <CardPreview :card="card"/>

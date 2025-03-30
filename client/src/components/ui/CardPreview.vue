@@ -5,7 +5,7 @@
       'bg-red-100 border-red-300': card.consequence_qualifier === 'NEGATIVE',
       'bg-green-100 border-green-300': card.consequence_qualifier === 'POSITIVE'
     }"
-      class="w-64 p-4 rounded-lg shadow-md border-2 transition-all duration-200 hover:shadow-lg"
+      class="w-64 p-4 rounded-lg shadow-md border-2"
   >
     <div class="space-y-2">
       <p class="text-gray-800 text-xs font-medium">{{ card.description }}</p>
