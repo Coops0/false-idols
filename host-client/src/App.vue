@@ -1,6 +1,7 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 md:p-8">
-    <Toast v-model="errorMessage"/>
+    <AbilityUnlockNotification :game/>
+    <ErrorToast v-model="errorMessage"/>
     <div class="max-w-7xl mx-auto">
       <div class="relative">
         <div class="absolute inset-0 pointer-events-none">
@@ -50,9 +51,10 @@ import LobbyScreen from '@/components/screens/LobbyScreen.vue';
 import InProgressScreen from '@/components/screens/InProgressScreen.vue';
 import GameOverScreen from '@/components/screens/GameOverScreen.vue';
 import KeybindDisplay from '@/components/ui/KeybindDisplay.vue';
-import Toast from '@/components/ui/Toast.vue';
+import ErrorToast from '@/components/ui/ErrorToast.vue';
 import { useLocalStorage } from '@/util/use-local-storage.ts';
 import { PlayerIcon } from '@/game/player-icon.ts';
+import AbilityUnlockNotification from '@/components/ui/AbilityUnlockNotification.vue';
 
 const ws = new WebsocketOwner(onMessage);
 const game = ref<GameState | null>(null);
