@@ -45,8 +45,8 @@
 import { WebsocketOwner } from '@/game/websocket-owner.ts';
 import { ActionChoice, type InboundMessage } from '@/game/messages.ts';
 import { PlayerIcon } from '@/game/player-icon.ts';
-import { Game, type ViewRoleGameState } from '@/game';
-import { ref } from 'vue';
+import { Game, type ViewInvestigationResultsGameState, type ViewRoleGameState } from '@/game';
+import { onMounted, ref } from 'vue';
 import { isNameValid } from '@/util';
 import LoginScreen from '@/components/screen/LoginScreen.vue';
 import ErrorToast from '@/components/ui/ErrorToast.vue';
@@ -68,15 +68,17 @@ const game = ref<Game | null>(null);
 
 const canShowLogin = ref<boolean>(false);
 
-(async function () {
-  playerName.value = localStorage.getItem('name') ?? '';
+onMounted(() => {
+  (async function () {
+    playerName.value = localStorage.getItem('name') ?? '';
 
-  if (isNameValid(playerName.value)) {
-    await tryToConnect();
-  } else {
-    canShowLogin.value = true;
-  }
-})();
+    if (isNameValid(playerName.value)) {
+      await tryToConnect();
+    } else {
+      canShowLogin.value = true;
+    }
+  })();
+});
 
 async function tryToConnect() {
   localStorage.setItem('name', playerName.value);
@@ -120,7 +122,12 @@ function handleMessage(message: InboundMessage) {
       game.value!.state = { type: 'advisor_choose_card', cards: message.cards };
       break;
     case 'investigation_result':
-      game.value!.state = { type: 'view_investigation_results', player: message.target, role: message.simple_role };
+      game.value!.state = {
+        type: 'view_investigation_results',
+        player: message.target,
+        role: message.simple_role,
+        hasConfirmed: false
+      };
       break;
     case 'disconnect':
       game.value = null;
@@ -145,7 +152,12 @@ function commitAction(playerName: string, action: ActionChoice) {
 }
 
 function confirmInvestigation() {
-  game.value!.state = { type: 'idle' };
+  const state = game.value!.state as ViewInvestigationResultsGameState;
+  if (state.hasConfirmed) {
+    game.value!.state = { type: 'idle' };
+  } else {
+    state.hasConfirmed = true;
+  }
 }
 
 function discardCard(cardId: number) {

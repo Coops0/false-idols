@@ -5,7 +5,21 @@
         <h1 class="text-2xl font-bold text-gray-800 text-center">Investigation</h1>
       </template>
 
-      <div class="space-y-6">
+      <div v-if="!gameState.hasConfirmed" class="space-y-6">
+        <div class="text-center space-y-4">
+          <p class="text-gray-600 text-base font-bold">
+            You are about to see if {{ gameState.player.name }} is a demon or angel. You cannot physically show this screen to anyone.
+          </p>
+        </div>
+
+        <div class="flex justify-center">
+          <BaseButton variant="primary" @click="() => emit('confirm')">
+            Continue
+          </BaseButton>
+        </div>
+      </div>
+
+      <div v-else class="space-y-6">
         <div class="text-center space-y-2">
           <PlayerPreview :player="gameState.player" :game="props.game"
                          :icon-variant="gameState.role === Role.DEMON ? 'demon' : 'angel'" class="w-40 h-40 mx-auto"/>

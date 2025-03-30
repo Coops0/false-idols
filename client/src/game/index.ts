@@ -43,6 +43,7 @@ export type ViewInvestigationResultsGameState = {
     type: 'view_investigation_results';
     player: Player;
     role: SimpleRole;
+    hasConfirmed: boolean;
 }
 
 export type GameState =

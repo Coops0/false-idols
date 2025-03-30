@@ -2,7 +2,6 @@
   <div class="space-y-8">
     <ModernCard variant="highlighted">
       <div class="text-center space-y-6">
-        <h2 class="text-3xl font-bold text-gray-900 tracking-tight">The Chief's Turn</h2>
         <div class="flex justify-center">
           <div class="relative">
             <div class="w-32 h-32 rounded-2xl overflow-hidden border-2 border-gray-100 shadow-sm bg-white">

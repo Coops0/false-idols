@@ -104,6 +104,17 @@ function onKeyPress(event: KeyboardEvent) {
     return;
   }
 
+  if (key === 'f') {
+    event.preventDefault();
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen()
+          .catch(err => console.error('Error attempting to enable full-screen mode', err));
+    } else if (document.exitFullscreen) {
+      document.exitFullscreen();
+    }
+    return;
+  }
+
   const s = (message: ServerOutboundMessage) => {
     ws.send(message);
     event.preventDefault();

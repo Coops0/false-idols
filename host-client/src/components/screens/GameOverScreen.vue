@@ -5,7 +5,7 @@
         <h1 :class="[
           game.winner === 'ANGELS' ? 'text-blue-600' : 'text-red-600'
         ]" class="text-4xl font-bold">
-          {{ game.winner === 'ANGELS' ? 'Divine Victory' : 'Demonic Triumph' }}
+          {{ game.winner === 'ANGELS' ? 'Angels Win' : 'Demonic Win' }}
         </h1>
         <p class="text-xl text-amber-900">{{ reasonText }}</p>
       </div>

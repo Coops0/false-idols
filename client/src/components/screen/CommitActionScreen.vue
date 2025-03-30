@@ -8,10 +8,11 @@
       <div class="space-y-8">
         <div class="flex justify-center space-x-4">
           <button
-              v-for="action in gameState.permittedActions"
+              v-for="action in [ActionChoice.NOMINATE, ActionChoice.INVESTIGATE, ActionChoice.KILL]"
               :key="action"
               :class="{
               'bg-blue-500 text-white shadow-lg': selectedAction === action,
+              'opacity-50': !isValidAction(action),
               'bg-gray-100 text-gray-700': selectedAction !== action
             }"
               class="px-6 py-3 rounded-lg font-semibold transition-all duration-200"
@@ -67,8 +68,12 @@ const players = computed<(ActionSupplementedPlayer & { enabled: boolean })[]>(()
       return { ...p, enabled };
     }));
 
+function isValidAction(action: ActionChoice) {
+  return gameState.value.permittedActions.includes(action);
+}
+
 function swapAction(action: ActionChoice) {
-  if (gameState.value.permittedActions.includes(action)) {
+  if (isValidAction(action)) {
     selectedAction.value = action;
   }
 }

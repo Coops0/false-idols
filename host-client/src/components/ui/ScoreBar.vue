@@ -8,7 +8,6 @@
             ⚖️
           </div>
         </div>
-        <div class="text-sm text-gray-600">{{ balanceText }}</div>
       </div>
       <div class="relative h-8">
         <div class="absolute inset-0 bg-gradient-to-r from-red-500/10 via-blue-500/10 to-green-500/10 rounded-full"/>
@@ -23,10 +22,6 @@
           </div>
         </div>
       </div>
-      <div class="mt-3 flex justify-between text-xs text-gray-500">
-        <span>Demonic</span>
-        <span>Divine</span>
-      </div>
     </div>
   </div>
 </template>
@@ -37,10 +32,4 @@ import { computed } from 'vue';
 
 const props = defineProps<{ game: InProgressGameState }>();
 const score = computed(() => props.game.deck.played_cards.reduce((acc, card) => acc + card.consequence, 0));
-
-const balanceText = computed(() => {
-  if (score.value > 0) return 'Divine Favor';
-  if (score.value < 0) return 'Demonic Influence';
-  return 'Perfect Balance';
-});
 </script>

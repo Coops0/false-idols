@@ -43,7 +43,7 @@ export class WebsocketOwner {
             throw new Error('Name is invalid');
         }
 
-        this.wasManuallyDisconnectedLast = true;
+        this.wasManuallyDisconnectedLast = false;
 
         const self = this;
         return new Promise<void>((resolve, reject) => {

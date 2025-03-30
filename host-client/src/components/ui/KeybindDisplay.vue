@@ -5,6 +5,10 @@
         <kbd class="px-2.5 py-1.5 bg-gray-800/50 rounded-lg text-gray-200 border border-gray-700/50">H</kbd>
         <span class="text-gray-300">Hide</span>
       </div>
+      <div class="flex items-center gap-2">
+        <kbd class="px-2.5 py-1.5 bg-gray-800/50 rounded-lg text-gray-200 border border-gray-700/50">F</kbd>
+        <span class="text-gray-300">Fullscreen</span>
+      </div>
 
       <template v-if="game.type === 'lobby'">
         <div class="flex items-center gap-2">

@@ -93,12 +93,12 @@ val cards = listOf(
     Card(
         id = 0,
         description = "Give everyone aids",
-        consequence = -3
+        consequence = -1
     ),
     Card(
         id = 1,
         description = "Kill Elon Musk",
-        consequence = 2
+        consequence = 1
     ),
     Card(
         id = 2,
@@ -113,7 +113,7 @@ val cards = listOf(
     Card(
         id = 4,
         description = "Hate crime",
-        consequence = -2
+        consequence = -1
     ),
     Card(
         id = 5,
@@ -123,7 +123,7 @@ val cards = listOf(
     Card(
         id = 6,
         description = "Sign up for scientology email list",
-        consequence = 2
+        consequence = 1
     ),
     Card(
         id = 7,
@@ -178,12 +178,12 @@ val cards = listOf(
     Card(
         id = 17,
         description = "Nerd fight!!",
-        consequence = 2
+        consequence = 1
     ),
     Card(
         id = 18,
         description = "Annoying Orange",
-        consequence = -5
+        consequence = -1
     ),
     Card(
         id = 19,
@@ -249,6 +249,41 @@ val cards = listOf(
         id = 31,
         description = "Minions movie (GRU)",
         consequence = -1
-    )
+    ),
+    Card(
+        id = 32,
+        description = "Camp in the woods",
+        consequence = 0
+    ),
+    Card(
+        id = 33,
+        description = "Beach week!!!",
+        consequence = 1
+    ),
+    Card(
+        id = 34,
+        description = "Bad card",
+        consequence = -2
+    ),
+    Card(
+        id = 35,
+        description = "Gang attack",
+        consequence = 0
+    ),
+    Card(
+        id = 36,
+        description = "Go to collage",
+        consequence = 0
+    ),
+    Card(
+        id = 37,
+        description = "Mr. Kopple returns",
+        consequence = 1
+    ),
+    Card(
+        id = 38,
+        description = "Dentist all day",
+        consequence = -1
+    ),
 )
 // </editor-fold>
