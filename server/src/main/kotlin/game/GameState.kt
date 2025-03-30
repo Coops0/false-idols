@@ -7,9 +7,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 
 const val MIN_ABS_POINTS_TO_INVESTIGATE = 4
 const val MIN_ABS_POINTS_TO_KILL = 8
+
 const val POSITIVE_THRESHOLD_WIN = 10
 const val NEGATIVE_THRESHOLD_WIN = -6
+
 const val NEGATIVE_THRESHOLD_SATAN_WIN = -2
+const val MIN_ABS_POINTS_THRESHOLD_SATAN_WIN = 8
 
 sealed class GameState(val type: String) {
     @get:JsonIgnore abstract var server: SocketContentConverterSender<ServerOutboundMessage>

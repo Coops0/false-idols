@@ -57,7 +57,7 @@ suspend fun GameState.GameInProgress.rotateChief() {
 
 // throws GameOverThrowable
 fun GameState.GameInProgress.checkGameOverConditions() {
-    if (deck.points <= NEGATIVE_THRESHOLD_SATAN_WIN) {
+    if (deck.points <= NEGATIVE_THRESHOLD_SATAN_WIN && deck.absolutePoints >= MIN_ABS_POINTS_THRESHOLD_SATAN_WIN) {
         val igs = innerGameState
         if (igs is InnerGameState.AwaitingChiefCardDiscard && igs.advisorName == satan.name) {
             throw GameOverThrowable(

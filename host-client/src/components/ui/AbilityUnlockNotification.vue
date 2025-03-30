@@ -22,6 +22,7 @@ import UnlockNotification from '@/components/ui/UnlockNotification.vue';
 const INVESTIGATION_THRESHOLD = 4;
 const KILL_THRESHOLD = 8;
 const SATAN_ELECTION_WIN_THRESHOLD = -2;
+const ABS_SATAN_ELECTION_WIN_THRESHOLD = 8;
 
 const props = defineProps<{ game: GameState | null }>();
 
@@ -72,8 +73,10 @@ watch(() => props.game, g => {
     setTimeout(() => (killState.value = false), 5000);
   }
 
-  if (currentPoints <= SATAN_ELECTION_WIN_THRESHOLD) {
-    if (prevPoints > SATAN_ELECTION_WIN_THRESHOLD && showSatanElectionWinCase.value === null) {
+  // Satan election win case:
+  // Points <= -2 && Absolute Points >= 8
+  if (currentPoints <= SATAN_ELECTION_WIN_THRESHOLD && absolutePoints >= ABS_SATAN_ELECTION_WIN_THRESHOLD) {
+    if ((prevPoints > SATAN_ELECTION_WIN_THRESHOLD || prevAbsolutePoints < ABS_SATAN_ELECTION_WIN_THRESHOLD) && showSatanElectionWinCase.value === null) {
       showSatanElectionWinCase.value = true;
       setTimeout(() => (showSatanElectionWinCase.value = false), 5000);
     }
