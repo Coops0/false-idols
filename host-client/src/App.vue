@@ -2,6 +2,7 @@
   <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 md:p-8">
     <AbilityUnlockNotification :game/>
     <ErrorToast v-model="errorMessage"/>
+
     <div class="max-w-7xl mx-auto">
       <div class="relative">
         <div class="absolute inset-0 pointer-events-none">

@@ -7,7 +7,6 @@
               class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold shadow-sm border border-blue-400/50">
             ⚖️
           </div>
-          <span class="text-gray-900 font-medium text-lg">Divine Balance</span>
         </div>
         <div class="text-sm text-gray-600">
           {{ score > 0 ? 'Divine Favor' : score < 0 ? 'Demonic Influence' : 'Perfect Balance' }}

@@ -19,11 +19,7 @@
           </div>
         </div>
       </div>
-      <div class="text-sm text-gray-600">
-        {{
-          props.game.failed_elections === 3 ? 'Chaos!' : `${3 - props.game.failed_elections} more failures until chaos`
-        }}
-      </div>
+      <div class="text-sm text-gray-600" v-if="props.game.failed_elections === 3">Chaos!</div>
     </div>
   </div>
 </template>

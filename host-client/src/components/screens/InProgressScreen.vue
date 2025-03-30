@@ -24,7 +24,10 @@
 
     <CardDeck :game/>
     <ScoreBar :game/>
-    <ChaosBar v-if="game.failed_elections > 0" :game/>
+
+    <Transition mode="out-in" name="fade">
+      <ChaosBar v-if="game.failed_elections > 0" :game/>
+    </Transition>
   </div>
 </template>
 
