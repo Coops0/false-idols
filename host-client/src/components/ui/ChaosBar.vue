@@ -11,8 +11,8 @@
         </div>
         <div class="flex items-center gap-2">
           <div v-for="i in 3" :key="i"
-               class="w-4 h-4 rounded-full border transition-all duration-300"
-               :class="i <= game.failed_elections ? 'bg-gradient-to-br from-red-500 to-red-600 border-red-400/50 shadow-sm' : 'bg-gray-100/50 border-gray-200/50'">
+               :class="i <= game.failed_elections ? 'bg-gradient-to-br from-red-500 to-red-600 border-red-400/50 shadow-sm' : 'bg-gray-100/50 border-gray-200/50'"
+               class="w-4 h-4 rounded-full border transition-all duration-300">
           </div>
         </div>
       </div>

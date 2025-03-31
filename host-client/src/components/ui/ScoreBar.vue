@@ -15,7 +15,7 @@
         <div class="absolute inset-0 flex items-center">
           <div
               :style="{
-                 left: `${50 + (score / 2) * 50}%`,
+                 left: `${((score + 6) / 16) * 100}%`,
                  transform: 'translateX(-50%)',
                  transition: 'left 0.5s ease-in-out'
                }"

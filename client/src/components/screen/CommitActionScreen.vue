@@ -26,8 +26,8 @@
           <div
               v-for="player in players"
               :key="player.name"
-              class="transition-all duration-200 cursor-pointer active:scale-95"
               :class="!player.enabled && 'opacity-50'"
+              class="transition-all duration-200 cursor-pointer active:scale-95"
               @click="() => player.enabled && commitPlayer(player.name)"
           >
             <PlayerPreview
