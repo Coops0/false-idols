@@ -87,7 +87,7 @@ fun GameState.GameInProgress.checkGameOverConditions() {
         )
     }
 
-    if (angels.filterNot(GamePlayer::isAlive).isEmpty()) {
+    if (angels.none(GamePlayer::isAlive)) {
         throw GameOverThrowable(winner = SimpleRole.DEMON, reason = GameState.GameOver.Reason.ALL_ANGELS_DEAD)
     }
 

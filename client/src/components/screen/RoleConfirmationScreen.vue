@@ -31,7 +31,7 @@
 
           <div class="bg-gray-50 rounded-lg p-4 md:p-6 space-y-3 md:space-y-4">
             <p v-if="game.role === Role.ANGEL" class="text-gray-700 text-sm md:text-base">
-              Play positive scores and try to eliminate all demons.
+              Play positive cards and try to eliminate all demons.
             </p>
             <p v-else-if="game.role === Role.DEMON" class="text-gray-700 text-sm md:text-base">
               Work together with the other demons to kill angels and play negative cards.
