@@ -14,7 +14,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import type { GameState } from '@/game/state.ts';
 import { ref, watch } from 'vue';
 import UnlockNotification from '@/components/ui/UnlockNotification.vue';

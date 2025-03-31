@@ -1,34 +1,36 @@
 <template>
-  <div class="space-y-8">
-    <ModernCard>
-      <div class="space-y-6">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  <div class="h-full flex flex-col">
+    <div class="h-48 mb-4">
+      <ModernCard class="h-full">
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 h-full">
           <PlayerCard v-for="player in game.players" :key="player.name" :player/>
         </div>
-      </div>
-    </ModernCard>
+      </ModernCard>
+    </div>
 
-    <Transition mode="out-in" name="fade">
-      <AwaitingAdvisorCardChoiceScreen v-if="game.inner_game_state.type === 'awaiting_advisor_card_choice'"
-                                       :game/>
-      <AwaitingChiefCardDiscardScreen v-else-if="game.inner_game_state.type === 'awaiting_chief_card_discard'"
-                                      :game/>
-      <AwaitingElectionOutcomeScreen v-else-if="game.inner_game_state.type === 'awaiting_election_outcome'"
-                                     :game/>
-      <AwaitingInvestigationAnalysis v-else-if="game.inner_game_state.type === 'awaiting_investigation_analysis'"
-                                     :game/>
-      <AwaitingPlayerActionChoiceScreen v-else-if="game.inner_game_state.type === 'awaiting_chief_action_choice'"
+    <div class="flex-1 min-h-0 relative">
+      <div class="absolute inset-0">
+        <AwaitingAdvisorCardChoiceScreen v-if="game.inner_game_state.type === 'awaiting_advisor_card_choice'"
+                                         :game/>
+        <AwaitingChiefCardDiscardScreen v-else-if="game.inner_game_state.type === 'awaiting_chief_card_discard'"
                                         :game/>
-      <IdleScreen v-else-if="game.inner_game_state.type === 'idle'" :game/>
-    </Transition>
+        <AwaitingElectionOutcomeScreen v-else-if="game.inner_game_state.type === 'awaiting_election_outcome'"
+                                       :game/>
+        <AwaitingInvestigationAnalysis v-else-if="game.inner_game_state.type === 'awaiting_investigation_analysis'"
+                                       :game/>
+        <AwaitingPlayerActionChoiceScreen v-else-if="game.inner_game_state.type === 'awaiting_chief_action_choice'"
+                                          :game/>
+        <IdleScreen v-else-if="game.inner_game_state.type === 'idle'" :game/>
+      </div>
+    </div>
 
-    <CardDeck :game class="transition-opacity duration-200"
-              :class="game.deck.played_cards.length === 0 && 'opacity-0'"/>
-    <ScoreBar :game/>
-
-    <Transition mode="out-in" name="fade" appear>
-      <ChaosBar v-show="game.failed_elections > 0" :game/>
-    </Transition>
+    <div class="h-24 mt-4">
+      <div class="grid grid-cols-3 gap-4 h-full">
+        <CardDeck :game class="h-full"/>
+        <ScoreBar :game class="h-full"/>
+        <ChaosBar v-if="game.failed_elections > 0" :game class="h-full"/>
+      </div>
+    </div>
   </div>
 </template>
 

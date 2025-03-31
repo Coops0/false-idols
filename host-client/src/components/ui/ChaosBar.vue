@@ -20,7 +20,7 @@
           </div>
         </div>
       </div>
-      <div class="text-sm text-gray-600" v-if="game.failed_elections === 3">Chaos!</div>
+      <div v-if="game.failed_elections === 3" class="text-sm text-gray-600">Chaos!</div>
     </div>
   </div>
 </template>

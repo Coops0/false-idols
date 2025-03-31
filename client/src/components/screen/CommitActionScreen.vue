@@ -1,12 +1,12 @@
 <template>
   <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-4">
-    <BaseCard class="w-full max-w-4xl">
+    <BaseCard class="w-full max-w-4xl mx-4">
       <template #header>
-        <h1 class="text-2xl font-bold text-gray-800 text-center">Do Something</h1>
+        <h1 class="text-xl md:text-2xl font-bold text-gray-800 text-center">Do Something</h1>
       </template>
 
-      <div class="space-y-8">
-        <div class="flex justify-center space-x-4">
+      <div class="space-y-6 md:space-y-8">
+        <div class="flex flex-col sm:flex-row justify-center gap-2 sm:gap-4">
           <button
               v-for="action in [ActionChoice.NOMINATE, ActionChoice.INVESTIGATE, ActionChoice.KILL]"
               :key="action"
@@ -15,19 +15,21 @@
               'opacity-50': !isValidAction(action),
               'bg-gray-100 text-gray-700': selectedAction !== action
             }"
-              class="px-6 py-3 rounded-lg font-semibold transition-all duration-200"
+              class="px-4 sm:px-6 py-3 rounded-lg font-semibold transition-all duration-200 text-sm sm:text-base"
               @click="() => swapAction(action)"
           >
             {{ action }}
           </button>
         </div>
 
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
           <div
               v-for="player in players"
               :key="player.name"
-              :class="!player.enabled && 'opacity-50'"
-              class="transition-all duration-200"
+              :class="[
+                !player.enabled && 'opacity-50',
+                'transition-all duration-200 cursor-pointer active:scale-95'
+              ]"
               @click="() => player.enabled && commitPlayer(player.name)"
           >
             <PlayerPreview

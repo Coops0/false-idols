@@ -1,43 +1,32 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 md:p-8">
+  <div class="min-h-screen bg-gray-50 p-4">
     <AbilityUnlockNotification :game/>
     <ErrorToast v-model="errorMessage"/>
 
-    <div class="max-w-7xl mx-auto">
-      <div class="relative">
-        <div class="absolute inset-0 pointer-events-none">
-          <div
-              class="absolute top-0 left-0 w-96 h-96 bg-blue-100/30 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob"/>
-          <div
-              class="absolute top-0 right-0 w-96 h-96 bg-purple-100/30 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000"/>
-          <div
-              class="absolute -bottom-8 left-20 w-96 h-96 bg-pink-100/30 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-4000"/>
-        </div>
-
-        <div class="relative">
-          <div v-if="game === null" class="flex items-center justify-center min-h-[60vh]">
-            <div class="text-center">
-              <div class="w-16 h-16 border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin mx-auto"/>
-              <p class="mt-4 text-gray-600 text-lg font-medium">Loading...</p>
-            </div>
+    <div class="max-w-6xl mx-auto h-screen flex flex-col">
+      <div class="relative flex-1">
+        <div v-if="game === null" class="flex items-center justify-center h-full">
+          <div class="text-center">
+            <div class="w-16 h-16 border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin mx-auto"/>
+            <p class="mt-4 text-gray-600 text-lg font-medium">Loading...</p>
           </div>
-
-          <Transition v-else mode="out-in" name="fade">
-            <template v-if="game.type === 'lobby'">
-              <LobbyScreen :game/>
-            </template>
-            <template v-else-if="game.type === 'game_in_progress'">
-              <InProgressScreen :game/>
-            </template>
-            <template v-else-if="game.type === 'game_over'">
-              <GameOverScreen :game/>
-            </template>
-          </Transition>
-
-          <Transition mode="out-in" name="fade">
-            <KeybindDisplay v-if="game !== null && showKeybindDisplay" :game class="fixed bottom-4 right-4"/>
-          </Transition>
         </div>
+
+        <Transition v-else mode="out-in" name="fade">
+          <template v-if="game.type === 'lobby'">
+            <LobbyScreen :game/>
+          </template>
+          <template v-else-if="game.type === 'game_in_progress'">
+            <InProgressScreen :game/>
+          </template>
+          <template v-else-if="game.type === 'game_over'">
+            <GameOverScreen :game/>
+          </template>
+        </Transition>
+
+        <Transition mode="out-in" name="fade">
+          <KeybindDisplay v-if="game !== null && showKeybindDisplay" :game class="fixed bottom-4 right-4"/>
+        </Transition>
       </div>
     </div>
   </div>
@@ -181,32 +170,5 @@ function onKeyPress(event: KeyboardEvent) {
 .toast-leave-to {
   opacity: 0;
   transform: translateX(30px);
-}
-
-@keyframes blob {
-  0% {
-    transform: translate(0px, 0px) scale(1);
-  }
-  33% {
-    transform: translate(30px, -50px) scale(1.1);
-  }
-  66% {
-    transform: translate(-20px, 20px) scale(0.9);
-  }
-  100% {
-    transform: translate(0px, 0px) scale(1);
-  }
-}
-
-.animate-blob {
-  animation: blob 7s infinite;
-}
-
-.animation-delay-2000 {
-  animation-delay: 2s;
-}
-
-.animation-delay-4000 {
-  animation-delay: 4s;
 }
 </style>

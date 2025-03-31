@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="min-h-screen w-full overflow-x-hidden">
     <ErrorToast :message="error"/>
     <LoginScreen
         v-if="canShowLogin && !manualIsConnected"
@@ -184,3 +184,29 @@ function chooseCard(cardId: number) {
   game.value!.state = { type: 'idle' };
 }
 </script>
+
+<style>
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button, input, select, textarea {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+@media screen and (max-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+</style>

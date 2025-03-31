@@ -1,17 +1,18 @@
 <template>
   <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-4">
-    <BaseCard class="w-full max-w-4xl">
+    <BaseCard class="w-full max-w-4xl mx-4">
       <template #header>
-        <h1 class="text-2xl font-bold text-gray-800 text-center">Play a Card</h1>
-        <p class="text-gray-600 text-center mt-2">
+        <h1 class="text-xl md:text-2xl font-bold text-gray-800 text-center">Play a Card</h1>
+        <p class="text-sm md:text-base text-gray-600 text-center mt-2">
           Choose one card to <span class="font-bold text-green-600">play</span>
         </p>
       </template>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         <div
             v-for="card in gameState.cards"
             :key="card.id"
+            class="cursor-pointer active:scale-95 transition-transform"
             @click="() => choose(card)"
         >
           <CardPreview :card="card"/>

@@ -1,11 +1,11 @@
 <template>
   <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-4">
-    <BaseCard class="w-full max-w-md">
-      <div class="space-y-4">
+    <BaseCard class="w-full max-w-md mx-4">
+      <div class="space-y-6">
         <div>
           <input
               v-model="name"
-              class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+              class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors text-base"
               placeholder="Name"
               type="text"
               @keydown.enter="join"
@@ -14,7 +14,7 @@
 
         <BaseButton
             :disabled="!isNameValid(name)"
-            class="w-full"
+            class="w-full py-3 text-base font-medium"
             variant="primary"
             @click="join"
         >
