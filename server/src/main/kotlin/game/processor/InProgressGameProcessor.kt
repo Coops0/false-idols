@@ -143,7 +143,7 @@ suspend fun GameState.GameInProgress.handlePlayerActionChoice(
 
         ActionChoice.NOMINATE -> {
             if (this.players.size <= 5) {
-                require(!target.wasChiefLastRound) { "Target must not have been chief last round" }
+                require(!target.wasAdvisorLastRound) { "Target must not have been advisor last round" }
             } else {
                 require(!target.wasChiefLastRound && !target.wasAdvisorLastRound) { "Target must not have been chief or advisor last round" }
             }

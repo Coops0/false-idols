@@ -37,7 +37,7 @@ defineProps<{ card: Card }>();
 
 const sign = (value: number) => {
   if (value > 0) return '+';
-  if (value < 0) return '-';
+  // if (value < 0) return '';
   return '';
 };
 </script> 

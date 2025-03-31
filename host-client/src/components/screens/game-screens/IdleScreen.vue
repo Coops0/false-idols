@@ -1,5 +1,5 @@
 <template>
-  <div class="space-y-8 text-gray-200 text-center text-sm">
+  <div class="text-gray-200 text-center text-sm size-full">
     (idle)
   </div>
 </template>

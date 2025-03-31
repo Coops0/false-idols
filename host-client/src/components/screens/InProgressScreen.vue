@@ -1,6 +1,6 @@
 <template>
   <div class="h-full flex flex-col">
-    <div class="h-48 mb-4">
+    <div class="min-h-48 mb-4">
       <ModernCard class="h-full">
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 h-full">
           <PlayerCard v-for="player in game.players" :key="player.name" :player/>
@@ -8,7 +8,7 @@
       </ModernCard>
     </div>
 
-    <div class="flex-1 min-h-0 relative">
+    <div class="h-64 relative">
       <div class="absolute inset-0">
         <AwaitingAdvisorCardChoiceScreen v-if="game.inner_game_state.type === 'awaiting_advisor_card_choice'"
                                          :game/>
