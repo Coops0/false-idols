@@ -17,12 +17,14 @@ suspend fun GameState.GameInProgress.rotateChief() {
     } else {
         var currentChiefIndex = this.alive.indexOf(this.chief)
         if (currentChiefIndex == -1) {
-            // Chief has been killed
+            // Chief has been killed (shouldn't be possible)
             currentChiefIndex = this.players
+                // Find who the next chief would be if the chief was alive
                 .filter { player -> player.isAlive || player == this.chief }
                 .indexOf(this.chief)
         }
 
+        // Find next chief in line, or wrap around to the first alive player
         this.alive[(currentChiefIndex + 1) % this.alive.size]
     }
 
@@ -34,6 +36,10 @@ suspend fun GameState.GameInProgress.rotateChief() {
         newChief.isChief = true
     }
 
+    this.requestChiefAction()
+}
+
+suspend fun GameState.GameInProgress.requestChiefAction() {
     val permittedActions = mutableListOf(ActionChoice.NOMINATE)
     if (this.deck.absolutePoints >= MIN_ABS_POINTS_TO_INVESTIGATE) permittedActions.add(ActionChoice.INVESTIGATE)
     if (this.deck.absolutePoints >= MIN_ABS_POINTS_TO_KILL) permittedActions.add(ActionChoice.KILL)
@@ -43,10 +49,10 @@ suspend fun GameState.GameInProgress.rotateChief() {
     )
 
     val playersSize = this.players.size
-    val actionablePlayers = this.alive.filter { it != newChief }
+    val actionablePlayers = this.alive.filter { it != this.chief }
         .map { OutboundMessage.RequestActionChoice.ActionSupplementedPlayer.fromGamePlayer(playersSize, it) }
 
-    newChief.send(
+    this.chief.send(
         OutboundMessage.RequestActionChoice(
             permittedActions = permittedActions,
             players = actionablePlayers,
