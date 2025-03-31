@@ -28,11 +28,17 @@ export type GamePlayer = Player & {
     was_advisor_last_round: boolean;
 };
 
+export enum CardConsequenceQualifier {
+    POSITIVE = 'POSITIVE',
+    NEGATIVE = 'NEGATIVE',
+    NEUTRAL = 'NEUTRAL',
+}
+
 export type Card = {
     id: number;
     description: string;
     consequence: number;
-    consequence_qualifier: 'POSITIVE' | 'NEGATIVE' | 'NEUTRAL';
+    consequence_qualifier: CardConsequenceQualifier;
 }
 
 export type CardDeck = {
