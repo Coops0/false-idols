@@ -7,6 +7,7 @@
               class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold shadow-sm border border-blue-400/50">
             ⚖️
           </div>
+          <span class="text-gray-900 font-medium text-lg">Score</span>
         </div>
       </div>
       <div class="relative h-8">

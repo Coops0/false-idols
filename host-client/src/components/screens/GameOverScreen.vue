@@ -1,17 +1,15 @@
 <template>
   <div class="space-y-8">
-    <DivineCard>
+    <ModernCard>
       <div class="text-center space-y-4">
-        <h1 :class="[
-          game.winner === 'ANGELS' ? 'text-blue-600' : 'text-red-600'
-        ]" class="text-4xl font-bold">
+        <h1 :class="game.winner === 'ANGELS' ? 'text-blue-600' : 'text-red-600'" class="text-4xl font-bold">
           {{ game.winner === 'ANGELS' ? 'Angels Win' : 'Demonic Win' }}
         </h1>
-        <p class="text-xl text-amber-900">{{ reasonText }}</p>
+        <p class="text-xl text-gray-600">{{ reasonText }}</p>
       </div>
-    </DivineCard>
+    </ModernCard>
 
-    <DivineCard>
+    <ModernCard>
       <div class="space-y-6">
         <div class="text-center">
           <div class="flex flex-col items-center gap-4">
@@ -24,12 +22,12 @@
                 Satan
               </div>
             </div>
-            <p class="text-lg text-amber-900">{{ satan.name }}</p>
+            <p class="text-lg text-red-500">{{ satan.name }}</p>
           </div>
         </div>
 
         <div v-if="demons.length" class="text-center">
-          <h3 class="text-xl font-semibold text-amber-900 mb-4">Demon</h3>
+          <h3 class="text-xl font-semibold text-red-600 mb-4">Demon</h3>
           <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
             <div v-for="player in demons" :key="player.name" class="relative">
               <div class="w-20 h-20 rounded-full overflow-hidden border-4 border-red-500 shadow-lg">
@@ -43,15 +41,15 @@
           </div>
         </div>
       </div>
-    </DivineCard>
+    </ModernCard>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { type GameOverGameState } from '@/game/state.ts';
 import { computed } from 'vue';
-import DivineCard from '@/components/ui/DivineCard.vue';
 import { PlayerIcon } from '@/game/player-icon.ts';
+import ModernCard from '@/components/ui/ModernCard.vue';
 
 const props = defineProps<{ game: GameOverGameState }>();
 
