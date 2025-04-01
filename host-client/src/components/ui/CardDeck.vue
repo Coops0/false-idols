@@ -1,24 +1,21 @@
 <template>
-  <div class="relative w-full max-w-md mx-auto">
-    <div class="bg-white backdrop-blur-sm rounded-xl p-6 border border-gray-100">
-      <div class="flex items-center justify-between mb-6">
-        <div class="flex items-center gap-3">
-          <div
-              class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center text-white font-bold shadow-sm border border-purple-400/50">
-            🎴
-          </div>
-          <span class="text-gray-900 font-medium text-lg">Played Cards</span>
+  <div class="w-full h-full flex items-center justify-center">
+    <div class="bg-white/50 backdrop-blur-sm rounded-lg p-2 border border-gray-100/50 w-full h-full flex flex-col">
+      <div class="flex items-center gap-1 mb-1">
+        <div class="w-4 h-4 rounded-md bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold">
+          🎴
         </div>
+        <span class="text-gray-900 font-medium text-xs">Played Cards</span>
       </div>
-      <div class="relative h-32">
-        <div v-for="(card, index) in cards.slice(-3).reverse()"
-             :key="index"
-             :style="{
-               transform: `translateY(${index * 4}px)`,
-               zIndex: cards.length - index
-             }"
-             class="absolute w-full">
-          <GameCard :card/>
+      <div class="relative flex-grow flex items-center justify-center">
+        <div v-if="cards.length === 0" class="text-gray-400 text-xs text-center">
+          No cards played
+        </div>
+        <div v-else class="flex justify-center gap-1">
+          <div v-for="(card, index) in cards.slice(-2).reverse()" :key="index"
+               class="w-20 h-24">
+            <GameCard :card="card" class="w-full h-full"/>
+          </div>
         </div>
       </div>
     </div>

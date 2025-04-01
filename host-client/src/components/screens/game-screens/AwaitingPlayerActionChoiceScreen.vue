@@ -1,32 +1,32 @@
 <template>
-  <div class="space-y-8">
-    <ModernCard variant="highlighted">
-      <div class="text-center space-y-6">
-        <div class="flex justify-center">
-          <div class="relative">
-            <div class="w-32 h-32 rounded-2xl overflow-hidden border-2 border-gray-100 shadow-sm bg-white">
-              <img :alt="chief.name" :src="PlayerIcon.normal(chief.icon)" class="w-full h-full object-cover"/>
-            </div>
-            <div
-                class="absolute -bottom-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-br from-blue-500 to-blue-600 text-white px-5 py-2 rounded-xl text-lg font-medium shadow-sm border border-blue-400/50">
-              {{ chief.name }}
-            </div>
-            <div
-                class="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center text-white text-sm font-bold shadow-sm border border-blue-400/50">
-              👑
-            </div>
+  <div class="bg-white/90 rounded-lg border border-gray-200 shadow-sm p-4">
+    <div class="text-center">
+      <div class="flex justify-center mb-4">
+        <div class="relative">
+          <div class="w-28 h-28 rounded-lg overflow-hidden border-2 border-gray-100 shadow-sm bg-white">
+            <img :alt="chief.name" :src="PlayerIcon.normal(chief.icon)" class="w-full h-full object-cover"/>
+          </div>
+          <div
+              class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-gradient-to-br from-blue-500 to-blue-600 text-white px-2 py-0.5 rounded-lg text-sm font-medium shadow-sm border border-blue-400/50">
+            {{ chief.name }}
+          </div>
+          <div
+              class="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-sm border border-blue-400/50">
+            👑
           </div>
         </div>
-        <p class="text-xl text-gray-700">The chief is deciding...</p>
       </div>
-    </ModernCard>
+
+      <div class="bg-gray-50 rounded-lg p-3 mx-auto max-w-xs">
+        <p class="text-base text-gray-700">The chief is deciding...</p>
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import type { AwaitingChiefActionChoiceInnerGameState, InProgressGameState } from '@/game/state.ts';
 import { computed } from 'vue';
-import ModernCard from '@/components/ui/ModernCard.vue';
 import { PlayerIcon } from '@/game/player-icon.ts';
 
 const props = defineProps<{ game: InProgressGameState }>();
