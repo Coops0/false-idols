@@ -1,9 +1,9 @@
 <template>
-  <div class="bg-white/90 rounded-lg border border-gray-200 shadow-sm p-4">
+  <div class="bg-white/90 rounded-lg border border-gray-200 shadow-sm p-6">
     <div class="text-center">
       <div class="flex justify-center mb-4">
         <div class="relative">
-          <div class="w-28 h-28 rounded-lg overflow-hidden border-2 border-gray-100 shadow-sm bg-white">
+          <div class="size-32 rounded-lg overflow-hidden border-2 border-gray-100 shadow-sm bg-white">
             <img :alt="chief.name" :src="PlayerIcon.normal(chief.icon)" class="w-full h-full object-cover"/>
           </div>
           <div

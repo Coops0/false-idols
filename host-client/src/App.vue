@@ -1,9 +1,9 @@
 <template>
-  <div class="min-h-screen p-4">
+  <div class="h-screen p-4 overflow-hidden">
     <AbilityUnlockNotification :game/>
     <ErrorToast v-model="errorMessage"/>
 
-    <div class="max-w-6xl mx-auto min-h-screen flex flex-col">
+    <div class="max-w-6xl mx-auto h-screen flex flex-col">
       <div class="relative flex-1">
         <div v-if="game === null" class="flex items-center justify-center h-full">
           <div class="text-center">

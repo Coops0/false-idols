@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white/90 rounded-lg border border-gray-200 shadow-sm p-4 max-w-md">
+  <div class="bg-white/90 rounded-lg border border-gray-200 shadow-sm p-6 max-w-md">
     <div class="text-center">
       <div class="bg-gray-50 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
         <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
