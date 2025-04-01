@@ -1,6 +1,6 @@
 <template>
   <div class="relative w-full max-w-md mx-auto">
-    <div class="bg-white/50 backdrop-blur-sm rounded-xl p-6 border border-gray-100/50">
+    <div class="bg-white backdrop-blur-sm rounded-xl p-6 border border-gray-100">
       <div class="flex items-center justify-between mb-6">
         <div class="flex items-center gap-3">
           <div

@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-50 p-4">
+  <div class="min-h-screen p-4">
     <AbilityUnlockNotification :game/>
     <ErrorToast v-model="errorMessage"/>
 
@@ -147,6 +147,10 @@ function onKeyPress(event: KeyboardEvent) {
 </script>
 
 <style>
+body {
+  background-color: var(--color-gray-50);
+}
+
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.3s ease;

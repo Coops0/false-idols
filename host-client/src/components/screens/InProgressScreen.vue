@@ -1,9 +1,5 @@
 <template>
   <div class="h-screen flex flex-col p-4 gap-2">
-    <div class="h-[15vh] bg-white/90 rounded-lg border border-gray-200 flex items-center justify-center">
-      <h1 class="text-4xl font-bold text-gray-900">Game in Progress</h1>
-    </div>
-
     <div class="h-[35vh]">
       <div class="grid grid-cols-4 gap-2 h-full">
         <div v-for="player in game.players" :key="player.name"
