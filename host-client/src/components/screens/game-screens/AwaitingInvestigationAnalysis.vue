@@ -6,7 +6,7 @@
         <div class="flex flex-col items-center">
           <div class="relative">
             <div class="size-32 rounded-lg overflow-hidden border-2 border-gray-100 shadow-sm bg-white">
-              <img :alt="chief.name" :src="PlayerIcon.normal(chief.icon)" class="w-full h-full object-cover"/>
+              <img :alt="chief.name" :src="PlayerIcon.normal(chief.icon)" class="w-full h-full object-cover player-icon"/>
             </div>
             <div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-gradient-to-br from-blue-500 to-blue-600 text-white px-2 py-0.5 rounded-lg text-sm font-medium shadow-sm border border-blue-400/50">
               {{ chief.name }}
@@ -26,7 +26,7 @@
         <div class="flex flex-col items-center">
           <div class="relative">
             <div class="w-28 h-28 rounded-lg overflow-hidden border-2 border-gray-100 shadow-sm bg-white">
-              <img :alt="target.name" :src="PlayerIcon.normal(target.icon)" class="w-full h-full object-cover"/>
+              <img :alt="target.name" :src="PlayerIcon.normal(target.icon)" class="w-full h-full object-cover player-icon"/>
             </div>
             <div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-gradient-to-br from-purple-500 to-purple-600 text-white px-2 py-0.5 rounded-lg text-sm font-medium shadow-sm border border-purple-400/50">
               {{ target.name }}

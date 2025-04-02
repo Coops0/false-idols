@@ -1,3 +1,5 @@
+import { ICONS } from '@/game/player-icon.ts';
+
 export enum Role {
     SATAN = 'SATAN',
     DEMON = 'DEMON',
@@ -17,7 +19,7 @@ export const roleName = (role: Role) => {
 
 export type Player = {
     name: string;
-    icon: string;
+    icon: typeof ICONS[number];
 };
 export type GamePlayer = Player & {
     role: Role;

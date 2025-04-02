@@ -166,7 +166,7 @@ function debugKeys(key: string): boolean {
           name: 'joe biden',
           is_chief: true,
           is_alive: true,
-          icon: 'raccoon',
+          icon: 'fox',
           role: Role.ANGEL,
           was_advisor_last_round: false,
           was_chief_last_round: false,
@@ -184,7 +184,7 @@ function debugKeys(key: string): boolean {
           name: 'meh',
           is_chief: false,
           is_alive: true,
-          icon: 'cat',
+          icon: 'mouse',
           role: Role.DEMON,
           was_advisor_last_round: false,
           was_chief_last_round: false,
@@ -193,7 +193,7 @@ function debugKeys(key: string): boolean {
           name: 'jesus',
           is_chief: false,
           is_alive: true,
-          icon: 'dog',
+          icon: 'reindeer',
           role: Role.ANGEL,
           was_advisor_last_round: false,
           was_chief_last_round: false,
@@ -245,16 +245,16 @@ function debugKeys(key: string): boolean {
       reason: 'SATAN_KILLED',
       players: [{
         name: 'joe biden',
-        icon: 'raccoon',
+        icon: 'rabbit',
       }, {
         name: 'okay',
-        icon: 'mouse',
+        icon: 'dog',
       }, {
         name: 'meh',
-        icon: 'cat',
+        icon: 'koala',
       }, {
         name: 'jesus',
-        icon: 'dog',
+        icon: 'pig',
       }],
       winner: 'ANGELS'
     };
@@ -269,6 +269,10 @@ function debugKeys(key: string): boolean {
 <style>
 body {
   background-color: var(--color-gray-50);
+}
+
+.player-icon {
+  image-rendering: pixelated;
 }
 
 .fade-enter-active,

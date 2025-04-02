@@ -4,7 +4,7 @@
       <div class="flex items-center gap-2">
         <div class="relative flex-shrink-0">
           <div class="w-12 h-12 rounded-lg overflow-hidden border-2 border-gray-100 shadow-sm bg-white">
-            <img :alt="player.name" :src="icon" class="w-full h-full object-cover"/>
+            <img :alt="player.name" :src="icon" class="w-full h-full object-cover player-icon"/>
           </div>
           <div v-if="player.is_chief"
                class="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-sm border border-blue-400">

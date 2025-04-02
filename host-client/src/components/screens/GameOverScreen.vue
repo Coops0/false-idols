@@ -14,7 +14,7 @@
       <div class="flex flex-col items-center justify-center gap-3 h-full">
         <div class="relative">
           <div class="w-28 h-28 rounded-lg overflow-hidden border-4 border-red-600">
-            <img :alt="satan.name" :src="PlayerIcon.satan(satan.icon)" class="w-full h-full object-cover"/>
+            <img :alt="satan.name" :src="PlayerIcon.satan(satan.icon)" class="w-full h-full object-cover player-icon"/>
           </div>
           <div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-red-600 text-white px-2 py-0.5 rounded-lg text-xs font-medium">
             Satan
@@ -31,7 +31,7 @@
       <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-9 gap-2">
         <div v-for="player in demons" :key="player.name" class="relative">
           <div class="w-24 h-24 rounded-lg overflow-hidden border-3 border-red-500 mx-auto">
-            <img :alt="player.name" :src="PlayerIcon.demon(player.icon)" class="w-full h-full object-cover"/>
+            <img :alt="player.name" :src="PlayerIcon.demon(player.icon)" class="w-full h-full object-cover player-icon"/>
           </div>
           <div class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-1.5 py-0.5 rounded-lg text-xs font-medium">
             {{ player.name }}

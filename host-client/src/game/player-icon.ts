@@ -51,7 +51,7 @@ export class PlayerIcon {
             ]))
             .map(icon => {
                 const img = new Image();
-                img.src = PlayerIcon.normalize(icon);
+                img.src = icon;
                 return new Promise<void>(resolve => {
                     img.onload = () => resolve();
                     img.onerror = (err) => {
@@ -69,6 +69,6 @@ export class PlayerIcon {
     }
 
     private static normalize(icon: string): string {
-        return `/assets/icons/${icon}.png`;
+        return `/icons/${icon}.png`;
     }
 }

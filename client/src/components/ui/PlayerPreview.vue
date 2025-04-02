@@ -5,7 +5,7 @@
       <img
           :alt="`${player.icon} ${iconVariant}`"
           :src="icon"
-          class="w-full h-full object-cover"
+          class="w-full h-full object-cover player-icon"
       />
     </div>
   </div>

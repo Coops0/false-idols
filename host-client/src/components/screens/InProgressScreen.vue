@@ -5,7 +5,7 @@
         <div v-for="player in game.players" :key="player.name"
              class="bg-white/90 rounded-lg border border-gray-200 p-2 flex items-center gap-2">
           <div class="w-12 h-12 rounded-lg overflow-hidden border-2 border-gray-200 flex-shrink-0">
-            <img :alt="player.name" :src="PlayerIcon.normal(player.icon)" class="w-full h-full object-cover"/>
+            <img :alt="player.name" :src="PlayerIcon.normal(player.icon)" class="w-full h-full object-cover player-icon"/>
           </div>
           <div class="flex-1 min-w-0">
             <div class="font-medium text-sm truncate">{{ player.name }}</div>

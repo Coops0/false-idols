@@ -46,7 +46,7 @@ export class PlayerIcon {
             ]))
             .map(icon => {
                 const img = new Image();
-                img.src = PlayerIcon.normalize(icon);
+                img.src = icon;
                 return new Promise<void>(resolve => {
                     img.onload = () => resolve();
                     img.onerror = (err) => {
