@@ -1,14 +1,14 @@
 export const ICONS = [
-    'zebra',
-    'cat',
-    'mouse',
-    'fox',
-    'raccoon',
-    'rabbit',
-    'dog',
-    'pig',
     'bear',
-    'lion'
+    'reindeer',
+    'gerbil',
+    'rabbit',
+    'fox',
+    'pig',
+    'mouse',
+    'dog',
+    'panda',
+    'koala'
 ] as const;
 
 export class PlayerIcon {
@@ -64,6 +64,6 @@ export class PlayerIcon {
     }
 
     private static normalize(icon: string): string {
-        return `/assets/icons/${icon}.png`;
+        return `/icons/${icon}.png`;
     }
 }

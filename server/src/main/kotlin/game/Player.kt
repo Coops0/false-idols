@@ -66,16 +66,16 @@ class GamePlayer(player: Player, val role: ComplexRole) :
 }
 
 enum class PlayerIcon(val iconName: String) {
-    ZEBRA("zebra"),
-    CAT("cat"),
-    MOUSE("mouse"),
-    FOX("fox"),
-    RACCOON("raccoon"),
-    RABBIT("rabbit"),
-    DOG("dog"),
-    PIG("pig"),
     BEAR("bear"),
-    LION("lion");
+    REINDEER("reindeer"),
+    GERBIL("gerbil"),
+    RABBIT("rabbit"),
+    FOX("fox"),
+    PIG("pig"),
+    MOUSE("mouse"),
+    DOG("dog"),
+    PANDA("panda"),
+    KOALA("koala");
 
     companion object {
         operator fun get(index: Int) = entries[index]

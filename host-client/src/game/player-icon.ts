@@ -1,14 +1,14 @@
 export const ICONS = [
-    'zebra',
-    'cat',
-    'mouse',
-    'fox',
-    'raccoon',
-    'rabbit',
-    'dog',
-    'pig',
     'bear',
-    'lion'
+    'reindeer',
+    'gerbil',
+    'rabbit',
+    'fox',
+    'pig',
+    'mouse',
+    'dog',
+    'panda',
+    'koala'
 ] as const;
 
 export class PlayerIcon {
