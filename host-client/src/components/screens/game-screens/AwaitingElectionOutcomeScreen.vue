@@ -1,7 +1,7 @@
 <template>
   <div class="p-10 max-w-md">
     <div class="text-center flex flex-col items-center">
-      <h2 class="text-lg font-bold text-gray-900 mb-3">Election</h2>
+      <h2 class="text-xl text-gray-900 mb-3">Election</h2>
       <div class="flex items-center gap-6">
         <div class="relative">
           <PlayerCard :player="nominee" size="lg"/>

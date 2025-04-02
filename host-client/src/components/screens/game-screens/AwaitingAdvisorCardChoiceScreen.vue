@@ -1,10 +1,10 @@
 <template>
   <div class="p-8 max-w-md">
     <div class="text-center flex flex-col items-center">
+      <h2 class="text-xl text-gray-900 mb-3">The advisor is choosing a card to play</h2>
       <div class="relative mb-3">
         <PlayerCard :player="advisor" size="lg"/>
       </div>
-      <p class="text-base text-gray-700">The advisor choosing which card to choose...</p>
     </div>
   </div>
 </template>

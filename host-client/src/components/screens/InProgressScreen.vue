@@ -1,5 +1,5 @@
 <template>
-  <div class="h-screen flex flex-col p-2 gap-2 overflow-hidden">
+  <div class="h-full flex flex-col p-2 gap-2 overflow-hidden">
     <div class="flex-none">
       <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-9 gap-2">
         <PlayerCard v-for="player in game.players" :key="player.name" :player size="md"/>
@@ -10,16 +10,16 @@
       <div class="h-full bg-white/90 rounded-lg border border-gray-200 p-4 overflow-hidden">
         <div class="h-full flex items-center justify-center">
           <AwaitingAdvisorCardChoiceScreen v-if="game.inner_game_state.type === 'awaiting_advisor_card_choice'"
-                                           :game="game"/>
+                                           :game/>
           <AwaitingChiefCardDiscardScreen v-else-if="game.inner_game_state.type === 'awaiting_chief_card_discard'"
-                                          :game="game"/>
+                                          :game/>
           <AwaitingElectionOutcomeScreen v-else-if="game.inner_game_state.type === 'awaiting_election_outcome'"
-                                         :game="game"/>
+                                         :game/>
           <AwaitingInvestigationAnalysis v-else-if="game.inner_game_state.type === 'awaiting_investigation_analysis'"
-                                         :game="game"/>
+                                         :game/>
           <AwaitingPlayerActionChoiceScreen v-else-if="game.inner_game_state.type === 'awaiting_chief_action_choice'"
-                                            :game="game"/>
-          <IdleScreen v-else-if="game.inner_game_state.type === 'idle'" :game="game"/>
+                                            :game/>
+          <IdleScreen v-else-if="game.inner_game_state.type === 'idle'" :game/>
         </div>
       </div>
     </div>
@@ -27,16 +27,16 @@
     <div class="flex-none">
       <div class="grid grid-cols-3 gap-2 h-38">
         <div class="bg-white/90 rounded-lg border border-gray-200 p-2 flex items-center justify-center">
-          <CardDeck :game="game" class="w-full h-full"/>
+          <CardDeck :game class="size-full"/>
         </div>
 
         <div class="bg-white/90 rounded-lg border border-gray-200 p-2 flex items-center justify-center">
-          <ScoreBar :game="game" class="w-full h-full"/>
+          <ScoreBar :game class="size-full"/>
         </div>
 
         <div v-if="game.failed_elections > 0"
              class="bg-white/90 rounded-lg border border-gray-200 p-2 flex items-center justify-center">
-          <ChaosBar :game="game" class="w-full h-full"/>
+          <ChaosBar :game class="size-full"/>
         </div>
 
         <div v-else class="bg-white/90 rounded-lg border border-gray-200 p-2 flex items-center justify-center">

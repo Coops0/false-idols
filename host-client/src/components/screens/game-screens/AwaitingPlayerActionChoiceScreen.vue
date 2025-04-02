@@ -3,12 +3,8 @@
     <div class="text-center">
       <div class="flex justify-center mb-4">
         <div class="relative">
-          <PlayerCard :player="chief" size="lg"/>
+          <PlayerCard :player="chief" size="xl"/>
         </div>
-      </div>
-
-      <div class="bg-gray-50 rounded-lg p-3 mx-auto max-w-xs">
-        <p class="text-base text-gray-700">The chief is deciding...</p>
       </div>
     </div>
   </div>

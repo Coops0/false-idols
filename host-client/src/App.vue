@@ -1,9 +1,9 @@
 <template>
-  <div class="h-screen overflow-hidden">
+  <div class="h-[calc(100vh-64px)] overflow-hidden">
     <AbilityUnlockNotification :game/>
     <ErrorToast v-model="errorMessage"/>
 
-    <div class="max-w-6xl mx-auto h-screen flex flex-col">
+    <div class="max-w-6xl mx-auto h-full flex flex-col">
       <div class="relative flex-1">
         <div v-if="game === null" class="flex items-center justify-center h-full">
           <div class="text-center">
@@ -39,7 +39,8 @@ import { onMounted, onUnmounted, ref } from 'vue';
 import {
   type AwaitingChiefActionChoiceInnerGameState,
   type AwaitingInvestigationAnalysisInnerGameState,
-  CardConsequenceQualifier, type GameOverGameState,
+  CardConsequenceQualifier,
+  type GameOverGameState,
   type GameState,
   type InProgressGameState,
   Role
@@ -237,7 +238,7 @@ function debugKeys(key: string): boolean {
     return true;
   }
 
-  if(key === 'o') {
+  if (key === 'o') {
     game.value = <GameOverGameState>{
       type: 'game_over',
       demons: ['meh'],
@@ -258,6 +259,80 @@ function debugKeys(key: string): boolean {
       }],
       winner: 'ANGELS'
     };
+
+    return true;
+  }
+
+  if (key === 'k') {
+    const g = { ...(game.value as InProgressGameState) };
+
+    g.players = [
+      {
+        name: 'joe biden',
+        is_chief: true,
+        is_alive: true,
+        icon: 'fox',
+        role: Role.ANGEL,
+        was_advisor_last_round: false,
+        was_chief_last_round: false,
+      },
+      {
+        name: 'okay',
+        is_chief: false,
+        is_alive: true,
+        icon: 'mouse',
+        role: Role.SATAN,
+        was_advisor_last_round: false,
+        was_chief_last_round: true,
+      },
+      {
+        name: 'meh',
+        is_chief: false,
+        is_alive: true,
+        icon: 'mouse',
+        role: Role.DEMON,
+        was_advisor_last_round: false,
+        was_chief_last_round: false,
+      },
+      {
+        name: 'jesus',
+        is_chief: false,
+        is_alive: true,
+        icon: 'reindeer',
+        role: Role.ANGEL,
+        was_advisor_last_round: false,
+        was_chief_last_round: false,
+      },
+      {
+        name: 'satan',
+        is_chief: false,
+        is_alive: true,
+        icon: 'reindeer',
+        role: Role.ANGEL,
+        was_advisor_last_round: false,
+        was_chief_last_round: false,
+      },
+      {
+        name: 'lucifer',
+        is_chief: false,
+        is_alive: true,
+        icon: 'reindeer',
+        role: Role.ANGEL,
+        was_advisor_last_round: false,
+        was_chief_last_round: false
+      },
+      {
+        name: 'satan2',
+        is_chief: false,
+        is_alive: true,
+        icon: 'reindeer',
+        role: Role.ANGEL,
+        was_advisor_last_round: false,
+        was_chief_last_round: false
+      }
+    ];
+
+    game.value = g;
 
     return true;
   }

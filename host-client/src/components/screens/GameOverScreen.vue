@@ -1,10 +1,10 @@
 <template>
-  <div class="h-screen flex flex-col p-2 gap-2 overflow-hidden">
+  <div class="h-full flex flex-col p-2 gap-2 overflow-hidden">
     <div class="flex-none bg-white/90 rounded-lg border border-gray-200 flex items-center justify-center p-3">
       <div class="text-center">
         <h1 :class="game.winner === 'ANGELS' ? 'text-blue-600' : 'text-red-600'"
             class="text-2xl md:text-3xl font-black mb-2">
-          {{ game.winner === 'ANGELS' ? 'Angels Win' : 'Demonic Win' }}
+          {{ game.winner === 'ANGELS' ? 'Angels Win' : 'Demons Win' }}
         </h1>
         <p class="text-sm text-gray-600">{{ reasonText }}</p>
       </div>
@@ -46,7 +46,7 @@ const reasonText = computed(() => {
     case 'ALL_ANGELS_DEAD':
       return 'All angels were killed';
     case 'SATAN_ELECTED_ADVISOR_LATE_GAME':
-      return 'Satan was elected as advisor';
+      return 'Satan was elected when the score was too low';
     case 'SATAN_KILLED':
       return 'Satan was killed';
   }

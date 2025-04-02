@@ -1,14 +1,14 @@
 <template>
-  <div class="bg-white/50 backdrop-blur-sm rounded-lg border border-gray-100/50 h-full" :class="sizeClasses.card">
+  <div class="h-full" :class="sizeClasses.card">
     <div class="flex flex-col h-full">
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-2 flex-col">
         <div class="relative flex-shrink-0">
           <div class="overflow-hidden" :class="sizeClasses.icon">
-            <img :alt="player.name" :src="icon" class="w-full h-full object-cover player-icon"/>
+            <img :alt="player.name" :src="icon" class="size-full object-cover player-icon"/>
           </div>
           <div
               v-if="isChief"
-              class="absolute -top-1 -right-1 rounded-full flex items-center justify-center text-white font-bold shadow-sm bg-yellow-200/60 border-yellow-300/80 border-2"
+              class="absolute -top-1 -right-1 rounded-full flex items-center justify-center text-white font-bold shadow-sm bg-yellow-200/90 border-yellow-300/80 border-2"
               :class="sizeClasses.crown"
           >
             👑
@@ -63,7 +63,7 @@ const sizeClasses = computed(() => {
       return {
         card: 'p-4',
         icon: 'size-24',
-        name: 'text-base',
+        name: 'text-lg',
         badge: 'text-sm px-2 py-1',
         crown: 'w-6 h-6 text-sm'
       };
@@ -71,7 +71,7 @@ const sizeClasses = computed(() => {
       return {
         card: 'p-6',
         icon: 'size-32',
-        name: 'text-lg',
+        name: 'text-2xl',
         badge: 'text-base px-3 py-1.5',
         crown: 'w-8 h-8 text-base'
       };

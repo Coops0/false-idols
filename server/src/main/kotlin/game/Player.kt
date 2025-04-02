@@ -78,6 +78,6 @@ enum class PlayerIcon(val iconName: String) {
     KOALA("koala");
 
     companion object {
-        operator fun get(index: Int) = entries[index]
+        operator fun get(index: Int) = entries[index % entries.size]
     }
 }

@@ -1,7 +1,7 @@
 <template>
   <div class="p-10 max-w-lg">
     <div class="flex flex-col items-center">
-      <h2 class="text-lg font-bold text-gray-900 mb-3">Investigation</h2>
+      <h2 class="text-xl text-gray-900 mb-3">Investigation</h2>
       <div class="flex items-center gap-6">
         <div class="flex flex-col items-center">
           <div class="relative">
@@ -10,7 +10,7 @@
         </div>
 
         <div class="flex items-center">
-          <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <svg class="w-6 h-6 text-gray-500 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
           </svg>
         </div>
