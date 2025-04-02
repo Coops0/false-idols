@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white/90 rounded-lg border border-gray-200 shadow-sm p-6">
+  <div class="p-10">
     <div class="text-center">
       <div class="flex justify-center mb-4">
         <div class="relative">
@@ -17,7 +17,6 @@
 <script lang="ts" setup>
 import type { AwaitingChiefActionChoiceInnerGameState, InProgressGameState } from '@/game/state.ts';
 import { computed } from 'vue';
-import { PlayerIcon } from '@/game/player-icon.ts';
 import PlayerCard from '@/components/ui/PlayerCard.vue';
 
 const props = defineProps<{ game: InProgressGameState }>();

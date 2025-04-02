@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white/90 rounded-lg border border-gray-200 shadow-sm p-8 max-w-lg">
+  <div class="p-10 max-w-lg">
     <div class="flex flex-col items-center">
       <h2 class="text-lg font-bold text-gray-900 mb-3">Investigation</h2>
       <div class="flex items-center gap-6">
@@ -28,7 +28,6 @@
 <script lang="ts" setup>
 import type { AwaitingInvestigationAnalysisInnerGameState, InProgressGameState } from '@/game/state.ts';
 import { computed } from 'vue';
-import { PlayerIcon } from '@/game/player-icon.ts';
 import PlayerCard from '@/components/ui/PlayerCard.vue';
 
 const props = defineProps<{ game: InProgressGameState }>();

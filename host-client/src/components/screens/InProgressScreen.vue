@@ -55,8 +55,6 @@ import AwaitingInvestigationAnalysis from '@/components/screens/game-screens/Awa
 import AwaitingPlayerActionChoiceScreen from '@/components/screens/game-screens/AwaitingPlayerActionChoiceScreen.vue';
 import IdleScreen from '@/components/screens/game-screens/IdleScreen.vue';
 import type { InProgressGameState } from '@/game/state.ts';
-import { computed } from 'vue';
-import { PlayerIcon } from '@/game/player-icon.ts';
 import ChaosBar from '@/components/ui/ChaosBar.vue';
 import ScoreBar from '@/components/ui/ScoreBar.vue';
 import CardDeck from '@/components/ui/CardDeck.vue';

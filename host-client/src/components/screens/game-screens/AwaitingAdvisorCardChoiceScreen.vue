@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white/90 rounded-lg border border-gray-200 shadow-sm p-6 max-w-md">
+  <div class="p-8 max-w-md">
     <div class="text-center flex flex-col items-center">
       <div class="relative mb-3">
         <PlayerCard :player="advisor" size="lg"/>
@@ -12,7 +12,6 @@
 <script lang="ts" setup>
 import type { AwaitingAdvisorCardChoiceInnerGameState, InProgressGameState } from '@/game/state.ts';
 import { computed } from 'vue';
-import { PlayerIcon } from '@/game/player-icon.ts';
 import PlayerCard from '@/components/ui/PlayerCard.vue';
 
 const props = defineProps<{ game: InProgressGameState }>();
