@@ -14,7 +14,7 @@
           <div class="absolute inset-0 flex items-center">
             <div
                 :style="{
-                  left: `${((score + 6) / 16) * 100}%`,
+                  left: `${leftPercent}%`,
                   transform: 'translateX(-50%)',
                   transition: 'left 0.5s ease-in-out'
                 }"
@@ -37,4 +37,15 @@ import { computed } from 'vue';
 
 const props = defineProps<{ game: InProgressGameState }>();
 const score = computed(() => props.game.deck.played_cards.reduce((acc, card) => acc + card.consequence, 0));
+
+const min = -5;
+const max = 11;
+const leftPercent = computed(() => {
+
+  if (score.value < 0) {
+    return ((score.value - min) / (0 - min)) * 50;
+  } else {
+    return 50 + (score.value / max) * 50;
+  }
+});
 </script>
