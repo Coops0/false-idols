@@ -1,5 +1,5 @@
 <template>
-  <div class="h-screen p-4 overflow-hidden">
+  <div class="h-screen overflow-hidden">
     <AbilityUnlockNotification :game/>
     <ErrorToast v-model="errorMessage"/>
 
@@ -269,10 +269,6 @@ function debugKeys(key: string): boolean {
 <style>
 body {
   background-color: var(--color-gray-50);
-}
-
-.player-icon {
-  image-rendering: pixelated;
 }
 
 .fade-enter-active,

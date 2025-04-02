@@ -1,20 +1,23 @@
 <template>
-  <div class="bg-white/50 backdrop-blur-sm rounded-lg p-3 border border-gray-100/50 h-full">
+  <div class="bg-white/50 backdrop-blur-sm rounded-lg border border-gray-100/50 h-full" :class="sizeClasses.card">
     <div class="flex flex-col h-full">
       <div class="flex items-center gap-2">
         <div class="relative flex-shrink-0">
-          <div class="w-12 h-12 rounded-lg overflow-hidden border-2 border-gray-100 shadow-sm bg-white">
+          <div class="overflow-hidden" :class="sizeClasses.icon">
             <img :alt="player.name" :src="icon" class="w-full h-full object-cover player-icon"/>
           </div>
-          <div v-if="player.is_chief"
-               class="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-sm border border-blue-400">
+          <div
+              v-if="isChief"
+              class="absolute -top-1 -right-1 rounded-full flex items-center justify-center text-white font-bold shadow-sm bg-yellow-200/60 border-yellow-300/80 border-2"
+              :class="sizeClasses.crown"
+          >
             👑
           </div>
         </div>
         <div class="flex-1 min-w-0">
-          <h3 class="text-sm font-medium text-gray-900 truncate">{{ player.name }}</h3>
-          <div v-if="!player.is_alive" class="mt-1">
-            <span class="text-xs px-1.5 py-0.5 rounded-full bg-red-100 text-red-600 border border-red-200/50">
+          <h3 class="font-medium text-gray-900 truncate" :class="sizeClasses.name">{{ player.name }}</h3>
+          <div v-if="isDead" class="mt-1">
+            <span class="rounded-full bg-red-100 text-red-600 border border-red-200/50" :class="sizeClasses.badge">
               Dead
             </span>
           </div>
@@ -25,16 +28,55 @@
 </template>
 
 <script lang="ts" setup>
-import type { GamePlayer } from '@/game/state.ts';
+import type { GamePlayer, Player } from '@/game/state.ts';
 import { computed } from 'vue';
 import { PlayerIcon } from '@/game/player-icon.ts';
 
 export type IconVariant = 'normal' | 'angel' | 'demon' | 'satan' | 'dead';
 
 const props = defineProps<{
-  player: GamePlayer;
+  player: GamePlayer | Player;
   iconVariant?: IconVariant;
+  ignoreModifiers?: boolean;
+  size?: 'sm' | 'md' | 'lg' | 'xl';
 }>();
+
+const sizeClasses = computed(() => {
+  switch (props.size ?? 'md') {
+    case 'sm':
+      return {
+        card: 'p-2',
+        icon: 'size-12',
+        name: 'text-xs',
+        badge: 'text-[10px] px-1 py-0.5',
+        crown: 'w-4 h-4 text-[10px]'
+      };
+    case 'md':
+      return {
+        card: 'p-3',
+        icon: 'size-16',
+        name: 'text-sm',
+        badge: 'text-xs px-1.5 py-0.5',
+        crown: 'w-5 h-5 text-xs'
+      };
+    case 'lg':
+      return {
+        card: 'p-4',
+        icon: 'size-24',
+        name: 'text-base',
+        badge: 'text-sm px-2 py-1',
+        crown: 'w-6 h-6 text-sm'
+      };
+    case 'xl':
+      return {
+        card: 'p-6',
+        icon: 'size-32',
+        name: 'text-lg',
+        badge: 'text-base px-3 py-1.5',
+        crown: 'w-8 h-8 text-base'
+      };
+  }
+});
 
 const icon = computed(() => {
   const i = props.player.icon;
@@ -51,4 +93,14 @@ const icon = computed(() => {
       return PlayerIcon.dead(i);
   }
 });
+
+const isGamePlayer = computed(() => 'role' in props.player);
+const isChief = computed(() => !props.ignoreModifiers && isGamePlayer.value && (props.player as GamePlayer).is_chief);
+const isDead = computed(() => !props.ignoreModifiers && isGamePlayer.value && !(props.player as GamePlayer).is_alive);
 </script>
+
+<style scoped>
+img {
+  image-rendering: pixelated;
+}
+</style>

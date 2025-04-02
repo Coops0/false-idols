@@ -199,10 +199,6 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
-.player-icon {
-  image-rendering: pixelated;
-}
-
 button, input, select, textarea {
   min-height: 44px;
   min-width: 44px;
