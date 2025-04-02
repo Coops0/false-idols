@@ -22,9 +22,7 @@ import { ref, watch } from 'vue';
 const props = defineProps<{ message: string }>();
 const localMessage = ref(props.message);
 
-watch(() => props.message, m => {
-  localMessage.value = m;
-});
+watch(() => props.message, m => (localMessage.value = m));
 
 function dismiss() {
   localMessage.value = '';

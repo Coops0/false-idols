@@ -41,7 +41,6 @@ const score = computed(() => props.game.deck.played_cards.reduce((acc, card) => 
 const min = -5;
 const max = 11;
 const leftPercent = computed(() => {
-
   if (score.value < 0) {
     return ((score.value - min) / (0 - min)) * 50;
   } else {

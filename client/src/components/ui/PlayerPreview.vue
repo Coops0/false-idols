@@ -6,6 +6,7 @@
           :alt="`${player.icon} ${iconVariant}`"
           :src="icon"
           class="w-full h-full object-cover"
+          draggable="false"
       />
     </div>
   </div>
