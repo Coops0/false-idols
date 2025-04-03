@@ -62,14 +62,17 @@ const showKeybindDisplay = useLocalStorage('show-keybind-display', true);
 
 function onMessage(message: ServerInboundMessage) {
   console.log(message);
-  if (message.type === 'update_game_state') {
-    game.value = message.game_state;
-  } else {
-    let m = message.error.error_type;
-    if (message.error.player_name) {
-      m += ` (${message.error.player_name})`;
-    }
-    errorMessage.value = `${m}: ${message.error.message}`;
+  switch (message.type) {
+    case 'update_game_state':
+      game.value = message.game_state;
+      break;
+    case 'error':
+      let m = message.error.error_type;
+      if (message.error.player_name) {
+        m += ` (${message.error.player_name})`;
+      }
+      errorMessage.value = `${m}: ${message.error.message}`;
+      break;
   }
 }
 
@@ -109,7 +112,8 @@ function onKeyPress(event: KeyboardEvent) {
   if (key === 'f') {
     event.preventDefault();
     if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen()
+      document.documentElement
+          .requestFullscreen()
           .catch(err => console.error('Error attempting to enable full-screen mode', err));
     } else if (document.exitFullscreen) {
       document.exitFullscreen();

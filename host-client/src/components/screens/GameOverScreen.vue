@@ -14,7 +14,7 @@
       <div class="flex flex-col items-center justify-center gap-3 h-full">
         <p class="text-3xl font-bold text-red-500">Satan</p>
         <div class="relative">
-          <PlayerCard :player="satan" icon-variant="satan" size="xl" ignore-modifiers/>
+          <PlayerCard :player="satan" icon-variant="satan" ignore-modifiers size="xl"/>
         </div>
       </div>
     </div>
@@ -23,7 +23,7 @@
       <h3 class="text-2xl font-semibold text-red-600 mb-2 text-center">Demons</h3>
       <div class="grid grid-cols-3 gap-2">
         <div v-for="player in demons" :key="player.name" class="relative">
-          <PlayerCard :player icon-variant="demon" size="xl" ignore-modifiers/>
+          <PlayerCard :player icon-variant="demon" ignore-modifiers size="xl"/>
         </div>
       </div>
     </div>

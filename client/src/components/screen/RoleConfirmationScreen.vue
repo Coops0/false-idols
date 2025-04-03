@@ -96,11 +96,12 @@ const demonsText = computed(() => {
   if (c === 0) return null;
 
   const other = props.game.role === Role.SATAN ? ' other ' : ' ';
+  const includingSatan = props.game.role === Role.SATAN ? ' (not including Satan)' : '';
 
   if (c === 1) {
-    return `There is 1${other}demon`;
+    return `There is 1${other}demon${includingSatan}`;
   } else {
-    return `There are ${c}${other}demons`;
+    return `There are ${c}${other}demons${includingSatan}`;
   }
 });
 </script>

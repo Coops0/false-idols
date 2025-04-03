@@ -1,23 +1,23 @@
 <template>
-  <div class="h-full" :class="sizeClasses.card">
+  <div :class="sizeClasses.card" class="h-full">
     <div class="flex flex-col h-full">
       <div class="flex items-center gap-2 flex-col">
         <div class="relative flex-shrink-0">
-          <div class="overflow-hidden" :class="sizeClasses.icon">
+          <div :class="sizeClasses.icon" class="overflow-hidden">
             <img :alt="player.name" :src="icon" class="size-full object-cover player-icon"/>
           </div>
           <div
               v-if="isChief"
-              class="absolute -top-1 -right-1 rounded-full flex items-center justify-center text-white font-bold shadow-sm bg-yellow-200/90 border-yellow-300/80 border-2"
               :class="sizeClasses.crown"
+              class="absolute -top-1 -right-1 rounded-full flex items-center justify-center text-white font-bold shadow-sm bg-yellow-200/90 border-yellow-300/80 border-2"
           >
             👑
           </div>
         </div>
         <div class="flex-1 min-w-0">
-          <h3 class="font-medium text-gray-900 truncate" :class="sizeClasses.name">{{ player.name }}</h3>
+          <h3 :class="sizeClasses.name" class="font-medium text-gray-900 truncate">{{ player.name }}</h3>
           <div v-if="isDead" class="mt-1">
-            <span class="rounded-full bg-red-100 text-red-600 border border-red-200/50" :class="sizeClasses.badge">
+            <span :class="sizeClasses.badge" class="rounded-full bg-red-100 text-red-600 border border-red-200/50">
               Dead
             </span>
           </div>

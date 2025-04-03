@@ -1,11 +1,11 @@
 <template>
   <div class="bg-white/70 rounded-md p-1.5 border border-gray-100/50 shadow-sm size-full">
     <div class="flex flex-col h-full">
-      <div class="text-xs font-bold" :class="{
+      <div :class="{
         'text-red-600': card.consequence_qualifier === 'NEGATIVE',
         'text-blue-600': card.consequence_qualifier === 'POSITIVE',
         'text-gray-600': card.consequence_qualifier === 'NEUTRAL'
-      }">
+      }" class="text-xs font-bold">
         {{ card.consequence > 0 ? '+' : '' }}{{ card.consequence }}
       </div>
 
