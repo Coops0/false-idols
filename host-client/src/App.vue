@@ -348,6 +348,7 @@ function debugKeys(key: string): boolean {
 <style>
 body {
   background-color: var(--color-gray-50);
+  cursor: none;
 }
 
 .fade-enter-active,

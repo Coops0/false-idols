@@ -84,5 +84,5 @@ watch(() => props.game, g => {
     // Reset since points can fluctuate and this notification should reactivate
     showSatanElectionWinCase.value = null;
   }
-});
+}, { deep: true, immediate: true });
 </script>

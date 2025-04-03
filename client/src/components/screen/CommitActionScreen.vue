@@ -54,7 +54,7 @@ const emit = defineEmits<{ commit: [playerName: string, action: ActionChoice] }>
 
 const selectedAction = ref(ActionChoice.NOMINATE);
 
-watch(gameState, s => (selectedAction.value = s.permittedActions[0]));
+watch(gameState, s => (selectedAction.value = s.permittedActions[0]), { deep: true, immediate: true });
 
 const players = computed<(ActionSupplementedPlayer & { enabled: boolean })[]>(() => gameState.value.supplementedPlayers
     .map(p => {
