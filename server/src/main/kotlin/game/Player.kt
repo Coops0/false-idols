@@ -3,6 +3,9 @@ package com.cooper.game
 import com.cooper.SocketContentConverterSender
 import com.cooper.message.OutboundMessage
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.core.JsonGenerator
+import com.fasterxml.jackson.databind.JsonSerializer
+import com.fasterxml.jackson.databind.SerializerProvider
 import java.util.*
 
 typealias SessionId = UUID
@@ -79,5 +82,15 @@ enum class PlayerIcon(val iconName: String) {
 
     companion object {
         operator fun get(index: Int) = entries[index % entries.size]
+    }
+}
+
+class PlayerIconSerializer : JsonSerializer<PlayerIcon>() {
+    override fun serialize(value: PlayerIcon?, gen: JsonGenerator?, serializers: SerializerProvider?) {
+        if (value == null) {
+            gen?.writeNull()
+        } else {
+            gen?.writeString(value.iconName)
+        }
     }
 }

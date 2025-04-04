@@ -26,4 +26,4 @@ copy-host-client:
 	cp -r host-client/dist/assets/* $(SERVER_RESOURCES)/assets/
 
 build-server:
-	cd server && ./gradlew build
+	cd server && ./gradlew shadowJar

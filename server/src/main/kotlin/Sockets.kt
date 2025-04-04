@@ -6,6 +6,7 @@ import com.cooper.message.OutboundMessage
 import com.cooper.message.server.ServerInboundMessage
 import com.cooper.message.server.ServerOutboundMessage
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
+import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.ktor.serialization.*
 import io.ktor.serialization.jackson.*
@@ -30,6 +31,10 @@ fun Application.configureSockets() {
 
         val objectMapper = jacksonObjectMapper()
         objectMapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
+        objectMapper.registerModule(
+            SimpleModule()
+                .addSerializer(PlayerIcon::class.java, PlayerIconSerializer())
+        )
 
         contentConverter = JacksonWebsocketContentConverter(objectmapper = objectMapper)
 

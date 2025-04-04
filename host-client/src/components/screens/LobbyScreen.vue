@@ -6,7 +6,7 @@
         <div class="inline-block">
           <QrcodeSvg
               :value="`${domain}/ok`"
-              :size="128"
+              :size="150"
               level="L"
           />
         </div>
@@ -28,5 +28,8 @@ import PlayerCard from '@/components/ui/PlayerCard.vue';
 import { QrcodeSvg } from 'qrcode.vue';
 
 defineProps<{ game: LobbyGameState }>();
-const domain = computed(() => window?.location?.hostname ?? 'LOADING');
+const domain = computed(() => {
+  if (!window.location) return 'LOADING';
+  return `${window.location.protocol}//${window.location.host}`;
+});
 </script>
