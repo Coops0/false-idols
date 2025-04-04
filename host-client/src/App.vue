@@ -36,15 +36,7 @@
 import { WebsocketOwner } from '@/game/websocket-owner.ts';
 import type { ServerInboundMessage, ServerOutboundMessage } from '@/game/messages.ts';
 import { onMounted, onUnmounted, ref } from 'vue';
-import {
-  type AwaitingChiefActionChoiceInnerGameState,
-  type AwaitingInvestigationAnalysisInnerGameState,
-  CardConsequenceQualifier,
-  type GameOverGameState,
-  type GameState,
-  type InProgressGameState,
-  Role
-} from '@/game/state.ts';
+import { type GameState } from '@/game/state.ts';
 import LobbyScreen from '@/components/screens/LobbyScreen.vue';
 import InProgressScreen from '@/components/screens/InProgressScreen.vue';
 import GameOverScreen from '@/components/screens/GameOverScreen.vue';
@@ -98,11 +90,6 @@ function onKeyPress(event: KeyboardEvent) {
     key = event.key.toLowerCase();
   }
 
-  if (debugKeys(key)) {
-    event.preventDefault();
-    return;
-  }
-
   if (key === 'h') {
     event.preventDefault();
     showKeybindDisplay.value = !showKeybindDisplay.value;
@@ -118,6 +105,12 @@ function onKeyPress(event: KeyboardEvent) {
     } else if (document.exitFullscreen) {
       document.exitFullscreen();
     }
+    return;
+  }
+
+  if (key === 'altleft' || key === 'altright') {
+    event.preventDefault();
+    document.body.classList.toggle('no-cursor');
     return;
   }
 
@@ -161,193 +154,14 @@ function onKeyPress(event: KeyboardEvent) {
       break;
   }
 }
-
-function debugKeys(key: string): boolean {
-  if (key === 'l') {
-    game.value = <InProgressGameState>{
-      type: 'game_in_progress',
-      players: [
-        {
-          name: 'joe biden',
-          is_chief: true,
-          is_alive: true,
-          icon: 'fox',
-          role: Role.ANGEL,
-          was_advisor_last_round: false,
-          was_chief_last_round: false,
-        },
-        {
-          name: 'okay',
-          is_chief: false,
-          is_alive: true,
-          icon: 'mouse',
-          role: Role.SATAN,
-          was_advisor_last_round: false,
-          was_chief_last_round: true,
-        },
-        {
-          name: 'meh',
-          is_chief: false,
-          is_alive: true,
-          icon: 'mouse',
-          role: Role.DEMON,
-          was_advisor_last_round: false,
-          was_chief_last_round: false,
-        },
-        {
-          name: 'jesus',
-          is_chief: false,
-          is_alive: true,
-          icon: 'reindeer',
-          role: Role.ANGEL,
-          was_advisor_last_round: false,
-          was_chief_last_round: false,
-        }
-      ],
-      deck: {
-        played_cards: [{
-          consequence_qualifier: CardConsequenceQualifier.NEGATIVE,
-          consequence: -1,
-          description: 'okay',
-          id: 1
-        }, {
-          consequence_qualifier: CardConsequenceQualifier.POSITIVE,
-          consequence: 1,
-          description: 'meh',
-          id: 2
-        }, {
-          consequence_qualifier: CardConsequenceQualifier.NEUTRAL,
-          consequence: 0,
-          description: 'gaa',
-          id: 3
-        }]
-      },
-      failed_elections: 1,
-      inner_game_state: <AwaitingInvestigationAnalysisInnerGameState>{
-        target: 'jesus',
-        type: 'awaiting_investigation_analysis',
-      }
-    };
-
-    return true;
-  }
-
-  if (key === 'c') {
-    const g = { ...(game.value as InProgressGameState) };
-    g.inner_game_state = <AwaitingChiefActionChoiceInnerGameState>{
-      type: 'awaiting_chief_action_choice',
-      permitted_actions: ['KILL', 'ELECT']
-    };
-    game.value = g;
-    return true;
-  }
-
-  if (key === 'o') {
-    game.value = <GameOverGameState>{
-      type: 'game_over',
-      demons: ['meh'],
-      satan: 'okay',
-      reason: 'SATAN_KILLED',
-      players: [{
-        name: 'joe biden',
-        icon: 'rabbit',
-      }, {
-        name: 'okay',
-        icon: 'dog',
-      }, {
-        name: 'meh',
-        icon: 'koala',
-      }, {
-        name: 'jesus',
-        icon: 'pig',
-      }],
-      winner: 'ANGELS'
-    };
-
-    return true;
-  }
-
-  if (key === 'k') {
-    const g = { ...(game.value as InProgressGameState) };
-
-    g.players = [
-      {
-        name: 'joe biden',
-        is_chief: true,
-        is_alive: true,
-        icon: 'fox',
-        role: Role.ANGEL,
-        was_advisor_last_round: false,
-        was_chief_last_round: false,
-      },
-      {
-        name: 'okay',
-        is_chief: false,
-        is_alive: true,
-        icon: 'mouse',
-        role: Role.SATAN,
-        was_advisor_last_round: false,
-        was_chief_last_round: true,
-      },
-      {
-        name: 'meh',
-        is_chief: false,
-        is_alive: true,
-        icon: 'mouse',
-        role: Role.DEMON,
-        was_advisor_last_round: false,
-        was_chief_last_round: false,
-      },
-      {
-        name: 'jesus',
-        is_chief: false,
-        is_alive: true,
-        icon: 'reindeer',
-        role: Role.ANGEL,
-        was_advisor_last_round: false,
-        was_chief_last_round: false,
-      },
-      {
-        name: 'satan',
-        is_chief: false,
-        is_alive: true,
-        icon: 'reindeer',
-        role: Role.ANGEL,
-        was_advisor_last_round: false,
-        was_chief_last_round: false,
-      },
-      {
-        name: 'lucifer',
-        is_chief: false,
-        is_alive: true,
-        icon: 'reindeer',
-        role: Role.ANGEL,
-        was_advisor_last_round: false,
-        was_chief_last_round: false
-      },
-      {
-        name: 'satan2',
-        is_chief: false,
-        is_alive: true,
-        icon: 'reindeer',
-        role: Role.ANGEL,
-        was_advisor_last_round: false,
-        was_chief_last_round: false
-      }
-    ];
-
-    game.value = g;
-
-    return true;
-  }
-
-  return false;
-}
 </script>
 
 <style>
 body {
   background-color: var(--color-gray-50);
+}
+
+.no-cursor {
   cursor: none;
 }
 

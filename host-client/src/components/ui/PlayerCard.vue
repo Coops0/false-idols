@@ -78,9 +78,20 @@ const sizeClasses = computed(() => {
   }
 });
 
+const isGamePlayer = computed(() => 'role' in props.player);
+const isChief = computed(() => !props.ignoreModifiers && isGamePlayer.value && (props.player as GamePlayer).is_chief);
+const isDead = computed(() => !props.ignoreModifiers && isGamePlayer.value && !(props.player as GamePlayer).is_alive);
+
 const icon = computed(() => {
+  let variant = props.iconVariant;
+  if (!variant && !props.ignoreModifiers) {
+    if (isDead.value) {
+      variant = 'dead';
+    }
+  }
+
   const i = props.player.icon;
-  switch (props.iconVariant ?? 'normal') {
+  switch (variant ?? 'normal') {
     case 'normal':
       return PlayerIcon.normal(i);
     case 'angel':
@@ -93,10 +104,6 @@ const icon = computed(() => {
       return PlayerIcon.dead(i);
   }
 });
-
-const isGamePlayer = computed(() => 'role' in props.player);
-const isChief = computed(() => !props.ignoreModifiers && isGamePlayer.value && (props.player as GamePlayer).is_chief);
-const isDead = computed(() => !props.ignoreModifiers && isGamePlayer.value && !(props.player as GamePlayer).is_alive);
 </script>
 
 <style scoped>

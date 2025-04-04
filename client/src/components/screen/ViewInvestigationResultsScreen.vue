@@ -21,7 +21,7 @@
       </div>
 
       <div v-else class="space-y-6">
-        <div class="text-center space-y-3">
+        <div class="text-center space-y-1">
           <PlayerPreview
               :game="props.game"
               :icon-variant="gameState.role === Role.DEMON ? 'demon' : 'angel'"
@@ -34,7 +34,7 @@
           </p>
         </div>
 
-        <div class="text-center space-y-2">
+        <div class="text-center">
           <p class="text-xs md:text-sm text-gray-800 font-bold">You cannot show anyone this screen</p>
         </div>
 

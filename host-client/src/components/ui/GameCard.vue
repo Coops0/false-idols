@@ -1,5 +1,9 @@
 <template>
-  <div class="bg-white/70 rounded-md p-1.5 border border-gray-100/50 shadow-sm size-full">
+  <div class="rounded-md p-1.5 border border-gray-100/50 shadow-sm size-full" :class="{
+    'bg-red-300/70': card.consequence_qualifier === 'NEGATIVE',
+    'bg-blue-300/70': card.consequence_qualifier === 'POSITIVE',
+    'bg-gray-300/70': card.consequence_qualifier === 'NEUTRAL',
+  }">
     <div class="flex flex-col h-full">
       <div :class="{
         'text-red-600': card.consequence_qualifier === 'NEGATIVE',

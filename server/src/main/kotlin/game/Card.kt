@@ -61,7 +61,10 @@ class CardDeck(totalCardCount: Int = 17) {
         if (cardStack.size >= len) return
 
         // don't clear played cards, they are used for scoring
+
+        cardStack.clear()
         cardStack.addAll(originalCards)
+
         cardStack.shuffle()
     }
 

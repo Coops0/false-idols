@@ -120,7 +120,7 @@ suspend fun GameState.GameInProgress.handlePlayerActionChoice(
 
     when (action) {
         ActionChoice.INVESTIGATE -> {
-            require(this.deck.absolutePoints >= MIN_ABS_POINTS_TO_INVESTIGATE) { "Must have enough absolute points to investigate" }
+            require(this.deck.absolutePoints >= MIN_ABS_POINTS_TO_INVESTIGATE) { "Must have reached absolute threshold to investigate" }
             require(!target.isInvestigated) { "Target must not have already been investigated" }
 
             target.isInvestigated = true
@@ -130,11 +130,11 @@ suspend fun GameState.GameInProgress.handlePlayerActionChoice(
         }
 
         ActionChoice.KILL -> {
-            require(this.deck.absolutePoints >= MIN_ABS_POINTS_TO_KILL) { "Must have enough absolute points to kill" }
+            require(this.deck.absolutePoints >= MIN_ABS_POINTS_TO_KILL) { "Must have reached absolute threshold to kill" }
 
             target.isAlive = false
             if (target.role == ComplexRole.SATAN) {
-                throw GameOverThrowable(winner = SimpleRole.DEMON, reason = GameState.GameOver.Reason.SATAN_KILLED)
+                throw GameOverThrowable(winner = SimpleRole.ANGEL, reason = GameState.GameOver.Reason.SATAN_KILLED)
             }
 
             this.checkGameOverConditions()
