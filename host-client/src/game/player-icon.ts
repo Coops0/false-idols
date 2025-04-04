@@ -69,6 +69,6 @@ export class PlayerIcon {
     }
 
     private static normalize(icon: string): string {
-        return `/icons/${icon}.png`;
+        return `/assets/icons/${icon}.png`;
     }
 }

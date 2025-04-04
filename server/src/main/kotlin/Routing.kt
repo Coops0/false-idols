@@ -6,13 +6,20 @@ import io.ktor.server.http.content.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import io.ktor.server.webjars.*
+
+val clientFile by lazy {
+    Application::class.java.classLoader.getResourceAsStream("static/client.html")!!.use { resource ->
+        resource.readBytes()
+    }
+}
+
+val hostFile by lazy {
+    Application::class.java.classLoader.getResourceAsStream("static/host-client.html")!!.use { resource ->
+        resource.readBytes()
+    }
+}
 
 fun Application.configureRouting() {
-    install(Webjars) {
-        path = "/webjars"
-    }
-
     install(StatusPages) {
         exception<Throwable> { call, cause ->
             call.application.log.error(cause.message)
@@ -21,14 +28,16 @@ fun Application.configureRouting() {
     }
 
     routing {
-        get("/") {
-            call.respondText("Ok")
+        staticResources("/assets/", "static/assets", index = null) {
+            preCompressed(CompressedFileType.BROTLI, CompressedFileType.GZIP)
         }
 
-        staticResources("/static", "static")
+        get("/") {
+            call.respondBytes(clientFile, ContentType.Text.Html)
+        }
 
-        get("/webjars") {
-
+        get("/host") {
+            call.respondBytes(hostFile, ContentType.Text.Html)
         }
     }
 }
