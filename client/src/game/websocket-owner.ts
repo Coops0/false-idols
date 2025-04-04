@@ -81,7 +81,7 @@ export class WebsocketOwner {
                 self.initialMessageBuffer = [];
             };
 
-            self.ws = new WebSocket(`ws://localhost:8080/ws?name=${this.name.value}`);
+            self.ws = new WebSocket(`${__WS_HOST__}/ws?name=${this.name.value}`);
             self.ws.addEventListener('message', event => resolveOnOpen(event));
             self.ws.addEventListener('error', err => rejectOnError(err));
             self.ws.addEventListener('close', err => rejectOnError(err));

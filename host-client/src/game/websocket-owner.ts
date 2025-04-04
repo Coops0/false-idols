@@ -13,7 +13,7 @@ export class WebsocketOwner {
     }
 
     async connect() {
-        this.ws = new WebSocket('ws://localhost:8080/server-ws');
+        this.ws = new WebSocket(`${__WS_HOST__}/server-ws`);
         this.ws.addEventListener('message', this.onMessage);
     }
 

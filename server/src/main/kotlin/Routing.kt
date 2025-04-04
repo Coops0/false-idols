@@ -32,6 +32,18 @@ fun Application.configureRouting() {
             preCompressed(CompressedFileType.BROTLI, CompressedFileType.GZIP)
         }
 
+        get("/ok") {
+            call.response.cookies.append(
+                Cookie(
+                    name = "auth",
+                    value = "mhm",
+                    maxAge = 2592000
+                )
+            )
+
+            call.respondRedirect("/", permanent = false)
+        }
+
         get("/") {
             call.respondBytes(clientFile, ContentType.Text.Html)
         }
