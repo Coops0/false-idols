@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-4">
+  <div class="min-h-screen flex items-center justify-center p-4">
     <BaseCard class="w-full max-w-2xl mx-4">
       <div v-if="!gameState.hasConfirmed" class="space-y-6">
         <div class="text-center space-y-4">

@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-4">
+  <div class="min-h-screen flex items-center justify-center p-4">
     <BaseCard class="w-full max-w-md mx-4">
       <div class="space-y-6">
         <div>

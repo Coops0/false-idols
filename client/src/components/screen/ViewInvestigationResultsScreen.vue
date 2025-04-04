@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-4">
+  <div class="min-h-screen flex items-center justify-center">
     <BaseCard class="w-full max-w-md mx-4">
       <template #header>
         <h1 class="text-xl md:text-2xl font-bold text-gray-800 text-center">Investigation</h1>

@@ -86,11 +86,7 @@ enum class PlayerIcon(val iconName: String) {
 }
 
 class PlayerIconSerializer : JsonSerializer<PlayerIcon>() {
-    override fun serialize(value: PlayerIcon?, gen: JsonGenerator?, serializers: SerializerProvider?) {
-        if (value == null) {
-            gen?.writeNull()
-        } else {
-            gen?.writeString(value.iconName)
-        }
+    override fun serialize(value: PlayerIcon, gen: JsonGenerator?, serializers: SerializerProvider?) {
+        gen?.writeString(value.iconName)
     }
 }

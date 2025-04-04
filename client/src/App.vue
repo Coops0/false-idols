@@ -197,6 +197,7 @@ body {
   width: 100%;
   overflow-x: hidden;
   -webkit-tap-highlight-color: transparent;
+  background-color: #f9fafb;
 }
 
 button, input, select, textarea {
