@@ -1,29 +1,29 @@
+SERVER_RESOURCES := server/src/main/resources/static
+
 .PHONY: all clean build-client build-host-client copy-client copy-host-client build-server
 
 all: clean build-client build-host-client copy-client copy-host-client build-server
 
 clean:
-    rm -r client/dist
-    rm -r host-client/dist
-    rm server/src/main/resources/static/assets/*.{js,css}
-    rm server/src/main/resources/static/client.html server/src/main/resources/static/host-client.html
-    rm -r server/build
+	rm -rf client/dist
+	rm -rf host-client/dist
+	rm -f $(SERVER_RESOURCES)/assets/*.{js,css}
+	rm -f $(SERVER_RESOURCES)/{client,host-client}.html
+	rm -rf server/build
 
 build-client:
-    cd client && bun install && bun run build
+	cd client && bun install && bun run build
 
 build-host-client:
-    cd host-client && bun install && bun run build
+	cd host-client && bun install && bun run build
 
 copy-client:
-    mkdir -p server/src/main/resources/client/
-    cp client/dist/index.html server/src/main/resources/static/client.html
-	cp -r client/dist/assets/* server/src/main/resources/static/assets/
+	cp client/dist/index.html $(SERVER_RESOURCES)/client.html
+	cp -r client/dist/assets/* $(SERVER_RESOURCES)/assets/
 
 copy-host-client:
-    mkdir -p server/src/main/resources/host-client/
-	cp host-client/dist/index.html server/src/main/resources/static/host-client.html
-	cp -r host-client/dist/assets/* server/src/main/resources/static/assets/
+	cp host-client/dist/index.html $(SERVER_RESOURCES)/host-client.html
+	cp -r host-client/dist/assets/* $(SERVER_RESOURCES)/assets/
 
 build-server:
-    cd server && ./gradlew build
+	cd server && ./gradlew build

@@ -38,3 +38,5 @@ out/
 .DS_Store
 node_modules/
 dist/
+server/src/main/resources/static/*.html
+server/src/main/resources/static/assets/*[.css, .js]
