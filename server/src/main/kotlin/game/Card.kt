@@ -2,7 +2,6 @@ package com.cooper.game
 
 import com.cooper.game.Card.CardConsequenceQualifier.*
 import kotlin.math.absoluteValue
-import kotlin.random.Random
 
 typealias CardId = Int
 
@@ -24,44 +23,26 @@ data class Card(
     }
 }
 
-private const val VARIATION_RANGE = 0.1
-private fun randomVariation() = Random.nextDouble(-VARIATION_RANGE, VARIATION_RANGE)
-
-private const val BASE_POSITIVE_RATIO = 0.35
-private const val BASE_NEGATIVE_RATIO = 0.5
-
-class CardDeck(totalCardCount: Int = 17) {
+class CardDeck {
     @Suppress("MemberVisibilityCanBePrivate") val cardStack: MutableList<Card> = mutableListOf()
-    private var originalCards = listOf<Card>()
+    private var originalCards: List<Card> = listOf()
     val playedCards = mutableListOf<Card>()
 
     init {
-        val positiveRatio = BASE_POSITIVE_RATIO + randomVariation()
-        val negativeRatio = BASE_NEGATIVE_RATIO + randomVariation()
+        // get the largest possible deck size
+        for (i in 17..1000) {
+            originalCards = generateCards(i) ?: break
+        }
 
-        val positiveCount = (totalCardCount * positiveRatio).toInt()
-        val negativeCount = (totalCardCount * negativeRatio).toInt()
-        val neutralCount = totalCardCount - positiveCount - negativeCount
-
-        assert(positiveCount <= positiveCards.size) { "Not enough positive cards" }
-        assert(negativeCount <= negativeCards.size) { "Not enough negative cards" }
-        assert(neutralCount <= neutralCards.size) { "Not enough neutral cards" }
-
-        cardStack.addAll(positiveCards.shuffled().take(positiveCount))
-        cardStack.addAll(negativeCards.shuffled().take(negativeCount))
-        cardStack.addAll(neutralCards.shuffled().take(neutralCount))
-
-        assert(cardStack.size == totalCardCount) { "Card deck size mismatch" }
-
-        cardStack.shuffle()
-        originalCards = cardStack.toList()
+        cardStack.addAll(originalCards)
     }
 
-    private fun checkEmptyStack(len: Int = 1) {
-        if (cardStack.size >= len) return
+    private fun checkEmptyStack() {
+        if (cardStack.size >= 3) return
 
         // don't clear played cards, they are used for scoring
 
+        // prevent any duplicates
         cardStack.clear()
         cardStack.addAll(originalCards)
 
@@ -69,13 +50,11 @@ class CardDeck(totalCardCount: Int = 17) {
     }
 
     fun pickAndTakeThree(): List<Card> {
-        checkEmptyStack(3)
+        checkEmptyStack()
 
-        val cards = List(3) {
+        return List(3) {
             cardStack.removeAt(0)
         }
-
-        return cards
     }
 
     fun playOneBlind() {
@@ -90,6 +69,26 @@ class CardDeck(totalCardCount: Int = 17) {
 val positiveCards get() = cards.filter { it.consequenceQualifier == POSITIVE }
 val negativeCards get() = cards.filter { it.consequenceQualifier == NEGATIVE }
 val neutralCards get() = cards.filter { it.consequenceQualifier == NEUTRAL }
+
+private const val POSITIVE_RATIO = 0.4
+private const val NEGATIVE_RATIO = 0.5
+private const val NEUTRAL_RATIO = 1 - POSITIVE_RATIO - NEGATIVE_RATIO
+
+private fun generateCards(deckSize: Int): List<Card>? {
+    val positiveCount = (deckSize * POSITIVE_RATIO).toInt()
+    val negativeCount = (deckSize * NEGATIVE_RATIO).toInt()
+    val neutralCount = deckSize - positiveCount - negativeCount
+
+    if (positiveCount <= positiveCards.size) return null
+    if (negativeCount <= negativeCards.size) return null
+    if (neutralCount <= neutralCards.size) return null
+
+    return listOf(
+        *positiveCards.shuffled().take(positiveCount).toTypedArray(),
+        *negativeCards.shuffled().take(negativeCount).toTypedArray(),
+        *neutralCards.shuffled().take(neutralCount).toTypedArray(),
+    ).shuffled()
+}
 
 // <editor-fold desc="Card definitions">
 val cards = listOf(
