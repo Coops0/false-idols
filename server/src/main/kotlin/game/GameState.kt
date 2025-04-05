@@ -6,14 +6,11 @@ import com.cooper.message.server.ServerOutboundMessage
 import com.fasterxml.jackson.annotation.JsonIgnore
 import kotlinx.coroutines.channels.ClosedSendChannelException
 
-const val MIN_ABS_POINTS_TO_INVESTIGATE = 4
-const val MIN_ABS_POINTS_TO_KILL = 8
+const val POSITIVE_CARD_COUNT_WIN = 5
+const val NEGATIVE_CARD_COUNT_WIN = 6
 
-const val POSITIVE_THRESHOLD_WIN = 10
-const val NEGATIVE_THRESHOLD_WIN = -6
-
-const val NEGATIVE_THRESHOLD_SATAN_WIN = -2
-const val MIN_ABS_POINTS_THRESHOLD_SATAN_WIN = 8
+const val NEGATIVE_CARD_COUNT_SATAN_ELECTION_WIN = 3
+const val NEGATIVE_CARD_COUNT_VETO = 5
 
 sealed class GameState(val type: String) {
     @get:JsonIgnore abstract var server: SocketContentConverterSender<ServerOutboundMessage>?
@@ -67,7 +64,7 @@ sealed class GameState(val type: String) {
 
         var failedElections: Int = 0
 
-        val chief: GamePlayer get() = players.first(GamePlayer::isChief)
+        val president: GamePlayer get() = players.first(GamePlayer::isPresident)
         val satan: GamePlayer get() = players.first { it.role == ComplexRole.SATAN }
         val demons: List<GamePlayer> get() = players.filter { it.role == ComplexRole.DEMON }
         val angels: List<GamePlayer> get() = players.filter { it.role == ComplexRole.ANGEL }
@@ -75,6 +72,9 @@ sealed class GameState(val type: String) {
 
         /// 3 failed elections in a row
         val isChaos: Boolean get() = failedElections >= 3
+
+        /// If a president is forced to elect the next president, then we must return back to the proper order after
+        var previousPresidentIndex: Int = -1
 
         fun toGameOver(winner: SimpleRole, cause: GameOver.Reason) = GameOver(
             server,
@@ -98,8 +98,7 @@ sealed class GameState(val type: String) {
                 val demonCount = when (originalPlayers.size) {
                     4, 5 -> 1
                     6, 7 -> 2
-                    8, 9 -> 3
-                    else -> 4
+                    else -> 3
                 }
 
                 val shuffledPlayers = originalPlayers.shuffled().toMutableList()
@@ -113,7 +112,7 @@ sealed class GameState(val type: String) {
                 players.addAll(shuffledPlayers.map { GamePlayer(it, ComplexRole.ANGEL) })
 
                 players.shuffle()
-                players.random().isChief = true
+                players.random().isPresident = true
 
                 return players
             }
@@ -143,15 +142,19 @@ sealed class GameState(val type: String) {
 sealed class InnerGameState(val type: String) {
     class Idle(val initialWaitPeriod: Boolean = false) : InnerGameState("idle")
 
-    class AwaitingChiefActionChoice(val permittedActions: List<ActionChoice> = ActionChoice.entries) :
-            InnerGameState("awaiting_chief_action_choice")
+    class AwaitingPresidentActionChoice(val action: ActionChoice, forced: Boolean = false) :
+            InnerGameState("awaiting_president_action_choice")
 
-    class AwaitingChiefCardDiscard(val cards: List<Card>, val advisorName: String) :
-            InnerGameState("awaiting_chief_card_discard")
+    class AwaitingPresidentCardDiscard(val cards: List<Card>, val advisorName: PlayerName) :
+            InnerGameState("awaiting_president_card_discard")
 
-    class AwaitingAdvisorCardChoice(val cards: List<Card>, val advisorName: String) :
+    class AwaitingAdvisorCardChoice(val cards: List<Card>, val advisorName: PlayerName) :
             InnerGameState("awaiting_advisor_card_choice")
 
-    class AwaitingElectionResolution(val nominee: PlayerName) : InnerGameState("awaiting_election_outcome")
+    class AwaitingAdvisorElectionResolution(val nominee: PlayerName) : InnerGameState("awaiting_election_outcome")
+
+    class AwaitingPresidentElectionResolution(val nominee: PlayerName) :
+            InnerGameState("awaiting_president_election_outcome")
+
     class AwaitingInvestigationAnalysis(val target: PlayerName) : InnerGameState("awaiting_investigation_analysis")
 }

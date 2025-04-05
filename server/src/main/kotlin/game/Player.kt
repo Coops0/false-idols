@@ -62,9 +62,9 @@ class GamePlayer(player: Player, val role: ComplexRole) :
     var isAlive = true
     var isInvestigated = false
 
-    var isChief = false
+    var isPresident = false
 
-    var wasChiefLastRound = false
+    var wasPresidentLastRound = false
     var wasAdvisorLastRound = false
 }
 

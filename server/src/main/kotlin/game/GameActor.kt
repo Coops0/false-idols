@@ -21,7 +21,7 @@ sealed class InnerApplicationMessage {
     class ServerInboundMessageInner(val serverInboundMessage: ServerInboundMessage) : InnerApplicationMessage()
 
     class PlayerJoin(
-        val playerName: String,
+        val playerName: PlayerName,
         val channel: SocketContentConverterSender<OutboundMessage>,
         /// One-shot channel to receive player's connection session ID or join error
         val completable: CompletableDeferred<Result<SessionId>>

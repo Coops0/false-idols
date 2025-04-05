@@ -2,6 +2,7 @@ package com.cooper.message
 
 import com.cooper.game.ActionChoice
 import com.cooper.game.CardId
+import com.cooper.game.PlayerName
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 
@@ -17,13 +18,10 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
     JsonSubTypes.Type(value = InboundMessage.Ping::class, name = "ping"),
 )
 sealed class InboundMessage {
-    /// Chief chooses a player to investigate, kill, or nominate
-    class ChooseActionOnPlayer(
-        val action: ActionChoice,
-        val target: String
-    ) : InboundMessage()
+    /// President chooses a player to execute an action upon
+    class ChooseActionOnPlayer(val target: PlayerName) : InboundMessage()
 
-    /// Chief chooses one card to discard from deck (of 3) before
+    /// President chooses one card to discard from deck (of 3) before
     /// being handed to advisor to select
     class DiscardOneCard(val cardId: CardId) : InboundMessage()
 

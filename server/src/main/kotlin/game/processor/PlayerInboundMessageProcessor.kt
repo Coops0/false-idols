@@ -15,8 +15,8 @@ suspend fun GameState.handlePlayerInboundApplicationMessage(playerName: PlayerNa
 
     val player = this[playerName]!!
     when (message) {
-        is InboundMessage.ChooseActionOnPlayer -> this.handlePlayerActionChoice(player, message.action, message.target)
-        is InboundMessage.DiscardOneCard -> this.handleChiefDiscardCard(player, message.cardId)
+        is InboundMessage.ChooseActionOnPlayer -> this.handlePlayerActionChoice(player, message.target)
+        is InboundMessage.DiscardOneCard -> this.handlePresidentDiscardCard(player, message.cardId)
         is InboundMessage.ChooseCard -> this.handleAdvisorChooseCard(player, message.cardId)
         else -> throw IllegalArgumentException("Unknown message type: $message")
     }

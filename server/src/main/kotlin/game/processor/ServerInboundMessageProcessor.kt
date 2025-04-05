@@ -27,29 +27,45 @@ suspend fun GameState.handleServerInboundApplicationMessage(message: ServerInbou
 
         is ServerInboundMessage.ResolveElection -> {
             require(this is GameState.GameInProgress) { "Game must be in progress to resolve election" }
-            val igs = this.innerGameState
+            when (val igs = this.innerGameState) {
+                is InnerGameState.AwaitingAdvisorElectionResolution -> {
+                    if (message.passed) {
+                        this.passAdvisorElection(this[igs.nominee]!!)
+                    } else {
+                        this.failAdvisorElection()
+                    }
+                }
 
-            require(igs is InnerGameState.AwaitingElectionResolution) { "Game must be awaiting election resolution to resolve election" }
+                is InnerGameState.AwaitingPresidentElectionResolution -> {
+                    if (message.passed) {
+                        this.previousPresidentIndex = this.players.indexOf(this.president)
+                        this.players.forEach { player -> player.wasPresidentLastRound = false }
+                        this.president.wasPresidentLastRound = true
+                        this.president.isPresident = false
 
-            if (message.passed) {
-                this.passElection(this[igs.nominee]!!)
-            } else {
-                this.failElection()
+                        this[igs.nominee]!!.isPresident = true
+                        this.requestPresidentAction()
+                    } else {
+                        this.rotatePresident()
+                    }
+                }
+
+                else -> throw IllegalStateException("Game must be awaiting election resolution to resolve")
             }
         }
 
         is ServerInboundMessage.Skip -> {
             require(this is GameState.GameInProgress) { "Game must be in progress to skip" }
             when (val igs = this.innerGameState) {
-                is InnerGameState.Idle -> this.rotateChief()
-                is InnerGameState.AwaitingChiefCardDiscard ->
-                    this.handleChiefDiscardCard(this.chief, igs.cards.random().id)
+                is InnerGameState.Idle -> this.rotatePresident()
+                is InnerGameState.AwaitingPresidentCardDiscard ->
+                    this.handlePresidentDiscardCard(this.president, igs.cards.random().id)
 
                 is InnerGameState.AwaitingAdvisorCardChoice ->
                     this.handleAdvisorChooseCard(this[igs.advisorName]!!, igs.cards.random().id)
 
-                is InnerGameState.AwaitingChiefActionChoice -> this.rotateChief()
-                is InnerGameState.AwaitingInvestigationAnalysis -> this.rotateChief()
+                is InnerGameState.AwaitingPresidentActionChoice -> this.rotatePresident()
+                is InnerGameState.AwaitingInvestigationAnalysis -> this.rotatePresident()
                 else -> throw IllegalStateException("Cannot skip in state ${igs.type}")
             }
         }
@@ -57,6 +73,12 @@ suspend fun GameState.handleServerInboundApplicationMessage(message: ServerInbou
         is ServerInboundMessage.GoBackToLobby -> {
             require(this is GameState.GameOver) { "Game must be in progress to go back to lobby" }
             return ServerInboundMessageProcessorAction.BACK_TO_LOBBY
+        }
+
+        is ServerInboundMessage.Veto -> {
+            require(this is GameState.GameInProgress) { "Game must be in progress to veto" }
+            require(this.innerGameState is InnerGameState.AwaitingAdvisorCardChoice) { "Must be awaiting advisor choice to veto" }
+            this.rotatePresident()
         }
 
         is ServerInboundMessage.Ping -> {}

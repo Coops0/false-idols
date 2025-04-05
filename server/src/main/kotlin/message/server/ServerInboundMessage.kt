@@ -27,5 +27,9 @@ sealed class ServerInboundMessage {
 
     class GoBackToLobby : ServerInboundMessage()
 
+    /// After 5 negative cards, after the advisor receives their cards,
+    /// if the president and advisor agree, they can just nullify all the cards
+    class Veto : ServerInboundMessage()
+
     class Ping : ServerInboundMessage()
 }

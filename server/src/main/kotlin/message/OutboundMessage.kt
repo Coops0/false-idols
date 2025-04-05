@@ -18,8 +18,7 @@ sealed class OutboundMessage(val type: String) {
 
     /// Sent to a player to request an action choice
     class RequestActionChoice(
-        /// Sometimes actions are forced, and early game you can only elect
-        val permittedActions: List<ActionChoice> = ActionChoice.entries,
+        val action: ActionChoice,
         /// List of (alive) players to choose from (excluding self),
         /// coupled with eligibility for actions. Must be eligible in player and be a permitted action.
         val players: List<ActionSupplementedPlayer>,
@@ -30,7 +29,7 @@ sealed class OutboundMessage(val type: String) {
 
         class ActionSupplementedPlayer(
             name: PlayerName,
-            icon: String,
+            icon: PlayerIcon,
             val investigatable: Boolean,
             val electable: Boolean
         ) : StrippedPlayer(name, icon) {
@@ -40,12 +39,12 @@ sealed class OutboundMessage(val type: String) {
                         // if player size <= 5, then we only care if they were advisor last round
                         !player.wasAdvisorLastRound
                     } else {
-                        (!player.wasChiefLastRound && !player.wasAdvisorLastRound)
+                        (!player.wasPresidentLastRound && !player.wasAdvisorLastRound)
                     }
 
                     return ActionSupplementedPlayer(
                         player.name,
-                        player.icon.iconName,
+                        player.icon,
                         !player.isInvestigated,
                         electable
                     )
@@ -54,23 +53,23 @@ sealed class OutboundMessage(val type: String) {
         }
     }
 
-    /// Sent to chief when they must discard a card
-    class RequestChiefCardDiscard(val cards: List<Card>) :
-            OutboundMessage("request_chief_card_discard") {
+    /// Sent to president when they must discard a card
+    class RequestPresidentCardDiscard(val cards: List<Card>) :
+            OutboundMessage("request_president_card_discard") {
         init {
             assert(cards.size == 3)
         }
     }
 
     /// Sent to advisor when they must choose a card to play
-    class RequestAdvisorCardChoice(val cards: List<Card>) :
+    class RequestAdvisorCardChoice(val cards: List<Card>, val vetoable: Boolean = false) :
             OutboundMessage("request_advisor_card_choice") {
         init {
             assert(cards.size == 2)
         }
     }
 
-    /// Sent when a player (usually chief) investigates another player.
+    /// Sent when a player (usually president) investigates another player.
     /// Includes simple role.
     class InvestigationResult(
         val target: StrippedPlayer,
@@ -88,10 +87,13 @@ sealed class OutboundMessage(val type: String) {
     /// Sent on first join, 'welcome' message
     class AssignIcon(val icon: PlayerIcon) : OutboundMessage("assign_icon")
 
+    /// When a fascist card action is played and policy peek is the action
+    class PolicyPeek(val cards: List<Card>) : OutboundMessage("policy_peek")
+
     /// Utility class to serialize player name & icon
-    open class StrippedPlayer(val name: String, val icon: String) {
+    open class StrippedPlayer(val name: String, val icon: PlayerIcon) {
         companion object {
-            val Player.stripped get() = StrippedPlayer(this.name, this.icon.iconName)
+            val Player.stripped get() = StrippedPlayer(this.name, this.icon)
         }
     }
 }
