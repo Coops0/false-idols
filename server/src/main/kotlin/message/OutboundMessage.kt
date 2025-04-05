@@ -81,6 +81,7 @@ sealed class OutboundMessage(val type: String) {
     class Disconnect(val reason: DisconnectionReason) : OutboundMessage("disconnect") {
         enum class DisconnectionReason {
             HOST_RESET_PLAYERS,
+            SERVER_SHUTDOWN,
         }
     }
 

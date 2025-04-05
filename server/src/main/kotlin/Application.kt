@@ -1,5 +1,8 @@
 package com.cooper
 
+import com.cooper.game.InnerApplicationMessage
+import com.cooper.game.globalInnerApplicationChannel
+import com.cooper.game.launchGameActor
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import io.ktor.http.*
 import io.ktor.serialization.jackson.*
@@ -10,10 +13,35 @@ import io.ktor.server.plugins.compression.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
+import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.ClosedSendChannelException
 
-fun main() {
-    embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::module)
-        .start(wait = true)
+@DelicateCoroutinesApi fun main() {
+    val server = embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::module)
+
+    GlobalScope.launch { launchGameActor() }
+
+    server.addShutdownHook {
+        println("Shutting down...")
+        runBlocking {
+            val completable = CompletableDeferred<Unit>()
+
+            try {
+                globalInnerApplicationChannel.send(InnerApplicationMessage.Shutdown(completable))
+            } catch (_: ClosedSendChannelException) {
+                println("Channel already closed")
+                return@runBlocking
+            }
+
+            println("Waiting for shutdown to complete")
+            completable.await()
+        }
+
+        println("Shut down successful")
+    }
+
+
+    server.start(wait = true)
 }
 
 val SecurityCheckPlugin = createApplicationPlugin(name = "SecurityCheckPlugin") {

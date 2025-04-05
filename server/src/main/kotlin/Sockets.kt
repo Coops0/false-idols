@@ -15,10 +15,9 @@ import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
 import io.ktor.util.reflect.*
 import io.ktor.websocket.*
-import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.consumeEach
-import kotlinx.coroutines.launch
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
@@ -60,6 +59,8 @@ class SocketContentConverterSender<M>(
             )
         )
     }
+
+    fun close(cause: Throwable? = null): Boolean = channel.close(cause)
 }
 
 val alphaNumericRegex by lazy { Regex("^[a-zA-Z0-9_]*$") }
@@ -86,17 +87,17 @@ private fun Routing.ws() {
             typeInfo = TypeInfo(OutboundMessage::class),
         )
 
-        val oneShot = Channel<Result<SessionId>>(1)
+        val completable = CompletableDeferred<Result<SessionId>>()
         globalInnerApplicationChannel.send(
-            PlayerJoinInnerApplicationMessage(
+            InnerApplicationMessage.PlayerJoin(
                 playerName = name,
                 channel = channel,
-                callback = oneShot,
+                completable = completable,
             )
         )
 
         println("Player $name waiting for one shot...")
-        val oneShotResponse = oneShot.receive()
+        val oneShotResponse = completable.await()
         if (oneShotResponse.isFailure) {
             println("Player $name failed to join: ${oneShotResponse.exceptionOrNull()}")
             close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, oneShotResponse.exceptionOrNull()!!.toString()))
@@ -116,12 +117,14 @@ private fun Routing.ws() {
                     content = frame,
                 ) as? InboundMessage ?: return@consumeEach
 
-                globalInnerApplicationChannel.send(PlayerInboundApplicationMessage(sessionId, message))
+                //@formatter:off
+                globalInnerApplicationChannel.send(InnerApplicationMessage.PlayerInboundMessageInner(sessionId, message))
+                //@formatter:on
             }
         }.onFailure { exception ->
             println("WebSocket exception: ${exception.message}")
         }.also {
-            globalInnerApplicationChannel.send(PlayerDisconnectInnerApplicationMessage(name, sessionId))
+            globalInnerApplicationChannel.send(InnerApplicationMessage.PlayerDisconnect(name, sessionId))
         }
     }
 }
@@ -134,7 +137,7 @@ private fun Routing.serverWs() {
             typeInfo = TypeInfo(ServerOutboundMessage::class),
         )
 
-        launch { launchGameActor(channel) }
+        globalInnerApplicationChannel.send(InnerApplicationMessage.NewServerConnection(channel))
 
         runCatching {
             incoming.consumeEach { frame ->
@@ -146,7 +149,7 @@ private fun Routing.serverWs() {
                     content = frame,
                 ) as? ServerInboundMessage ?: return@consumeEach
 
-                globalInnerApplicationChannel.send(ServerInboundApplicationMessage(message))
+                globalInnerApplicationChannel.send(InnerApplicationMessage.ServerInboundMessageInner(message))
             }
         }.onFailure { exception ->
             println("WebSocket exception: ${exception.message}")

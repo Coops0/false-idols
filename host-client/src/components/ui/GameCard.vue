@@ -1,9 +1,5 @@
 <template>
-  <div class="rounded-md p-1.5 border border-gray-100/50 shadow-sm size-full" :class="{
-    'bg-red-300/70': card.consequence_qualifier === 'NEGATIVE',
-    'bg-blue-300/70': card.consequence_qualifier === 'POSITIVE',
-    'bg-gray-300/70': card.consequence_qualifier === 'NEUTRAL',
-  }">
+  <div class="rounded-md p-1.5 border border-gray-100/50 shadow-sm size-full" :class="bgColor">
     <div class="flex flex-col h-full">
       <div :class="{
         'text-red-600': card.consequence_qualifier === 'NEGATIVE',
@@ -22,6 +18,32 @@
 
 <script lang="ts" setup>
 import { type Card } from '@/game/state.ts';
+import { computed } from 'vue';
 
-defineProps<{ card: Card }>();
+const props = defineProps<{
+  card: Card;
+  newest?: boolean;
+}>();
+
+const bgColor = computed(() => {
+  if (props.newest) {
+    switch (props.card.consequence_qualifier) {
+      case 'NEGATIVE':
+        return 'bg-red-500/70';
+      case 'POSITIVE':
+        return 'bg-blue-500/70';
+      case 'NEUTRAL':
+        return 'bg-gray-500/70';
+    }
+  } else {
+    switch (props.card.consequence_qualifier) {
+      case 'NEGATIVE':
+        return 'bg-red-300/70';
+      case 'POSITIVE':
+        return 'bg-blue-300/70';
+      case 'NEUTRAL':
+        return 'bg-gray-300/70';
+    }
+  }
+});
 </script>

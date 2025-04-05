@@ -10,29 +10,31 @@ import com.cooper.message.OutboundMessage
 import com.cooper.message.OutboundMessage.StrippedPlayer.Companion.stripped
 import com.cooper.message.server.ServerInboundMessage
 import com.cooper.message.server.ServerOutboundMessage
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.channels.Channel
 import java.util.*
-import java.util.concurrent.atomic.AtomicBoolean
 
-abstract class InnerApplicationMessage
+sealed class InnerApplicationMessage {
+    class PlayerInboundMessageInner(val sessionId: SessionId, val inboundMessage: InboundMessage) :
+            InnerApplicationMessage()
 
-class PlayerInboundApplicationMessage(val sessionId: SessionId, val inboundMessage: InboundMessage) :
-        InnerApplicationMessage()
+    class ServerInboundMessageInner(val serverInboundMessage: ServerInboundMessage) : InnerApplicationMessage()
 
-class ServerInboundApplicationMessage(val serverInboundMessage: ServerInboundMessage) : InnerApplicationMessage()
+    class PlayerJoin(
+        val playerName: String,
+        val channel: SocketContentConverterSender<OutboundMessage>,
+        /// One-shot channel to receive player's connection session ID or join error
+        val completable: CompletableDeferred<Result<SessionId>>
+    ) : InnerApplicationMessage()
 
-class PlayerJoinInnerApplicationMessage(
-    val playerName: String,
-    val channel: SocketContentConverterSender<OutboundMessage>,
-    /// One-shot channel to receive player's connection session ID or join error
-    val callback: Channel<Result<SessionId>>
-) : InnerApplicationMessage()
+    class PlayerDisconnect(val playerName: PlayerName, val sessionId: SessionId) :
+            InnerApplicationMessage()
 
-class PlayerDisconnectInnerApplicationMessage(val playerName: PlayerName, val sessionId: SessionId) :
-        InnerApplicationMessage()
+    class NewServerConnection(val server: SocketContentConverterSender<ServerOutboundMessage>) :
+            InnerApplicationMessage()
 
-class NewServerConnectionInnerApplicationMessage(val server: SocketContentConverterSender<ServerOutboundMessage>) :
-        InnerApplicationMessage()
+    class Shutdown(val complete: CompletableDeferred<Unit>) : InnerApplicationMessage()
+}
 
 val globalInnerApplicationChannel = Channel<InnerApplicationMessage>()
 
@@ -41,25 +43,18 @@ class GameOverThrowable(
     val reason: GameState.GameOver.Reason
 ) : Throwable()
 
-private val isActorActive: AtomicBoolean = AtomicBoolean(false)
-
-suspend fun launchGameActor(initialServer: SocketContentConverterSender<ServerOutboundMessage>) {
-    if (!isActorActive.compareAndSet(false, true)) {
-        return globalInnerApplicationChannel.send(
-            NewServerConnectionInnerApplicationMessage(initialServer)
-        )
-    }
-
-    var gameState: GameState = GameState.Lobby(initialServer)
+suspend fun launchGameActor() {
+    var gameState: GameState = GameState.Lobby(null)
 
     // send initial game state
     gameState.sendServer(ServerOutboundMessage.UpdateGameState(gameState))
 
     for (message in globalInnerApplicationChannel) {
         when (message) {
-            is PlayerInboundApplicationMessage -> {
+            is InnerApplicationMessage.PlayerInboundMessageInner -> {
                 val player = gameState.getBySessionId(message.sessionId) ?: continue
 
+                //@formatter:off
                 try {
                     gameState.handlePlayerInboundApplicationMessage(player.name, message.inboundMessage)
                 } catch (e: GameOverThrowable) {
@@ -71,9 +66,10 @@ suspend fun launchGameActor(initialServer: SocketContentConverterSender<ServerOu
                 } catch (e: AssertionError) {
                     gameState.sendServer(ServerOutboundMessage.Error(FalseIdolsError.assertionError(player.name, e.message)))
                 }
+                //@formatter:on
             }
 
-            is ServerInboundApplicationMessage -> {
+            is InnerApplicationMessage.ServerInboundMessageInner -> {
                 val action = try {
                     gameState.handleServerInboundApplicationMessage(message.serverInboundMessage)
                 } catch (e: GameOverThrowable) {
@@ -104,29 +100,41 @@ suspend fun launchGameActor(initialServer: SocketContentConverterSender<ServerOu
                 }
             }
 
-            is PlayerJoinInnerApplicationMessage -> gameState.handlePlayerJoin(message)
-            is PlayerDisconnectInnerApplicationMessage -> gameState.handlePlayerDisconnect(message)
-            is NewServerConnectionInnerApplicationMessage -> {
+            is InnerApplicationMessage.PlayerJoin -> gameState.handlePlayerJoin(message)
+            is InnerApplicationMessage.PlayerDisconnect -> gameState.handlePlayerDisconnect(message)
+            is InnerApplicationMessage.NewServerConnection -> {
                 gameState.server = message.server
                 gameState.sendServer(ServerOutboundMessage.UpdateGameState(gameState))
+            }
+
+            is InnerApplicationMessage.Shutdown -> {
+                try {
+                    gameState.players.forEach { player -> player.disconnectAll(OutboundMessage.Disconnect.DisconnectionReason.SERVER_SHUTDOWN) }
+                    gameState.server?.close()
+                    gameState.server = null
+                    globalInnerApplicationChannel.close()
+                } finally {
+                    message.complete.complete(Unit)
+                }
+                break
             }
         }
 
         // if it is ping, no change -> no need to resend state
         if (
-            (message is PlayerInboundApplicationMessage && message.inboundMessage is InboundMessage.Ping) ||
-            (message is ServerInboundApplicationMessage && message.serverInboundMessage is ServerInboundMessage.Ping)
+            (message is InnerApplicationMessage.PlayerInboundMessageInner && message.inboundMessage is InboundMessage.Ping) ||
+            (message is InnerApplicationMessage.ServerInboundMessageInner && message.serverInboundMessage is ServerInboundMessage.Ping) ||
+            // Or if it's a shutdown
+            (message is InnerApplicationMessage.Shutdown)
         ) {
             continue
         }
 
         gameState.sendServer(ServerOutboundMessage.UpdateGameState(gameState))
     }
-
-    isActorActive.set(false)
 }
 
-private suspend fun GameState.handlePlayerJoin(message: PlayerJoinInnerApplicationMessage) {
+private suspend fun GameState.handlePlayerJoin(message: InnerApplicationMessage.PlayerJoin) {
     val channel = message.channel
     val existingPlayer = this[message.playerName]
 
@@ -141,11 +149,13 @@ private suspend fun GameState.handlePlayerJoin(message: PlayerJoinInnerApplicati
         // And also send them their icon
         channel.send(OutboundMessage.AssignIcon(existingPlayer.icon))
 
-        return message.callback.send(Result.success(sessionId))
+        message.completable.complete(Result.success(sessionId))
+        return
     }
 
     if (this !is GameState.Lobby) {
-        return message.callback.send(Result.failure(IllegalStateException("Cannot join game in progress")))
+        message.completable.complete(Result.failure(IllegalStateException("Cannot join game in progress")))
+        return
     }
 
     val playerIcon = PlayerIcon[this.players.size]
@@ -156,10 +166,10 @@ private suspend fun GameState.handlePlayerJoin(message: PlayerJoinInnerApplicati
     // Send them their icon
     channel.send(OutboundMessage.AssignIcon(playerIcon))
 
-    message.callback.send(Result.success(sessionId))
+    message.completable.complete(Result.success(sessionId))
 }
 
-private suspend fun GameState.handlePlayerDisconnect(message: PlayerDisconnectInnerApplicationMessage) {
+private suspend fun GameState.handlePlayerDisconnect(message: InnerApplicationMessage.PlayerDisconnect) {
     val player = this[message.playerName] ?: return
     player.disconnect(message.sessionId)
 

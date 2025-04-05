@@ -15,7 +15,7 @@
         <div v-else class="flex justify-center gap-3">
           <div v-for="(card, index) in cards.slice(-3).reverse()" :key="index"
                class="w-20 h-24">
-            <GameCard :card :class="index === 0 && '!border-yellow-400/60 border-3'" class="size-full"/>
+            <GameCard :card :newest="index === 0" :class="index === 0 && '!border-yellow-400/60 border-3'" class="size-full"/>
           </div>
           <div v-if="cards.length > 3" class="mt-auto text-gray-400 text-xs">...</div>
         </div>

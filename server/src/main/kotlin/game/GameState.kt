@@ -4,6 +4,7 @@ import com.cooper.SocketContentConverterSender
 import com.cooper.message.OutboundMessage
 import com.cooper.message.server.ServerOutboundMessage
 import com.fasterxml.jackson.annotation.JsonIgnore
+import kotlinx.coroutines.channels.ClosedSendChannelException
 
 const val MIN_ABS_POINTS_TO_INVESTIGATE = 4
 const val MIN_ABS_POINTS_TO_KILL = 8
@@ -15,11 +16,16 @@ const val NEGATIVE_THRESHOLD_SATAN_WIN = -2
 const val MIN_ABS_POINTS_THRESHOLD_SATAN_WIN = 8
 
 sealed class GameState(val type: String) {
-    @get:JsonIgnore abstract var server: SocketContentConverterSender<ServerOutboundMessage>
+    @get:JsonIgnore abstract var server: SocketContentConverterSender<ServerOutboundMessage>?
     abstract val players: List<Player>
 
     suspend fun sendServer(message: ServerOutboundMessage) {
-        server.send(message)
+        try {
+            server?.send(message)
+        } catch (err: ClosedSendChannelException) {
+            println("Server channel closed: $err")
+            server = null
+        }
     }
 
     open operator fun get(playerName: PlayerName): Player? {
@@ -39,18 +45,18 @@ sealed class GameState(val type: String) {
     }
 
     class Lobby(
-        override var server: SocketContentConverterSender<ServerOutboundMessage>,
+        override var server: SocketContentConverterSender<ServerOutboundMessage>?,
         override val players: MutableList<Player> = mutableListOf()
     ) : GameState("lobby") {
         fun toGameInProgress() = GameInProgress(server, players, _fakeArg = null)
     }
 
     class GameInProgress private constructor(
-        override var server: SocketContentConverterSender<ServerOutboundMessage>,
+        override var server: SocketContentConverterSender<ServerOutboundMessage>?,
         override val players: MutableList<GamePlayer>
     ) : GameState("game_in_progress") {
         @Suppress("UNUSED_PARAMETER", "LocalVariableName") constructor(
-            server: SocketContentConverterSender<ServerOutboundMessage>,
+            server: SocketContentConverterSender<ServerOutboundMessage>?,
             originalPlayers: List<Player>,
             // Need this to prevent constructor declaration clash
             _fakeArg: Unit?
@@ -115,7 +121,7 @@ sealed class GameState(val type: String) {
     }
 
     class GameOver(
-        override var server: SocketContentConverterSender<ServerOutboundMessage>,
+        override var server: SocketContentConverterSender<ServerOutboundMessage>?,
         override val players: MutableList<Player>,
         val winner: PlayerName,
         val satan: PlayerName,
