@@ -1,8 +1,7 @@
 package com.cooper
 
 import com.cooper.game.InnerApplicationMessage
-import com.cooper.game.globalInnerApplicationChannel
-import com.cooper.game.launchGameActor
+import com.cooper.game.gameActor
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import io.ktor.http.*
 import io.ktor.serialization.jackson.*
@@ -14,14 +13,18 @@ import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ClosedSendChannelException
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 fun main(): Unit = runBlocking {
-    val server = embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::module)
+    val innerApplicationChannel = Channel<InnerApplicationMessage>()
 
-    launch { launchGameActor() }
+    val server =
+        embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = { module(innerApplicationChannel) })
+
+    launch { gameActor(innerApplicationChannel) }
 
     server.addShutdownHook {
         println("Shutting down...")
@@ -29,7 +32,7 @@ fun main(): Unit = runBlocking {
             val completable = CompletableDeferred<Unit>()
 
             try {
-                globalInnerApplicationChannel.send(InnerApplicationMessage.Shutdown(completable))
+                innerApplicationChannel.send(InnerApplicationMessage.Shutdown(completable))
             } catch (_: ClosedSendChannelException) {
                 println("Channel already closed")
                 return@block
@@ -69,7 +72,7 @@ val DisableCorsPlugin = createApplicationPlugin(name = "DisableCorsPlugin") {
     }
 }
 
-fun Application.module() {
+fun Application.module(innerApplicationChannel: Channel<InnerApplicationMessage>) {
     if (developmentMode) {
         log.info("Disabled CORS")
         install(DisableCorsPlugin)
@@ -87,6 +90,6 @@ fun Application.module() {
         }
     }
 
-    configureSockets()
+    configureSockets(innerApplicationChannel)
     configureRouting()
 }

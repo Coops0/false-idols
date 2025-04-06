@@ -1,7 +1,7 @@
 <template>
   <div class="p-10">
     <div class="text-center">
-      <div class="flex justify-center mb-4">
+      <div class="flex justify-center items-center flex-col">
         <div class="relative">
           <PlayerCard :player="president" size="xl"/>
         </div>

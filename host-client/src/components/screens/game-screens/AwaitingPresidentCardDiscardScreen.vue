@@ -1,10 +1,12 @@
 <template>
-  <div class="p-8 max-w-md">
-    <div class="text-center flex flex-col items-center">
-    <div class="relative mb-3">
-        <PlayerCard :player="president" size="lg"/>
+  <div class="p-10">
+    <div class="text-center">
+      <div class="flex justify-center items-center flex-col">
+        <div class="relative">
+          <PlayerCard :player="president" size="xl"/>
+        </div>
+        <p class="text-base text-gray-700">Choosing a card to remove</p>
       </div>
-      <p class="text-base text-gray-700">Choosing a card to remove</p>
     </div>
   </div>
 </template>

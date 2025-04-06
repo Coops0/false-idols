@@ -1,10 +1,9 @@
 <template>
-  <div class="p-10 max-w-md">
-    <div class="text-center flex flex-col items-center">
-      <h2 class="text-xl text-gray-900 mb-3">Election</h2>
-      <div class="flex items-center gap-6">
+  <div class="p-10">
+    <div class="text-center">
+      <div class="flex justify-center items-center flex-col">
         <div class="relative">
-          <PlayerCard :player="nominee" size="lg"/>
+          <PlayerCard :player="nominee" size="xl"/>
         </div>
         <p class="text-base text-gray-700">Elect as advisor?</p>
       </div>

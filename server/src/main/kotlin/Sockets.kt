@@ -16,12 +16,13 @@ import io.ktor.server.websocket.*
 import io.ktor.util.reflect.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.consumeEach
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-fun Application.configureSockets() {
+fun Application.configureSockets(innerApplicationChannel: Channel<InnerApplicationMessage>) {
     install(WebSockets) {
         pingPeriod = 15.seconds
         timeout = Duration.INFINITE
@@ -40,8 +41,8 @@ fun Application.configureSockets() {
     }
 
     routing {
-        ws()
-        serverWs()
+        ws(innerApplicationChannel)
+        serverWs(innerApplicationChannel)
     }
 }
 
@@ -65,7 +66,7 @@ class SocketContentConverterSender<M>(
 
 val alphaNumericRegex by lazy { Regex("^[a-zA-Z0-9_]*$") }
 
-private fun Routing.ws() {
+private fun Routing.ws(innerApplicationChannel: Channel<InnerApplicationMessage>) {
     webSocket("/ws") {
         val name = call.request.queryParameters["name"]?.trim() ?: throw IllegalArgumentException("No name provided")
         println("Player $name init connection")
@@ -88,7 +89,7 @@ private fun Routing.ws() {
         )
 
         val completable = CompletableDeferred<Result<SessionId>>()
-        globalInnerApplicationChannel.send(
+        innerApplicationChannel.send(
             InnerApplicationMessage.PlayerJoin(
                 playerName = name,
                 channel = channel,
@@ -118,18 +119,18 @@ private fun Routing.ws() {
                 ) as? InboundMessage ?: return@consumeEach
 
                 //@formatter:off
-                globalInnerApplicationChannel.send(InnerApplicationMessage.PlayerInboundMessageInner(sessionId, message))
+                innerApplicationChannel.send(InnerApplicationMessage.PlayerInboundMessageInner(sessionId, message))
                 //@formatter:on
             }
         }.onFailure { exception ->
             println("WebSocket exception: ${exception.message}")
         }.also {
-            globalInnerApplicationChannel.send(InnerApplicationMessage.PlayerDisconnect(name, sessionId))
+            innerApplicationChannel.send(InnerApplicationMessage.PlayerDisconnect(name, sessionId))
         }
     }
 }
 
-private fun Routing.serverWs() {
+private fun Routing.serverWs(innerApplicationChannel: Channel<InnerApplicationMessage>) {
     webSocket("/server-ws") {
         val channel = SocketContentConverterSender<ServerOutboundMessage>(
             channel = outgoing,
@@ -137,9 +138,8 @@ private fun Routing.serverWs() {
             typeInfo = TypeInfo(ServerOutboundMessage::class),
         )
 
-        globalInnerApplicationChannel.send(InnerApplicationMessage.NewServerConnection(channel))
+        innerApplicationChannel.send(InnerApplicationMessage.NewServerConnection(channel))
 
-        println("AFTER")
         runCatching {
             incoming.consumeEach { frame ->
                 if (frame !is Frame.Text) return@consumeEach
@@ -150,7 +150,7 @@ private fun Routing.serverWs() {
                     content = frame,
                 ) as? ServerInboundMessage ?: return@consumeEach
 
-                globalInnerApplicationChannel.send(InnerApplicationMessage.ServerInboundMessageInner(message))
+                innerApplicationChannel.send(InnerApplicationMessage.ServerInboundMessageInner(message))
             }
         }.onFailure { exception ->
             println("WebSocket exception: ${exception.message}")
