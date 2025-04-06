@@ -11,9 +11,12 @@ sealed class OutboundMessage(val type: String) {
         /// Excluding satan
         val demonCount: Int,
 
-        /// These will only be non-null if complex role == DEMON
-        val teammates: List<StrippedPlayer>? = null,
+        /// These will only be non-null if complex role == DEMON || isSmallGame && complex role == SATAN
+        val demons: List<StrippedPlayer>? = null,
         val satan: StrippedPlayer? = null,
+
+        /// If small game then satan knows who the demons are
+        isSmallGame: Boolean = false
     ) : OutboundMessage("assign_role")
 
     /// Sent to a player to request an action choice

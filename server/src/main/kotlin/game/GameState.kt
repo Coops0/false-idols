@@ -13,6 +13,7 @@ const val NEGATIVE_CARD_COUNT_SATAN_ELECTION_WIN = 3
 const val NEGATIVE_CARD_COUNT_VETO = 5
 
 const val FAILED_ELECTIONS_CHAOS = 4
+const val SMALL_GAME_PLAYER_SIZE = 6
 
 sealed class GameState(val type: String) {
     @get:JsonIgnore abstract var server: SocketContentConverterSender<ServerOutboundMessage>?
@@ -43,8 +44,8 @@ sealed class GameState(val type: String) {
         }
     }
 
-    suspend fun send(playerName: PlayerName, message: OutboundMessage, queued: Boolean = false) {
-        this[playerName]?.send(message, queued)
+    suspend fun send(playerName: PlayerName, message: OutboundMessage, significant: Boolean = false) {
+        this[playerName]?.send(message, significant)
     }
 
     class Lobby(
@@ -75,6 +76,8 @@ sealed class GameState(val type: String) {
         val demons: List<GamePlayer> get() = players.filter { it.role == ComplexRole.DEMON }
         val angels: List<GamePlayer> get() = players.filter { it.role == ComplexRole.ANGEL }
         val alive: List<GamePlayer> get() = players.filter(GamePlayer::isAlive)
+
+        val isSmallGame: Boolean get() = players.size <= SMALL_GAME_PLAYER_SIZE
 
         /// If a president is forced to elect the next president, then we must return back to the proper order after
         var previousPresidentIndex: Int = -1

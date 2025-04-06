@@ -46,8 +46,6 @@ export type Card = {
 export type CardDeck = {
     card_stack: Card[];
     played_cards: Card[];
-    negative_cards_played: number;
-    positive_cards_played: number;
 }
 
 export enum ActionChoice {

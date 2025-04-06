@@ -61,7 +61,7 @@ suspend fun GameState.GameInProgress.requestPresidentAction() {
             action = ActionChoice.NOMINATE,
             players = actionablePlayers,
         ),
-        queued = true
+        significant = true
     )
 }
 
@@ -124,7 +124,7 @@ suspend fun GameState.GameInProgress.handlePlayerActionChoice(aggressor: GamePla
             target.isInvestigated = true
 
             this.innerGameState = InnerGameState.AwaitingInvestigationAnalysis(targetName)
-            aggressor.send(OutboundMessage.InvestigationResult(target.stripped, target.role.simple), queued = true)
+            aggressor.send(OutboundMessage.InvestigationResult(target.stripped, target.role.simple), significant = true)
         }
 
         ActionChoice.KILL -> {
@@ -180,7 +180,7 @@ suspend fun GameState.GameInProgress.handlePresidentDiscardCard(player: GamePlay
         OutboundMessage.RequestAdvisorCardChoice(
             cards = newCards,
             vetoable = this.deck.negativeCardsPlayed >= NEGATIVE_CARD_COUNT_VETO
-        ), queued = true
+        ), significant = true
     )
 }
 
@@ -234,7 +234,7 @@ suspend fun GameState.GameInProgress.handleNegativeCardAction(): Boolean {
     // Policy peek
     if (action == null) {
         val cards = this.deck.cardStack.take(3)
-        this.president.send(OutboundMessage.PolicyPeek(cards), queued = true)
+        this.president.send(OutboundMessage.PolicyPeek(cards), significant = true)
         this.sendServer(ServerOutboundMessage.PolicyPeeking())
         return false
     }
@@ -254,7 +254,7 @@ suspend fun GameState.GameInProgress.handleNegativeCardAction(): Boolean {
                         electable = true
                     )
                 }),
-        queued = true
+        significant = true
     )
 
     return true
@@ -268,7 +268,7 @@ suspend fun GameState.GameInProgress.passAdvisorElection(advisor: GamePlayer) {
 
     this.checkGameOverConditions()
 
-    this.president.send(OutboundMessage.RequestPresidentCardDiscard(cards), queued = true)
+    this.president.send(OutboundMessage.RequestPresidentCardDiscard(cards), significant = true)
 }
 
 fun GameState.GameInProgress.failAdvisorElection() {

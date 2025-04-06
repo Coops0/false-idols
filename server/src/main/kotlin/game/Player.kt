@@ -44,8 +44,8 @@ open class Player(
         channels.removeIf { it.sessionId == sessionId }
     }
 
-    suspend fun send(message: OutboundMessage, queued: Boolean = false) {
-        if (queued) {
+    suspend fun send(message: OutboundMessage, significant: Boolean = false) {
+        if (significant) {
             queue.add(message)
         }
 

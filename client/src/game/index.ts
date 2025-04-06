@@ -76,7 +76,7 @@ export class Game {
             hasConfirmed: false,
             demonCount: message.demon_count,
             demonExtras: message.role === Role.DEMON ? {
-                teammates: message.teammates,
+                teammates: message.demons,
                 satan: message.satan
             } : null
         };

@@ -35,7 +35,9 @@ import type { ServerInboundMessage, ServerOutboundMessage } from '@/game/message
 import { onMounted, onUnmounted, ref } from 'vue';
 import {
   type AwaitingInvestigationAnalysisInnerGameState,
-  type AwaitingPresidentActionChoiceInnerGameState, type GameOverGameState,
+  type AwaitingPresidentActionChoiceInnerGameState,
+  CardConsequence,
+  type GameOverGameState,
   type GameState,
   type InProgressGameState
 } from '@/game/state.ts';
@@ -160,9 +162,26 @@ function onKeyPress(event: KeyboardEvent) {
         }
       ],
       deck: {
-        negative_cards_played: 4,
-        positive_cards_played: 2,
-        played_cards: [],
+        played_cards: [{
+          consequence: CardConsequence.POSITIVE,
+          id: 1,
+          description: 'Card 1 woohoo'
+        },
+          {
+            consequence: CardConsequence.NEGATIVE,
+            id: 2,
+            description: 'Card 2 boohoo'
+          },
+          {
+            consequence: CardConsequence.POSITIVE,
+            id: 3,
+            description: 'Card 3 woohoo'
+          },
+          {
+            consequence: CardConsequence.NEGATIVE,
+            id: 4,
+            description: 'Card 4 boohoo'
+          }],
         card_stack: []
       },
       failed_elections: 1

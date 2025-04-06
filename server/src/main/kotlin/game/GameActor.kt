@@ -173,21 +173,47 @@ private suspend fun GameState.handlePlayerDisconnect(message: InnerApplicationMe
     }
 }
 
-suspend fun GameState.GameInProgress.sendPlayerRoles() {
-    players.forEach { player ->
-        player.send(
-            if (player.role == ComplexRole.DEMON) OutboundMessage.AssignRole(
-                role = player.role,
-                demonCount = demons.size,
-                teammates = demons
-                    .filter { it != player }
-                    .map { it.stripped },
-                satan = satan.stripped
-            ) else OutboundMessage.AssignRole(
-                role = player.role,
-                demonCount = demons.size,
-            ),
-            queued = true
+private fun GameState.GameInProgress.generateAssignRoleMessage(player: GamePlayer): OutboundMessage.AssignRole {
+    if (player.role == ComplexRole.ANGEL) {
+        return OutboundMessage.AssignRole(
+            role = player.role,
+            demonCount = demons.size,
+            isSmallGame = this.isSmallGame
         )
     }
+
+    if (player.role == ComplexRole.DEMON) {
+        return OutboundMessage.AssignRole(
+            role = player.role,
+            demonCount = demons.size,
+            demons = demons
+                .filter { it != player }
+                .map { it.stripped },
+            satan = satan.stripped,
+            isSmallGame = this.isSmallGame
+        )
+    }
+
+    assert(player.role == ComplexRole.SATAN)
+
+    if (this.isSmallGame) {
+        return OutboundMessage.AssignRole(
+            role = player.role,
+            demonCount = demons.size,
+            demons = demons
+                .filter { it != player }
+                .map { it.stripped },
+            isSmallGame = true
+        )
+    }
+
+    return OutboundMessage.AssignRole(
+        role = player.role,
+        demonCount = demons.size,
+        isSmallGame = false
+    )
+}
+
+suspend fun GameState.GameInProgress.sendPlayerRoles() {
+    players.forEach { player -> player.send(this.generateAssignRoleMessage(player)) }
 }

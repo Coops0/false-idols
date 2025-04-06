@@ -56,12 +56,16 @@ export type OutboundMessage =
 
 //@formatter:off
 export type InboundMessage =
-/// Game start, server has assigned a role to player.
-/// If role == Satan or Angel, send no additional data.
-    { type: 'assign_role', role: Role.SATAN | Role.ANGEL, demon_count: number } |
+    /// Game start, server has assigned a role to player.
+    /// If role == Angel, send no additional data.
+    { type: 'assign_role', role: Role.ANGEL, demon_count: number, is_small_game: boolean } |
     /// Game start cont.
     /// If role == Demon, send fellow teammates and who satan is
-    { type: 'assign_role', role: Role.DEMON, demon_count: number, teammates: Player[], satan: Player } |
+    { type: 'assign_role', role: Role.DEMON, demon_count: number, demons: Player[], satan: Player, is_small_game: boolean } |
+    /// Game start cont.
+    /// If role == Satan, only send fellow teammates if is a small game
+    { type: 'assign_role', role: Role.SATAN, demon_count: number, demons: Player[], is_small_game: true } |
+    { type: 'assign_role', role: Role.SATAN, demon_count: number, is_small_game: false } |
     /// The server is requesting us to play an action, most likely when we are president.
     /// It will supply the players we can run actions on, and the actions we can run.
     /// For an action to be valid, it has to be both a permitted action, and be valid on the ActionSupplementedPlayer.
