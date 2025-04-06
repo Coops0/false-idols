@@ -1,5 +1,5 @@
 <template>
-  <div class="flex w-full h-[270px] relative items-center">
+  <div class="flex w-full">
     <img class="object-scale-down" :src="boardImage" />
   </div>
 </template>
