@@ -1,15 +1,29 @@
 <template>
-  <div class="flex w-full">
-    <img class="object-scale-down" :src="boardImage" />
+  <div class="relative w-full">
+    <img class="object-scale-down" :src="boardImage" ref="demonBoardImageEl"/>
+    <PlayedGameCard
+        v-for="(card, index) in negativeCards"
+        :key="index"
+        :card
+        class="absolute"
+        :style="{
+          top: `${topOffset}px`,
+          left: `${leftOffset.initial + (leftOffset.offset * index)}px`,
+          width: `${cardSize.width}px`,
+          height: `${cardSize.height}px`,
+        }"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import type { Card } from '@/App.vue';
-import { computed } from 'vue';
+import { computed, useTemplateRef } from 'vue';
 import Board56Image from '@/assets/board/board-demon-5-6.png';
 import Board78Image from '@/assets/board/board-demon-7-8.png';
 import Board910Image from '@/assets/board/board-demon-9-10.png';
+import { useElementBounds } from '@/util/element-bounds.composable.ts';
+import PlayedGameCard from '@/components/PlayedGameCard.vue';
 
 const props = defineProps<{
   cards: Card[];
@@ -34,5 +48,19 @@ const boardImage = computed(() => {
     case 3:
       return Board910Image;
   }
+});
+
+const demonBoardImageEl = useTemplateRef('demonBoardImageEl');
+const bounds = useElementBounds(demonBoardImageEl);
+
+const topOffset = computed(() => bounds.value.height / 3.7);
+const leftOffset = computed(() => {
+  const w = bounds.value.width;
+  return { initial: w / 11.5, offset: w / 6.95 };
+});
+
+const cardSize = computed(() => {
+  const b = bounds.value;
+  return { width: b.width / 9.5, height: b.height / 2.2 };
 });
 </script>
