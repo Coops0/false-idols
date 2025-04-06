@@ -1,12 +1,10 @@
 <template>
-  <div class="p-10 max-w-md">
-    <div class="text-center flex flex-col items-center">
-      <div class="flex items-center gap-6">
-        <div class="relative">
-          <PlayerCard :player="nominee" size="lg"/>
-        </div>
-        <p class="text-base text-gray-700">Elect as president?</p>
+  <div class="flex flex-col items-center">
+    <div class="flex items-center gap-6">
+      <div class="relative">
+        <PlayerPreview :player="nominee" size="2xl"/>
       </div>
+      <p class="text-gray-700 text-center text-3xl">Elect as president?</p>
     </div>
   </div>
 </template>
@@ -14,7 +12,7 @@
 <script lang="ts" setup>
 import type { AwaitingPresidentElectionOutcomeInnerGameState, InProgressGameState } from '@/game/state.ts';
 import { computed } from 'vue';
-import PlayerCard from '@/components/ui/PlayerCard.vue';
+import PlayerPreview from '@/components/ui/PlayerPreview.vue';
 
 const props = defineProps<{ game: InProgressGameState }>();
 const gameState = computed(() => props.game.inner_game_state as AwaitingPresidentElectionOutcomeInnerGameState);

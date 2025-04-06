@@ -1,12 +1,10 @@
 <template>
-  <div class="p-10">
-    <div class="text-center">
-      <div class="flex justify-center items-center flex-col">
-        <div class="relative">
-          <PlayerCard :player="president" size="xl"/>
-        </div>
-        <p class="text-base text-gray-700">Choosing who to <span class="font-bold">{{ actionName }}</span></p>
+  <div class="flex flex-col items-center">
+    <div class="flex justify-center items-center flex-col">
+      <div class="relative">
+        <PlayerPreview :player="president" size="2xl"/>
       </div>
+      <p class="text-gray-700 text-center text-3xl">Choosing who to <span class="font-bold">{{ actionName }}</span></p>
     </div>
   </div>
 </template>
@@ -18,7 +16,7 @@ import {
   type InProgressGameState
 } from '@/game/state.ts';
 import { computed } from 'vue';
-import PlayerCard from '@/components/ui/PlayerCard.vue';
+import PlayerPreview from '@/components/ui/PlayerPreview.vue';
 
 const props = defineProps<{ game: InProgressGameState }>();
 const gameState = computed(() => props.game.inner_game_state as AwaitingPresidentActionChoiceInnerGameState);

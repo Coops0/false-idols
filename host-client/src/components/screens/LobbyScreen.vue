@@ -1,8 +1,8 @@
 <template>
-  <div class="h-full flex flex-col p-2 gap-2 overflow-hidden">
-    <div class="flex-none bg-white/90 rounded-lg border border-gray-200 flex items-center justify-center p-3">
+  <div class="h-full flex flex-col p-2 gap-2">
+    <div class="flex items-center justify-center m-3">
       <div class="text-center">
-        <h1 class="text-3xl font-bold text-gray-900 mb-4">False Idols</h1>
+        <h1 class="text-9xl font-bold text-gray-900 mb-4">False Idols</h1>
         <div class="inline-block">
           <QrcodeSvg
               :value="`${domain}/ok`"
@@ -13,9 +13,9 @@
       </div>
     </div>
 
-    <div class="flex-grow bg-white/90 rounded-lg border border-gray-200 p-3 overflow-hidden">
-      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 h-full">
-        <PlayerCard v-for="player in game.players" :key="player.name" :player size="lg"/>
+    <div class="flex-grow m-3">
+      <div class="w-full flex flex-row gap-x-14 gap-y-7">
+        <PlayerPreview v-for="player in game.players" :key="player.name" :player size="lg"/>
       </div>
     </div>
   </div>
@@ -24,7 +24,7 @@
 <script lang="ts" setup>
 import type { LobbyGameState } from '@/game/state.ts';
 import { computed } from 'vue';
-import PlayerCard from '@/components/ui/PlayerCard.vue';
+import PlayerPreview from '@/components/ui/PlayerPreview.vue';
 import { QrcodeSvg } from 'qrcode.vue';
 
 defineProps<{ game: LobbyGameState }>();

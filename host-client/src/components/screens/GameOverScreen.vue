@@ -1,29 +1,28 @@
 <template>
-  <div class="h-full flex flex-col p-2 gap-2 overflow-hidden">
-    <div class="flex-none bg-white/90 rounded-lg border border-gray-200 flex items-center justify-center p-3">
+  <div class="h-full flex flex-col m-2 gap-2">
+    <div class="flex items-center justify-center">
       <div class="text-center">
         <h1 :class="game.winner === 'ANGELS' ? 'text-blue-600' : 'text-red-600'"
-            class="text-2xl md:text-3xl font-black mb-2">
-          {{ game.winner === 'ANGELS' ? 'Angels Win' : 'Demons Win' }}
+            class="text-9xl font-black mb-2">
+          {{ game.winner === 'ANGELS' ? 'ANGELS WIN' : 'DEMONS WIN' }}
         </h1>
-        <p class="text-sm text-gray-600">{{ reasonText }}</p>
+        <p class="text-lg text-gray-800 font-bold">{{ reasonText }}</p>
       </div>
     </div>
 
-    <div class="flex-grow mt-4 bg-white/90 rounded-lg border border-gray-200 p-3 overflow-hidden">
-      <div class="flex flex-col items-center justify-center gap-3 h-full">
-        <p class="text-3xl font-bold text-red-500">Satan</p>
-        <div class="relative">
-          <PlayerCard :player="satan" icon-variant="satan" ignore-modifiers size="xl"/>
+    <div class="flex size-full flex-grow flex-row justify-evenly gap-16 px-20 py-12">
+      <div class="flex flex-col gap-4">
+        <p class="text-5xl text-center font-bold text-red-500">Satan</p>
+        <div class="flex items-center basis-full">
+          <PlayerPreview class="relative" :player="satan" icon-variant="satan" ignore-modifiers size="2xl"/>
         </div>
       </div>
-    </div>
 
-    <div v-if="demons.length" class="flex-grow bg-white/90 rounded-lg border border-gray-200 p-3 overflow-hidden">
-      <h3 class="text-2xl font-semibold text-red-600 mb-2 text-center">Demons</h3>
-      <div class="grid grid-cols-3 gap-2">
-        <div v-for="player in demons" :key="player.name" class="relative">
-          <PlayerCard :player icon-variant="demon" ignore-modifiers size="xl"/>
+      <div v-if="demons.length" class="flex flex-col gap-4">
+        <p class="text-4xl font-semibold text-red-600 text-center">Demons</p>
+        <div class="flex flex-row flex-wrap gap-2 items-center basis-full">
+          <PlayerPreview v-for="player in demons" :key="player.name" class="relative" :player icon-variant="demon"
+                         ignore-modifiers size="xl"/>
         </div>
       </div>
     </div>
@@ -33,7 +32,7 @@
 <script lang="ts" setup>
 import { type GameOverGameState } from '@/game/state.ts';
 import { computed } from 'vue';
-import PlayerCard from '@/components/ui/PlayerCard.vue';
+import PlayerPreview from '@/components/ui/PlayerPreview.vue';
 
 const props = defineProps<{ game: GameOverGameState }>();
 

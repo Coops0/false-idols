@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen w-full overflow-x-hidden">
+  <div class="h-[calc(100vh-64px)] w-full overflow-x-hidden">
     <ErrorToast :message="error"/>
     <LoginScreen
         v-if="canShowLogin && !manualIsConnected"

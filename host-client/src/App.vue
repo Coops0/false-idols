@@ -1,6 +1,6 @@
 <template>
-  <div class="h-[calc(100vh-64px)] overflow-hidden">
-    <div class="max-w-6xl mx-auto h-full flex flex-col">
+  <div class="w-full h-screen overflow-hidden">
+    <div class="mx-auto h-full flex flex-col">
       <div class="relative flex-1">
         <div v-if="game === null" class="flex items-center justify-center h-full">
           <div class="text-center">
@@ -34,7 +34,8 @@ import { WebsocketOwner } from '@/game/websocket-owner.ts';
 import type { ServerInboundMessage, ServerOutboundMessage } from '@/game/messages.ts';
 import { onMounted, onUnmounted, ref } from 'vue';
 import {
-  type AwaitingPresidentActionChoiceInnerGameState,
+  type AwaitingInvestigationAnalysisInnerGameState,
+  type AwaitingPresidentActionChoiceInnerGameState, type GameOverGameState,
   type GameState,
   type InProgressGameState
 } from '@/game/state.ts';
@@ -166,6 +167,43 @@ function onKeyPress(event: KeyboardEvent) {
       },
       failed_elections: 1
     };
+    return;
+  }
+
+  if (key === 'o') {
+    game.value = <GameOverGameState>{
+      type: 'game_over',
+      winner: 'ANGELS',
+      reason: 'SATAN_KILLED',
+      players: [{
+        name: 'Dog',
+        icon: 'bear'
+      },
+        {
+          name: 'Cat',
+          icon: 'panda'
+        },
+        {
+          name: 'Fish',
+          icon: 'pig'
+        },
+        {
+          name: 'Bird',
+          icon: 'mouse'
+        }],
+      demons: ['Fish', 'Dog', 'Bird', 'Cat'],
+      satan: 'Cat',
+    }
+    return;
+  }
+
+  if (key === 'k') {
+    const s = {...game.value} as InProgressGameState;
+    s.inner_game_state = <AwaitingInvestigationAnalysisInnerGameState>{
+      type: 'awaiting_investigation_analysis',
+      target: 'Dog',
+    }
+    game.value = s;
     return;
   }
 
