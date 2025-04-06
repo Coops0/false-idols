@@ -36,20 +36,17 @@ sealed class InnerApplicationMessage {
     class Shutdown(val complete: CompletableDeferred<Unit>) : InnerApplicationMessage()
 }
 
-val globalInnerApplicationChannel = Channel<InnerApplicationMessage>()
+val globalInnerApplicationChannel = Channel<InnerApplicationMessage>(
+    onUndeliveredElement = { println("UNDELIVERED ELEMENT: $it") }
+)
 
-class GameOverThrowable(
-    val winner: SimpleRole,
-    val reason: GameState.GameOver.Reason
-) : Throwable()
+class GameOverThrowable(val winner: SimpleRole, val reason: GameState.GameOver.Reason) : Throwable()
 
 suspend fun launchGameActor() {
     var gameState: GameState = GameState.Lobby(null)
 
-    // send initial game state
-    gameState.sendServer(ServerOutboundMessage.UpdateGameState(gameState))
-
     for (message in globalInnerApplicationChannel) {
+        println("message $message")
         when (message) {
             is InnerApplicationMessage.PlayerInboundMessageInner -> {
                 val player = gameState.getBySessionId(message.sessionId) ?: continue
@@ -132,6 +129,8 @@ suspend fun launchGameActor() {
 
         gameState.sendServer(ServerOutboundMessage.UpdateGameState(gameState))
     }
+
+    println("Game actor channel closed")
 }
 
 private suspend fun GameState.handlePlayerJoin(message: InnerApplicationMessage.PlayerJoin) {

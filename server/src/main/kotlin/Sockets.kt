@@ -139,6 +139,7 @@ private fun Routing.serverWs() {
 
         globalInnerApplicationChannel.send(InnerApplicationMessage.NewServerConnection(channel))
 
+        println("AFTER")
         runCatching {
             incoming.consumeEach { frame ->
                 if (frame !is Frame.Text) return@consumeEach

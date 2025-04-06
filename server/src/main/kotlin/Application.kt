@@ -13,24 +13,26 @@ import io.ktor.server.plugins.compression.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.channels.ClosedSendChannelException
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
-@DelicateCoroutinesApi fun main() {
+fun main(): Unit = runBlocking {
     val server = embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::module)
 
-    GlobalScope.launch { launchGameActor() }
+    launch { launchGameActor() }
 
     server.addShutdownHook {
         println("Shutting down...")
-        runBlocking {
+        runBlocking block@{
             val completable = CompletableDeferred<Unit>()
 
             try {
                 globalInnerApplicationChannel.send(InnerApplicationMessage.Shutdown(completable))
             } catch (_: ClosedSendChannelException) {
                 println("Channel already closed")
-                return@runBlocking
+                return@block
             }
 
             println("Waiting for shutdown to complete")
@@ -41,7 +43,7 @@ import kotlinx.coroutines.channels.ClosedSendChannelException
     }
 
 
-    server.start(wait = true)
+    server.startSuspend(wait = false)
 }
 
 val SecurityCheckPlugin = createApplicationPlugin(name = "SecurityCheckPlugin") {

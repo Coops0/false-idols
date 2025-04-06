@@ -19,6 +19,10 @@ sealed class GameState(val type: String) {
     suspend fun sendServer(message: ServerOutboundMessage) {
         try {
             server?.send(message)
+
+            if (server == null) {
+                println("server is null")
+            }
         } catch (err: ClosedSendChannelException) {
             println("Server channel closed: $err")
             server = null
@@ -142,7 +146,7 @@ sealed class GameState(val type: String) {
 sealed class InnerGameState(val type: String) {
     class Idle(val initialWaitPeriod: Boolean = false) : InnerGameState("idle")
 
-    class AwaitingPresidentActionChoice(val action: ActionChoice, forced: Boolean = false) :
+    class AwaitingPresidentActionChoice(val action: ActionChoice, val forced: Boolean = false) :
             InnerGameState("awaiting_president_action_choice")
 
     class AwaitingPresidentCardDiscard(val cards: List<Card>, val advisorName: PlayerName) :
