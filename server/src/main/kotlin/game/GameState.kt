@@ -12,6 +12,8 @@ const val NEGATIVE_CARD_COUNT_WIN = 6
 const val NEGATIVE_CARD_COUNT_SATAN_ELECTION_WIN = 3
 const val NEGATIVE_CARD_COUNT_VETO = 5
 
+const val FAILED_ELECTIONS_CHAOS = 4
+
 sealed class GameState(val type: String) {
     @get:JsonIgnore abstract var server: SocketContentConverterSender<ServerOutboundMessage>?
     abstract val players: List<Player>
@@ -73,9 +75,6 @@ sealed class GameState(val type: String) {
         val demons: List<GamePlayer> get() = players.filter { it.role == ComplexRole.DEMON }
         val angels: List<GamePlayer> get() = players.filter { it.role == ComplexRole.ANGEL }
         val alive: List<GamePlayer> get() = players.filter(GamePlayer::isAlive)
-
-        /// 3 failed elections in a row
-        val isChaos: Boolean get() = failedElections >= 3
 
         /// If a president is forced to elect the next president, then we must return back to the proper order after
         var previousPresidentIndex: Int = -1

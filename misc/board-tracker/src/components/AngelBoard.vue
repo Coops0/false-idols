@@ -9,6 +9,7 @@ import { computed } from 'vue';
 const props = defineProps<{
   cards: Card[];
   playersSize: number;
+  failedElections: number;
 }>();
 
 const positiveCards = computed(() => props.cards.filter(card => card.consequence === 'POSITIVE'));

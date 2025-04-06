@@ -274,7 +274,7 @@ suspend fun GameState.GameInProgress.passAdvisorElection(advisor: GamePlayer) {
 fun GameState.GameInProgress.failAdvisorElection() {
     this.failedElections++
 
-    if (this.isChaos) {
+    if (this.failedElections >= FAILED_ELECTIONS_CHAOS) {
         this.failedElections = 0
         this.deck.playOneBlind()
     } else {

@@ -12,9 +12,8 @@
     <button @click="() => playersSize--">- Players</button>
   </div>
   <div>
-    <AngelBoard :cards :players-size />
-    <DemonBoard :cards :players-size />
-    <ElectionTracker :failed-elections/>
+    <AngelBoard :cards :players-size :failed-elections/>
+    <DemonBoard :cards :players-size/>
   </div>
 </template>
 
@@ -22,7 +21,6 @@
 import { ref } from 'vue';
 import AngelBoard from '@/components/AngelBoard.vue';
 import DemonBoard from '@/components/DemonBoard.vue';
-import ElectionTracker from '@/components/ElectionTracker.vue';
 
 export type Card = {
   id: number;
