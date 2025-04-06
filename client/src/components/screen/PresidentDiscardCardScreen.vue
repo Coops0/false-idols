@@ -16,8 +16,12 @@
             class="cursor-pointer active:scale-95 transition-transform"
             @click="() => discard(card)"
         >
-          <CardPreview :card="card"/>
+          <CardPreview :card/>
         </div>
+      </div>
+
+      <div class="mt-6">
+        <p class="text-xs md:text-sm text-gray-800 font-bold">You cannot show anyone this screen</p>
       </div>
     </BaseCard>
   </div>
@@ -26,12 +30,12 @@
 <script lang="ts" setup>
 import CardPreview from '@/components/ui/CardPreview.vue';
 import { computed } from 'vue';
-import { type ChiefDiscardCardGameState, Game } from '@/game';
+import { Game, type PresidentDiscardCardGameState } from '@/game';
 import type { Card } from '@/game/messages.ts';
 import BaseCard from '@/components/ui/BaseCard.vue';
 
 const props = defineProps<{ game: Game; }>();
-const gameState = computed(() => props.game.state as ChiefDiscardCardGameState);
+const gameState = computed(() => props.game.state as PresidentDiscardCardGameState);
 const emit = defineEmits<{ discard: [cardId: number] }>();
 
 function discard(card: Card) {

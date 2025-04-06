@@ -18,6 +18,13 @@
           <CardPreview :card="card"/>
         </div>
       </div>
+
+      <div v-if="gameState.vetoable" class="mt-6">
+        <p class="text-xs md:text-sm text-gray-800 font-bold">You cannot show anyone this screen</p>
+        <p class="text-sm md:text-base text-gray-700 font-extrabold text-center">
+          You may request a veto (out loud), and if the president agrees, all cards will be discarded.
+        </p>
+      </div>
     </BaseCard>
   </div>
 </template>

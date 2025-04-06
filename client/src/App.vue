@@ -27,8 +27,8 @@
         :game
         @confirm="confirmInvestigation"
     />
-    <ChiefDiscardCardScreen
-        v-else-if="game.state.type === 'chief_discard_card'"
+    <PresidentDiscardCardScreen
+        v-else-if="game.state.type === 'president_discard_card'"
         :game
         @discard="discardCard"
     />
@@ -37,13 +37,18 @@
         :game
         @choose="chooseCard"
     />
+    <PolicyPeekScreen
+        v-else-if="game.state.type === 'policy_peek'"
+        :game
+        @confirm="confirmPolicyPeek"
+    />
     <IdleScreen v-else/>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { WebsocketOwner } from '@/game/websocket-owner.ts';
-import { ActionChoice, type InboundMessage, Role } from '@/game/messages.ts';
+import { type InboundMessage, Role } from '@/game/messages.ts';
 import { PlayerIcon } from '@/game/player-icon.ts';
 import { Game, type ViewInvestigationResultsGameState, type ViewRoleGameState } from '@/game';
 import { onMounted, ref } from 'vue';
@@ -54,8 +59,9 @@ import IdleScreen from '@/components/screen/IdleScreen.vue';
 import RoleConfirmationScreen from '@/components/screen/RoleConfirmationScreen.vue';
 import CommitActionScreen from '@/components/screen/CommitActionScreen.vue';
 import ViewInvestigationResultsScreen from '@/components/screen/ViewInvestigationResultsScreen.vue';
-import ChiefDiscardCardScreen from '@/components/screen/ChiefDiscardCardScreen.vue';
+import PresidentDiscardCardScreen from '@/components/screen/PresidentDiscardCardScreen.vue';
 import AdvisorChooseCardScreen from '@/components/screen/AdvisorChooseCardScreen.vue';
+import PolicyPeekScreen from '@/components/screen/PolicyPeekScreen.vue';
 
 const playerName = ref<string>('');
 const playerIcon = ref<string>('');
@@ -129,15 +135,15 @@ function handleMessage(message: InboundMessage) {
     case 'request_action':
       game.value!.state = {
         type: 'commit_action',
-        permittedActions: message.permitted_actions,
+        action: message.action,
         supplementedPlayers: message.players
       };
       break;
-    case 'request_chief_card_discard':
-      game.value!.state = { type: 'chief_discard_card', cards: message.cards };
+    case 'request_president_card_discard':
+      game.value!.state = { type: 'president_discard_card', cards: message.cards };
       break;
     case 'request_advisor_card_choice':
-      game.value!.state = { type: 'advisor_choose_card', cards: message.cards };
+      game.value!.state = { type: 'advisor_choose_card', cards: message.cards, vetoable: message.vetoable };
       break;
     case 'investigation_result':
       game.value!.state = {
@@ -147,7 +153,11 @@ function handleMessage(message: InboundMessage) {
         hasConfirmed: false
       };
       break;
-
+    case 'policy_peek':
+      game.value!.state = {
+        type: 'policy_peek',
+        cards: message.cards,
+      };
   }
 }
 
@@ -160,8 +170,8 @@ function confirmRole() {
   }
 }
 
-function commitAction(playerName: string, action: ActionChoice) {
-  ws.send({ type: 'choose_action', target: playerName, action });
+function commitAction(playerName: string) {
+  ws.send({ type: 'choose_action', target: playerName });
   game.value!.state = { type: 'idle' };
 }
 
@@ -181,6 +191,10 @@ function discardCard(cardId: number) {
 
 function chooseCard(cardId: number) {
   ws.send({ type: 'choose_card', card_id: cardId });
+  game.value!.state = { type: 'idle' };
+}
+
+function confirmPolicyPeek() {
   game.value!.state = { type: 'idle' };
 }
 </script>

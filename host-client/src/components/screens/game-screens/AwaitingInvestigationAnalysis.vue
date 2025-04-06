@@ -5,7 +5,7 @@
       <div class="flex items-center gap-6">
         <div class="flex flex-col items-center">
           <div class="relative">
-            <PlayerCard :player="chief" size="lg"/>
+            <PlayerCard :player="president" size="lg"/>
           </div>
         </div>
 
@@ -34,6 +34,6 @@ import PlayerCard from '@/components/ui/PlayerCard.vue';
 const props = defineProps<{ game: InProgressGameState }>();
 const gameState = computed(() => props.game.inner_game_state as AwaitingInvestigationAnalysisInnerGameState);
 
-const chief = computed(() => props.game.players.find(p => p.is_chief)!);
+const president = computed(() => props.game.players.find(p => p.is_president)!);
 const target = computed(() => props.game.players.find(p => p.name === gameState.value.target)!);
 </script>

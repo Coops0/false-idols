@@ -129,22 +129,28 @@ function onKeyPress(event: KeyboardEvent) {
       break;
     case 'game_in_progress':
       switch (game.value.inner_game_state.type) {
-        case 'awaiting_chief_card_discard':
-        case 'awaiting_advisor_card_choice':
+        case 'awaiting_president_card_discard':
         case 'idle':
         case 'awaiting_investigation_analysis':
-        case 'awaiting_chief_action_choice':
+        case 'awaiting_president_action_choice':
           if (key === 'space') {
             s({ type: 'skip' });
           }
           break;
-        case 'awaiting_election_outcome':
+        case 'awaiting_president_election_outcome':
+        case 'awaiting_advisor_election_outcome':
           if (key === 'enter' || key === 'y') {
             s({ type: 'resolve_election', passed: true });
+            break;
           } else if (key === 'backspace' || key === 'n') {
             s({ type: 'resolve_election', passed: false });
+            break;
           }
-          break;
+        case 'awaiting_advisor_card_choice':
+          if (key === 'backspace' || key === 'v') {
+            s({ type: 'veto' });
+            break;
+          }
       }
       break;
     case 'game_over':

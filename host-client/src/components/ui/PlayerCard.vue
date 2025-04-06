@@ -7,7 +7,7 @@
             <img :alt="player.name" :src="icon" class="size-full object-cover player-icon"/>
           </div>
           <div
-              v-if="isChief"
+              v-if="isPresident"
               :class="sizeClasses.crown"
               class="absolute -top-1 -right-1 rounded-full flex items-center justify-center text-white font-bold shadow-sm bg-yellow-200/90 border-yellow-300/80 border-2"
           >
@@ -79,7 +79,7 @@ const sizeClasses = computed(() => {
 });
 
 const isGamePlayer = computed(() => 'role' in props.player);
-const isChief = computed(() => !props.ignoreModifiers && isGamePlayer.value && (props.player as GamePlayer).is_chief);
+const isPresident = computed(() => !props.ignoreModifiers && isGamePlayer.value && (props.player as GamePlayer).is_president);
 const isDead = computed(() => !props.ignoreModifiers && isGamePlayer.value && !(props.player as GamePlayer).is_alive);
 
 const icon = computed(() => {

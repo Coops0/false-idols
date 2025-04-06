@@ -2,26 +2,11 @@
   <div class="min-h-screen flex items-center justify-center p-4">
     <BaseCard class="w-full max-w-4xl mx-4">
       <template #header>
-        <h1 class="text-xl md:text-2xl font-bold text-gray-800 text-center">Do Something</h1>
+        <h1 class="text-xl md:text-2xl font-bold text-gray-800 text-center">Choose who to <span
+            class="font-bold" :class="actionColor">{{ actionName }}</span></h1>
       </template>
 
       <div class="space-y-6 md:space-y-8">
-        <div class="flex flex-col sm:flex-row justify-center gap-2 sm:gap-4">
-          <button
-              v-for="action in [ActionChoice.NOMINATE, ActionChoice.INVESTIGATE, ActionChoice.KILL]"
-              :key="action"
-              :class="{
-              'bg-blue-500 text-white shadow-lg': selectedAction === action,
-              'opacity-50': !isValidAction(action),
-              'bg-gray-100 text-gray-700': selectedAction !== action
-            }"
-              class="px-4 sm:px-6 py-3 rounded-lg font-semibold transition-all duration-200 text-sm sm:text-base"
-              @click="() => swapAction(action)"
-          >
-            {{ action }}
-          </button>
-        </div>
-
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
           <div
               v-for="player in players"
@@ -31,7 +16,7 @@
               @click="() => player.enabled && commitPlayer(player.name)"
           >
             <PlayerPreview
-                :player="player"
+                :player
                 icon-variant="normal"
             />
           </div>
@@ -43,40 +28,56 @@
 
 <script lang="ts" setup>
 import type { CommitActionGameState, Game } from '@/game';
-import { computed, ref, watch } from 'vue';
+import { computed } from 'vue';
 import { ActionChoice, type ActionSupplementedPlayer } from '@/game/messages.ts';
 import PlayerPreview from '@/components/ui/PlayerPreview.vue';
 import BaseCard from '@/components/ui/BaseCard.vue';
 
 const props = defineProps<{ game: Game; }>();
 const gameState = computed(() => props.game.state as CommitActionGameState);
-const emit = defineEmits<{ commit: [playerName: string, action: ActionChoice] }>();
+const emit = defineEmits<{ commit: [playerName: string] }>();
 
-const selectedAction = ref(ActionChoice.NOMINATE);
+const players = computed<(ActionSupplementedPlayer & { enabled: boolean })[]>(() => {
+  const action = gameState.value.action;
+  return gameState.value.supplementedPlayers
+      .map(p => {
+        const enabled =
+            (p.electable && action === ActionChoice.NOMINATE) ||
+            (p.investigatable && action === ActionChoice.INVESTIGATE) ||
+            action === ActionChoice.KILL ||
+            action === ActionChoice.NOMINATE_PRESIDENT;
 
-watch(gameState, s => (selectedAction.value = s.permittedActions[0]), { deep: true, immediate: true });
+        return { ...p, enabled };
+      });
+});
 
-const players = computed<(ActionSupplementedPlayer & { enabled: boolean })[]>(() => gameState.value.supplementedPlayers
-    .map(p => {
-      const enabled =
-          (p.electable && selectedAction.value === ActionChoice.NOMINATE) ||
-          (p.investigatable && selectedAction.value === ActionChoice.INVESTIGATE) ||
-          selectedAction.value === ActionChoice.KILL;
-
-      return { ...p, enabled };
-    }));
-
-function isValidAction(action: ActionChoice) {
-  return gameState.value.permittedActions.includes(action);
-}
-
-function swapAction(action: ActionChoice) {
-  if (isValidAction(action)) {
-    selectedAction.value = action;
+const actionName = computed(() => {
+  switch (gameState.value.action) {
+    case ActionChoice.INVESTIGATE:
+      return 'INVESTIGATE';
+    case ActionChoice.KILL:
+      return 'KILL';
+    case ActionChoice.NOMINATE:
+      return 'NOMINATE';
+    case ActionChoice.NOMINATE_PRESIDENT:
+      return 'NOMINATE PRESIDENT';
   }
-}
+});
+
+const actionColor = computed(() => {
+  switch (gameState.value.action) {
+    case ActionChoice.INVESTIGATE:
+      return 'text-blue-500';
+    case ActionChoice.KILL:
+      return 'text-red-500';
+    case ActionChoice.NOMINATE:
+      return 'text-gray-400';
+    case ActionChoice.NOMINATE_PRESIDENT:
+      return 'text-gray-600';
+  }
+});
 
 function commitPlayer(playerName: string) {
-  emit('commit', playerName, selectedAction.value);
+  emit('commit', playerName);
 }
 </script>

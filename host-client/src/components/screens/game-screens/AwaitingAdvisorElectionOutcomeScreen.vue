@@ -13,12 +13,12 @@
 </template>
 
 <script lang="ts" setup>
-import type { AwaitingElectionOutcomeInnerGameState, InProgressGameState } from '@/game/state.ts';
+import type { AwaitingAdvisorElectionOutcomeInnerGameState, InProgressGameState } from '@/game/state.ts';
 import { computed } from 'vue';
 import PlayerCard from '@/components/ui/PlayerCard.vue';
 
 const props = defineProps<{ game: InProgressGameState }>();
-const gameState = computed(() => props.game.inner_game_state as AwaitingElectionOutcomeInnerGameState);
+const gameState = computed(() => props.game.inner_game_state as AwaitingAdvisorElectionOutcomeInnerGameState);
 
 const nominee = computed(() => props.game.players.find(p => p.name === gameState.value.nominee)!);
 </script>

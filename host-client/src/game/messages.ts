@@ -14,9 +14,11 @@ export type ServerOutboundMessage =
     { type: 'resolve_election', passed: boolean } |
     { type: 'skip' } |
     { type: 'go_back_to_lobby' } |
+    { type: 'veto' } |
     { type: 'ping' };
 
 
 export type ServerInboundMessage =
     { type: 'update_game_state', game_state: GameState } |
-    { type: 'error', error: FalseIdolsError };
+    { type: 'error', error: FalseIdolsError } |
+    { type: 'policy_peeking' };

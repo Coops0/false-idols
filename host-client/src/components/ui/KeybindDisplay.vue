@@ -33,7 +33,7 @@
       </template>
 
       <template
-          v-if="game.type === 'game_in_progress' && game.inner_game_state.type === 'awaiting_election_outcome'">
+          v-if="game.type === 'game_in_progress' && game.inner_game_state.type === 'awaiting_president_election_outcome'">
         <div class="flex items-center gap-2">
           <kbd class="px-2 py-1 bg-gray-800/50 rounded-lg text-gray-200 border border-gray-700/50">Enter</kbd>
           <span class="text-gray-300">or</span>
@@ -45,6 +45,16 @@
           <span class="text-gray-300">or</span>
           <kbd class="px-2 py-1 bg-gray-800/50 rounded-lg text-gray-200 border border-gray-700/50">N</kbd>
           <span class="text-gray-300">Reject election</span>
+        </div>
+      </template>
+
+      <template
+          v-if="game.type === 'game_in_progress' && game.inner_game_state.type === 'awaiting_advisor_card_choice'">
+        <div class="flex items-center gap-2">
+          <kbd class="px-2 py-1 bg-gray-800/50 rounded-lg text-gray-200 border border-gray-700/50">Backspace</kbd>
+          <span class="text-gray-300">or</span>
+          <kbd class="px-2 py-1 bg-gray-800/50 rounded-lg text-gray-200 border border-gray-700/50">V</kbd>
+          <span class="text-gray-300">Veto</span>
         </div>
       </template>
 
@@ -70,7 +80,8 @@ const isSkippableState = computed(() => {
   }
 
   // all other inner game states are skippable except for election resolution
-  return props.game.inner_game_state.type !== 'awaiting_election_outcome';
+  return props.game.inner_game_state.type !== 'awaiting_advisor_election_outcome' &&
+      props.game.inner_game_state.type !== 'awaiting_president_election_outcome';
 });
 </script>
 

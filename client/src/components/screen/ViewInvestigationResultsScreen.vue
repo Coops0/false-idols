@@ -23,7 +23,7 @@
       <div v-else class="space-y-6">
         <div class="text-center space-y-1">
           <PlayerPreview
-              :game="props.game"
+              :game
               :icon-variant="gameState.role === Role.DEMON ? 'demon' : 'angel'"
               :player="gameState.player"
               class="w-32 h-32 sm:w-40 sm:h-40 mx-auto"

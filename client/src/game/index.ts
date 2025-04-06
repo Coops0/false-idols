@@ -25,18 +25,19 @@ export type ViewRoleGameState = {
 
 export type CommitActionGameState = {
     type: 'commit_action';
-    permittedActions: ActionChoice[];
+    action: ActionChoice;
     supplementedPlayers: ActionSupplementedPlayer[];
 }
 
-export type ChiefDiscardCardGameState = {
-    type: 'chief_discard_card';
+export type PresidentDiscardCardGameState = {
+    type: 'president_discard_card';
     cards: Card[];
 }
 
 export type AdvisorChooseCardGameState = {
     type: 'advisor_choose_card';
     cards: Card[];
+    vetoable: boolean;
 }
 
 export type ViewInvestigationResultsGameState = {
@@ -46,17 +47,23 @@ export type ViewInvestigationResultsGameState = {
     hasConfirmed: boolean;
 }
 
+export type PolicyPeekGameState = {
+    type: 'policy_peek';
+    cards: Card[];
+}
+
 export type GameState =
     IdleGameState
     | ViewRoleGameState
     | CommitActionGameState
-    | ChiefDiscardCardGameState
+    | PresidentDiscardCardGameState
     | AdvisorChooseCardGameState
-    | ViewInvestigationResultsGameState;
+    | ViewInvestigationResultsGameState
+    | PolicyPeekGameState;
 
 export class Game {
     readonly role: Role;
-    isChief: boolean;
+    isPresident: boolean;
     state: GameState;
 
     constructor(message: InboundMessage) {
@@ -75,6 +82,6 @@ export class Game {
         };
 
         this.role = message.role;
-        this.isChief = false;
+        this.isPresident = false;
     }
 }

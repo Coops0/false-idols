@@ -9,56 +9,39 @@
     <div class="flex-auto">
       <div class="h-full bg-white/90 rounded-lg border border-gray-200 p-4 overflow-hidden">
         <div class="h-full flex items-center justify-center">
-          <AwaitingAdvisorCardChoiceScreen v-if="game.inner_game_state.type === 'awaiting_advisor_card_choice'"
-                                           :game/>
-          <AwaitingChiefCardDiscardScreen v-else-if="game.inner_game_state.type === 'awaiting_chief_card_discard'"
-                                          :game/>
-          <AwaitingElectionOutcomeScreen v-else-if="game.inner_game_state.type === 'awaiting_election_outcome'"
-                                         :game/>
-          <AwaitingInvestigationAnalysis v-else-if="game.inner_game_state.type === 'awaiting_investigation_analysis'"
-                                         :game/>
-          <AwaitingPlayerActionChoiceScreen v-else-if="game.inner_game_state.type === 'awaiting_chief_action_choice'"
-                                            :game/>
+          <!--@formatter:off-->
+          <AwaitingAdvisorCardChoiceScreen v-if="game.inner_game_state.type === 'awaiting_advisor_card_choice'" :game/>
+          <AwaitingPresidentCardDiscardScreen v-else-if="game.inner_game_state.type === 'awaiting_president_card_discard'" :game/>
+          <AwaitingAdvisorElectionOutcomeScreen v-else-if="game.inner_game_state.type === 'awaiting_advisor_election_outcome'" :game/>
+          <AwaitingPresidentElectionOutcomeScreen v-else-if="game.inner_game_state.type === 'awaiting_president_election_outcome'" :game/>
+          <AwaitingInvestigationAnalysis v-else-if="game.inner_game_state.type === 'awaiting_investigation_analysis'" :game/>
+          <AwaitingPlayerActionChoiceScreen v-else-if="game.inner_game_state.type === 'awaiting_president_action_choice'" :game/>
           <IdleScreen v-else-if="game.inner_game_state.type === 'idle'" :game/>
+          <!--@formatter:on-->
         </div>
       </div>
     </div>
 
-    <div class="flex-none">
-      <div class="grid grid-cols-3 gap-2 h-38">
-        <div class="bg-white/90 rounded-lg border border-gray-200 p-2 flex items-center justify-center">
-          <CardDeck :game class="size-full"/>
-        </div>
-
-        <div class="bg-white/90 rounded-lg border border-gray-200 p-2 flex items-center justify-center">
-          <ScoreBar :game class="size-full"/>
-        </div>
-
-        <div v-if="game.failed_elections > 0"
-             class="bg-white/90 rounded-lg border border-gray-200 p-2 flex items-center justify-center">
-          <ChaosBar :game class="size-full"/>
-        </div>
-
-        <div v-else class="bg-white/90 rounded-lg border border-gray-200 p-2 flex items-center justify-center">
-          <div class="text-gray-400 text-sm">No failed elections</div>
-        </div>
-      </div>
+    <div class="flex">
+      <GameBoard :game/>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import AwaitingAdvisorCardChoiceScreen from '@/components/screens/game-screens/AwaitingAdvisorCardChoiceScreen.vue';
-import AwaitingChiefCardDiscardScreen from '@/components/screens/game-screens/AwaitingChiefCardDiscardScreen.vue';
-import AwaitingElectionOutcomeScreen from '@/components/screens/game-screens/AwaitingElectionOutcomeScreen.vue';
+import AwaitingPresidentCardDiscardScreen
+  from '@/components/screens/game-screens/AwaitingPresidentCardDiscardScreen.vue';
 import AwaitingInvestigationAnalysis from '@/components/screens/game-screens/AwaitingInvestigationAnalysis.vue';
 import AwaitingPlayerActionChoiceScreen from '@/components/screens/game-screens/AwaitingPlayerActionChoiceScreen.vue';
 import IdleScreen from '@/components/screens/game-screens/IdleScreen.vue';
 import type { InProgressGameState } from '@/game/state.ts';
-import ChaosBar from '@/components/ui/ChaosBar.vue';
-import ScoreBar from '@/components/ui/ScoreBar.vue';
-import CardDeck from '@/components/ui/CardDeck.vue';
 import PlayerCard from '@/components/ui/PlayerCard.vue';
+import AwaitingAdvisorElectionOutcomeScreen
+  from '@/components/screens/game-screens/AwaitingAdvisorElectionOutcomeScreen.vue';
+import AwaitingPresidentElectionOutcomeScreen
+  from '@/components/screens/game-screens/AwaitingPresidentElectionOutcomeScreen.vue';
+import GameBoard from '@/components/ui/GameBoard.vue';
 
 defineProps<{ game: InProgressGameState }>();
 </script>

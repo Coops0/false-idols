@@ -23,14 +23,14 @@ export type Player = {
 };
 export type GamePlayer = Player & {
     role: Role;
-    is_chief: boolean;
+    is_president: boolean;
     is_alive: boolean;
 
-    was_chief_last_round: boolean;
+    was_president_last_round: boolean;
     was_advisor_last_round: boolean;
 };
 
-export enum CardConsequenceQualifier {
+export enum CardConsequence {
     POSITIVE = 'POSITIVE',
     NEGATIVE = 'NEGATIVE',
     NEUTRAL = 'NEUTRAL',
@@ -39,28 +39,30 @@ export enum CardConsequenceQualifier {
 export type Card = {
     id: number;
     description: string;
-    consequence: number;
-    consequence_qualifier: CardConsequenceQualifier;
+    consequence: CardConsequence;
 }
 
 export type CardDeck = {
     card_stack: Card[];
     played_cards: Card[];
+    negative_cards_played: number;
+    positive_cards_played: number;
 }
 
 export enum ActionChoice {
     INVESTIGATE = 'INVESTIGATE',
-    ELECT = 'ELECT',
     KILL = 'KILL',
+    NOMINATE = 'ELECT',
+    NOMINATE_PRESIDENT = 'ELECT_PRESIDENT',
 }
 
 export type IdleInnerGameState = { type: 'idle' };
-export type AwaitingChiefActionChoiceInnerGameState = {
-    type: 'awaiting_chief_action_choice',
-    permitted_actions: ActionChoice[]
+export type AwaitingPresidentActionChoiceInnerGameState = {
+    type: 'awaiting_president_action_choice',
+    action: ActionChoice,
 };
-export type AwaitingChiefCardDiscardInnerGameState = {
-    type: 'awaiting_chief_card_discard',
+export type AwaitingPresidentCardDiscardInnerGameState = {
+    type: 'awaiting_president_card_discard',
     cards: Card[],
     advisor_name: string
 };
@@ -69,16 +71,22 @@ export type AwaitingAdvisorCardChoiceInnerGameState = {
     cards: Card[],
     advisor_name: string
 };
-export type AwaitingElectionOutcomeInnerGameState = { type: 'awaiting_election_outcome', nominee: string };
+export type AwaitingAdvisorElectionOutcomeInnerGameState = { type: 'awaiting_advisor_election_outcome', nominee: string };
+export type AwaitingPresidentElectionOutcomeInnerGameState = {
+    type: 'awaiting_president_election_outcome',
+    nominee: string
+};
+
 export type AwaitingInvestigationAnalysisInnerGameState = { type: 'awaiting_investigation_analysis', target: string };
 
 
 export type InnerGameState =
     IdleInnerGameState
-    | AwaitingChiefActionChoiceInnerGameState
-    | AwaitingChiefCardDiscardInnerGameState
+    | AwaitingPresidentActionChoiceInnerGameState
+    | AwaitingPresidentCardDiscardInnerGameState
     | AwaitingAdvisorCardChoiceInnerGameState
-    | AwaitingElectionOutcomeInnerGameState
+    | AwaitingAdvisorElectionOutcomeInnerGameState
+    | AwaitingPresidentElectionOutcomeInnerGameState
     | AwaitingInvestigationAnalysisInnerGameState;
 
 export type LobbyGameState = {
