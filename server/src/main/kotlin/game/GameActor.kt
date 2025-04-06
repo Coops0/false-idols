@@ -33,10 +33,11 @@ sealed class InnerApplicationMessage {
     class NewServerConnection(val server: SocketContentConverterSender<ServerOutboundMessage>) :
             InnerApplicationMessage()
 
-    class Shutdown(val complete: CompletableDeferred<Unit>) : InnerApplicationMessage()
+    class Shutdown(val completable: CompletableDeferred<Unit>) : InnerApplicationMessage()
 }
 
 val globalInnerApplicationChannel = Channel<InnerApplicationMessage>(
+//    capacity = Channel.UNLIMITED,
     onUndeliveredElement = { println("UNDELIVERED ELEMENT: $it") }
 )
 
@@ -111,7 +112,7 @@ suspend fun launchGameActor() {
                     gameState.server = null
                     globalInnerApplicationChannel.close()
                 } finally {
-                    message.complete.complete(Unit)
+                    message.completable.complete(Unit)
                 }
                 break
             }

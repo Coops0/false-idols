@@ -42,7 +42,6 @@ fun main(): Unit = runBlocking {
         println("Shut down successful")
     }
 
-
     server.startSuspend(wait = false)
 }
 
