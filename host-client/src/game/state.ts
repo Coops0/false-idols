@@ -21,6 +21,7 @@ export type Player = {
     name: string;
     icon: typeof ICONS[number];
 };
+
 export type GamePlayer = Player & {
     role: Role;
     is_president: boolean;

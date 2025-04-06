@@ -36,7 +36,11 @@
 import { WebsocketOwner } from '@/game/websocket-owner.ts';
 import type { ServerInboundMessage, ServerOutboundMessage } from '@/game/messages.ts';
 import { onMounted, onUnmounted, ref } from 'vue';
-import { type GameState } from '@/game/state.ts';
+import {
+  type AwaitingPresidentActionChoiceInnerGameState,
+  type GameState,
+  type InProgressGameState
+} from '@/game/state.ts';
 import LobbyScreen from '@/components/screens/LobbyScreen.vue';
 import InProgressScreen from '@/components/screens/InProgressScreen.vue';
 import GameOverScreen from '@/components/screens/GameOverScreen.vue';
@@ -114,6 +118,62 @@ function onKeyPress(event: KeyboardEvent) {
     return;
   }
 
+  if (key === 'l') {
+    game.value = <InProgressGameState>{
+      type: 'game_in_progress',
+      inner_game_state: <AwaitingPresidentActionChoiceInnerGameState>{
+        type: 'awaiting_president_action_choice',
+        action: 'KILL'
+      },
+      players: [
+        {
+          name: 'Dog',
+          role: 'ANGEL',
+          icon: 'bear',
+          was_advisor_last_round: false,
+          was_president_last_round: false,
+          is_president: true,
+          is_alive: true
+        },
+        {
+          name: 'Cat',
+          role: 'SATAN',
+          icon: 'panda',
+          was_advisor_last_round: false,
+          was_president_last_round: false,
+          is_president: false,
+          is_alive: true
+        },
+        {
+          name: 'Fish',
+          role: 'DEMON',
+          icon: 'pig',
+          was_advisor_last_round: false,
+          was_president_last_round: false,
+          is_president: false,
+          is_alive: true
+        },
+        {
+          name: 'Bird',
+          role: 'ANGEL',
+          icon: 'mouse',
+          was_advisor_last_round: false,
+          was_president_last_round: false,
+          is_president: false,
+          is_alive: true
+        }
+      ],
+      deck: {
+        negative_cards_played: 4,
+        positive_cards_played: 2,
+        played_cards: [],
+        card_stack: []
+      },
+      failed_elections: 1
+    };
+    return;
+  }
+
   const s = (message: ServerOutboundMessage) => {
     ws.send(message);
     event.preventDefault();
@@ -137,20 +197,19 @@ function onKeyPress(event: KeyboardEvent) {
             s({ type: 'skip' });
           }
           break;
-        case 'awaiting_president_election_outcome':
         case 'awaiting_advisor_election_outcome':
+        case 'awaiting_president_election_outcome':
           if (key === 'enter' || key === 'y') {
             s({ type: 'resolve_election', passed: true });
-            break;
           } else if (key === 'backspace' || key === 'n') {
             s({ type: 'resolve_election', passed: false });
-            break;
           }
+          break;
         case 'awaiting_advisor_card_choice':
           if (key === 'backspace' || key === 'v') {
             s({ type: 'veto' });
-            break;
           }
+          break;
       }
       break;
     case 'game_over':
