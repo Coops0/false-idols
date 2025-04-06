@@ -34,25 +34,25 @@
               Play positive cards and try to eliminate all demons.
             </p>
             <p v-else-if="game.role === Role.DEMON" class="text-gray-700 text-sm md:text-base">
-              Work together with the other demons to kill angels and play negative cards.
-              Satan does not know who the demons are.
+              Work together with the other demons/Satan to kill angels and play negative cards.
+              {{ gameState.isSmallGame ? 'Satan knows who you are.' : 'Satan does not know who the demons are.' }}
             </p>
             <p v-else class="text-gray-700 text-sm md:text-base">
-              The other demons know who you are, try to subtly work together to pass negative cards, and kill angels.
+              Try to subtly work together with the other demons to pass negative cards, and kill angels.
               <span class="font-bold text-red-600">If you die, the game ends immediately.</span>
             </p>
           </div>
 
-          <div v-if="gameState.demonExtras" class="bg-gray-50 rounded-lg p-4 md:p-6 space-y-3 md:space-y-4">
+          <div v-if="gameState.demons?.length" class="bg-gray-50 rounded-lg p-4 md:p-6 space-y-3 md:space-y-4">
             <h3 class="text-lg md:text-xl font-semibold text-gray-800">Your Team</h3>
-            <div class="space-y-2">
+            <div class="space-y-2" v-if="gameState.satan">
               <p class="text-gray-700 text-sm md:text-base">Satan:</p>
-              <PlayerPreview :player="gameState.demonExtras.satan" icon-variant="satan"/>
+              <PlayerPreview :player="gameState.satan" icon-variant="satan"/>
             </div>
-            <div v-if="gameState.demonExtras.teammates.length" class="space-y-2">
-              <p class="text-gray-700 text-sm md:text-base">Other Demons:</p>
+            <div v-if="gameState.demons.length" class="space-y-2">
+              <p class="text-gray-700 text-sm md:text-base">{{ game.role === Role.DEMON ? 'Other ' : '' }}Demons:</p>
               <ul class="space-y-2">
-                <li v-for="demon in gameState.demonExtras.teammates">
+                <li v-for="demon in gameState.demons">
                   <PlayerPreview :player="demon" icon-variant="demon"/>
                 </li>
               </ul>

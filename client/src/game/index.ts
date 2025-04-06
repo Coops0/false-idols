@@ -17,10 +17,9 @@ export type ViewRoleGameState = {
     /// Show confirmation/warning before showing the role.
     hasConfirmed: boolean;
     demonCount: number;
-    demonExtras: {
-        teammates: Player[];
-        satan: Player;
-    } | null
+    isSmallGame: boolean;
+    demons: Player[] | null;
+    satan: Player | null;
 }
 
 export type CommitActionGameState = {
@@ -75,10 +74,9 @@ export class Game {
             type: 'view_role',
             hasConfirmed: false,
             demonCount: message.demon_count,
-            demonExtras: message.role === Role.DEMON ? {
-                teammates: message.demons,
-                satan: message.satan
-            } : null
+            demons: (message.role === Role.DEMON || (message.role === Role.SATAN && message.is_small_game)) ? message.demons : null,
+            satan: message.role === Role.DEMON ? message.satan : null,
+            isSmallGame: message.is_small_game,
         };
 
         this.role = message.role;
