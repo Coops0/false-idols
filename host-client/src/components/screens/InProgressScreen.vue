@@ -22,8 +22,12 @@
       </div>
     </div>
 
-    <div class="flex">
-      <GameBoard :game/>
+    <div class="flex h-full items-center justify-center">
+      <div class="relative justify-center items-center flex flex-row gap-2">
+        <AngelBoard :cards="game.deck.played_cards" :players-size="game.players.length"
+                    :failed-elections="game.failed_elections"/>
+        <DemonBoard :cards="game.deck.played_cards" :players-size="game.players.length"/>
+      </div>
     </div>
   </div>
 </template>
@@ -41,7 +45,8 @@ import AwaitingAdvisorElectionOutcomeScreen
   from '@/components/screens/game-screens/AwaitingAdvisorElectionOutcomeScreen.vue';
 import AwaitingPresidentElectionOutcomeScreen
   from '@/components/screens/game-screens/AwaitingPresidentElectionOutcomeScreen.vue';
-import GameBoard from '@/components/ui/GameBoard.vue';
+import AngelBoard from '@/components/ui/AngelBoard.vue';
+import DemonBoard from '@/components/ui/DemonBoard.vue';
 
 defineProps<{ game: InProgressGameState }>();
 </script>

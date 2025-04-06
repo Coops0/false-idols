@@ -1,8 +1,5 @@
 <template>
   <div class="h-[calc(100vh-64px)] overflow-hidden">
-    <AbilityUnlockNotification :game/>
-    <ErrorToast v-model="errorMessage"/>
-
     <div class="max-w-6xl mx-auto h-full flex flex-col">
       <div class="relative flex-1">
         <div v-if="game === null" class="flex items-center justify-center h-full">
@@ -45,10 +42,8 @@ import LobbyScreen from '@/components/screens/LobbyScreen.vue';
 import InProgressScreen from '@/components/screens/InProgressScreen.vue';
 import GameOverScreen from '@/components/screens/GameOverScreen.vue';
 import KeybindDisplay from '@/components/ui/KeybindDisplay.vue';
-import ErrorToast from '@/components/ui/ErrorToast.vue';
 import { useLocalStorage } from '@/util/use-local-storage.ts';
 import { PlayerIcon } from '@/game/player-icon.ts';
-import AbilityUnlockNotification from '@/components/ui/AbilityUnlockNotification.vue';
 
 const ws = new WebsocketOwner(onMessage);
 const game = ref<GameState | null>(null);
