@@ -5,6 +5,7 @@
         v-for="(card, index) in positiveCards"
         :key="index"
         :card
+        variant="angel"
         class="absolute"
         :style="{
           top: `${topOffset}px`,
@@ -12,6 +13,19 @@
           width: `${cardSize.width}px`,
           height: `${cardSize.height}px`,
         }"
+    />
+
+    <img
+        v-for="i in props.failedElections"
+        :key="i"
+        class="absolute object-scale-down"
+        :style="{
+          top: `${topTrackerOffset}px`,
+          left: `${leftTrackerOffset.initial + (leftTrackerOffset.offset * (i - 1))}px`,
+          width: `${trackerSize}px`,
+          height: `${trackerSize}px`,
+        }"
+        :src="FailedElectionTracker"
     />
   </div>
 </template>
@@ -21,6 +35,7 @@ import type { Card } from '@/App.vue';
 import { computed, useTemplateRef } from 'vue';
 import BoardImage from '@/assets/board/board-angel.png';
 import PlayedGameCard from '@/components/PlayedGameCard.vue';
+import FailedElectionTracker from '@/assets/board/board-tracker.png';
 import { useElementBounds } from '@/util/element-bounds.composable.ts';
 
 // 1407x541
@@ -45,5 +60,17 @@ const leftOffset = computed(() => {
 const cardSize = computed(() => {
   const b = bounds.value;
   return { width: b.width / 9.5, height: b.height / 2.2 };
+});
+
+const topTrackerOffset = computed(() => bounds.value.height * (4.9 / 6));
+
+const leftTrackerOffset = computed(() => {
+  const w = bounds.value.width;
+  return { initial: w / 2.985, offset: w / 10.385 };
+});
+
+const trackerSize = computed(() => {
+  const b = bounds.value;
+  return b.width / 27.5;
 });
 </script>

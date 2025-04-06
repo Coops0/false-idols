@@ -5,6 +5,7 @@
         v-for="(card, index) in negativeCards"
         :key="index"
         :card
+        variant="demon"
         class="absolute"
         :style="{
           top: `${topOffset}px`,
