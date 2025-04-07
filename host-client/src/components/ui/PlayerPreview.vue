@@ -2,9 +2,12 @@
   <div :class="sizeClasses.card">
     <div class="flex flex-col">
       <div class="flex items-center gap-2 flex-col">
-        <div class="relative flex-shrink-0">
+        <div class="relative flex-shrink-0" :class="iconVariant === 'satan' && 'drop-shadow-red-500/80 drop-shadow-xl'">
           <div :class="sizeClasses.icon">
-            <img :alt="player.name" :src="icon" class="size-full object-cover player-icon"/>
+            <img
+                :src="icon"
+                class="size-full object-cover player-icon"
+            />
           </div>
           <div
               v-if="isPresident"

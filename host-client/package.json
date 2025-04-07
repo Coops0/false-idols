@@ -11,9 +11,9 @@
     "type-check": "vue-tsc --build"
   },
   "dependencies": {
-    "material-symbols": "^0.29.2",
     "qrcode.vue": "^3.6.0",
-    "vue": "^3.5.13"
+    "vue": "^3.5.13",
+    "vue3-toastify": "^0.2.8"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.3",

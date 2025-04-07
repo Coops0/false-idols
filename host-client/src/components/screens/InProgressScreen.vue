@@ -33,7 +33,7 @@ import AwaitingPresidentCardDiscardScreen
 import AwaitingInvestigationAnalysis from '@/components/screens/game-screens/AwaitingInvestigationAnalysis.vue';
 import AwaitingPlayerActionChoiceScreen from '@/components/screens/game-screens/AwaitingPlayerActionChoiceScreen.vue';
 import IdleScreen from '@/components/screens/game-screens/IdleScreen.vue';
-import type { InProgressGameState } from '@/game/state.ts';
+import { CardConsequence, type CardDeck, type InProgressGameState } from '@/game/state.ts';
 import PlayerPreview from '@/components/ui/PlayerPreview.vue';
 import AwaitingAdvisorElectionOutcomeScreen
   from '@/components/screens/game-screens/AwaitingAdvisorElectionOutcomeScreen.vue';
@@ -41,6 +41,26 @@ import AwaitingPresidentElectionOutcomeScreen
   from '@/components/screens/game-screens/AwaitingPresidentElectionOutcomeScreen.vue';
 import AngelBoard from '@/components/ui/AngelBoard.vue';
 import DemonBoard from '@/components/ui/DemonBoard.vue';
+import { watch } from 'vue';
+import { toast } from 'vue3-toastify';
 
-defineProps<{ game: InProgressGameState }>();
+const props = defineProps<{ game: InProgressGameState }>();
+
+const negativeCards = (deck: CardDeck) => deck.played_cards.filter(card => card.consequence === CardConsequence.NEGATIVE).length;
+
+const NEGATIVE_CARD_COUNT_SATAN_ELECTION_WIN = 3;
+watch(() => props.game, (game, oldGame) => {
+  if (!oldGame || !game) return;
+
+  const newNegativeCards = negativeCards(game.deck);
+  const oldNegativeCards = negativeCards(oldGame.deck);
+
+  if (newNegativeCards >= NEGATIVE_CARD_COUNT_SATAN_ELECTION_WIN && oldNegativeCards < NEGATIVE_CARD_COUNT_SATAN_ELECTION_WIN) {
+    toast('Demons will win if Satan is elected as advisor', {
+      type: toast.TYPE.WARNING,
+      autoClose: 5000,
+      position: toast.POSITION.BOTTOM_RIGHT
+    });
+  }
+});
 </script>

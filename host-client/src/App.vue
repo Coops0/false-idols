@@ -46,11 +46,11 @@ import InProgressScreen from '@/components/screens/InProgressScreen.vue';
 import GameOverScreen from '@/components/screens/GameOverScreen.vue';
 import KeybindDisplay from '@/components/ui/KeybindDisplay.vue';
 import { useLocalStorage } from '@/util/use-local-storage.ts';
-import { PlayerIcon } from '@/game/player-icon.ts';
+import { toast } from 'vue3-toastify';
+import { preloadImages } from '@/util/preload-images.util.ts';
 
 const ws = new WebsocketOwner(onMessage);
 const game = ref<GameState | null>(null);
-const errorMessage = ref<string | null>(null);
 
 const showKeybindDisplay = useLocalStorage('show-keybind-display', true);
 
@@ -60,12 +60,30 @@ function onMessage(message: ServerInboundMessage) {
     case 'update_game_state':
       game.value = message.game_state;
       break;
+    case 'policy_peeking':
+      const g = game.value;
+      if (g === null || g.type !== 'game_in_progress') return;
+
+      const presidentName = g.players.find(p => p.is_president)?.name;
+      toast(`${presidentName} is policy peeking`, {
+        type: toast.TYPE.INFO,
+        position: toast.POSITION.TOP_CENTER,
+        autoClose: 6000
+      });
+      break;
     case 'error':
       let m = message.error.error_type;
       if (message.error.player_name) {
         m += ` (${message.error.player_name})`;
       }
-      errorMessage.value = `${m}: ${message.error.message}`;
+
+      toast(`${m}: ${message.error.message}`, {
+        type: toast.TYPE.ERROR,
+        position: toast.POSITION.TOP_RIGHT,
+        autoClose: 3000,
+        closeOnClick: true,
+        pauseOnHover: true,
+      });
       break;
   }
 }
@@ -77,11 +95,14 @@ function onMessage(message: ServerInboundMessage) {
     console.error('failed to request wake lock', err);
   }
 
-  setTimeout(() => PlayerIcon.preload());
   await ws.connect();
 })();
 
-onMounted(() => document.addEventListener('keydown', onKeyPress));
+onMounted(() => {
+  document.addEventListener('keydown', onKeyPress);
+  setTimeout(() => preloadImages());
+});
+
 onUnmounted(() => document.removeEventListener('keydown', onKeyPress));
 
 function onKeyPress(event: KeyboardEvent) {
@@ -212,16 +233,16 @@ function onKeyPress(event: KeyboardEvent) {
         }],
       demons: ['Fish', 'Dog', 'Bird', 'Cat'],
       satan: 'Cat',
-    }
+    };
     return;
   }
 
   if (key === 'k') {
-    const s = {...game.value} as InProgressGameState;
+    const s = { ...game.value } as InProgressGameState;
     s.inner_game_state = <AwaitingInvestigationAnalysisInnerGameState>{
       type: 'awaiting_investigation_analysis',
       target: 'Dog',
-    }
+    };
     game.value = s;
     return;
   }

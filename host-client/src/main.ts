@@ -1,5 +1,5 @@
 import './assets/style.css';
-import 'material-symbols';
+import 'vue3-toastify/dist/index.css';
 
 import { createApp } from 'vue';
 import App from './App.vue';
