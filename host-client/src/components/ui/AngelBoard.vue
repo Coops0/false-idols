@@ -41,6 +41,7 @@ import FailedElectionTracker from '@/assets/board/board-tracker.png';
 import { useElementBounds } from '@/util/element-bounds.composable.ts';
 import GameCardTransition from '@/components/ui/GameCardTransition.vue';
 import PlayedGameCard from '@/components/ui/PlayedGameCard.vue';
+import type { Card } from '@/game/state.ts';
 
 // 1407x541
 

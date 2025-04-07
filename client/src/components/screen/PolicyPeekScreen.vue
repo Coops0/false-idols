@@ -1,11 +1,9 @@
 <template>
-<div>
-
+<div class="size-full flex items-center justify-center">
   <p>You cannot show anyone this screen</p>
   <BaseButton
     class="w-full"
-    @click="() => emit('confirm')"
-    />
+    @click="() => emit('confirm')"/>
 </div>
 </template>
 

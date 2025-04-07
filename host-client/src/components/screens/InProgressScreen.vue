@@ -5,15 +5,17 @@
     </div>
 
     <div class="flex flex-auto size-full items-center justify-center">
-      <!--@formatter:off-->
-      <AwaitingAdvisorCardChoiceScreen v-if="game.inner_game_state.type === 'awaiting_advisor_card_choice'" :game/>
-      <AwaitingPresidentCardDiscardScreen v-else-if="game.inner_game_state.type === 'awaiting_president_card_discard'" :game/>
-      <AwaitingAdvisorElectionOutcomeScreen v-else-if="game.inner_game_state.type === 'awaiting_advisor_election_outcome'" :game/>
-      <AwaitingPresidentElectionOutcomeScreen v-else-if="game.inner_game_state.type === 'awaiting_president_election_outcome'" :game/>
-      <AwaitingInvestigationAnalysis v-else-if="game.inner_game_state.type === 'awaiting_investigation_analysis'" :game/>
-      <AwaitingPlayerActionChoiceScreen v-else-if="game.inner_game_state.type === 'awaiting_president_action_choice'" :game/>
-      <IdleScreen v-else-if="game.inner_game_state.type === 'idle'" :game/>
-      <!--@formatter:on-->
+      <Transition name="fade" mode="out-in">
+        <!--@formatter:off-->
+        <AwaitingAdvisorCardChoiceScreen v-if="game.inner_game_state.type === 'awaiting_advisor_card_choice'" :game/>
+        <AwaitingPresidentCardDiscardScreen v-else-if="game.inner_game_state.type === 'awaiting_president_card_discard'" :game/>
+        <AwaitingAdvisorElectionOutcomeScreen v-else-if="game.inner_game_state.type === 'awaiting_advisor_election_outcome'" :game/>
+        <AwaitingPresidentElectionOutcomeScreen v-else-if="game.inner_game_state.type === 'awaiting_president_election_outcome'" :game/>
+        <AwaitingInvestigationAnalysis v-else-if="game.inner_game_state.type === 'awaiting_investigation_analysis'" :game/>
+        <AwaitingPlayerActionChoiceScreen v-else-if="game.inner_game_state.type === 'awaiting_president_action_choice'" :game/>
+        <IdleScreen v-else-if="game.inner_game_state.type === 'idle'" :game/>
+        <!--@formatter:on-->
+      </Transition>
     </div>
 
     <div class="flex h-auto items-center justify-center">

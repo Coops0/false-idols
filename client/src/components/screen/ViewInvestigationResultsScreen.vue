@@ -1,41 +1,36 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center">
-    <BaseCard class="w-full max-w-md mx-4">
-      <template #header>
-        <h1 class="text-xl md:text-2xl font-bold text-gray-800 text-center">Investigation</h1>
-      </template>
-
-      <div v-if="!gameState.hasConfirmed" class="space-y-6">
-        <div class="text-center space-y-4">
-          <p class="text-gray-600 text-sm md:text-base font-bold">
+  <div class="size-full flex items-center justify-center">
+      <div v-if="!gameState.hasConfirmed">
+        <div class="text-center">
+          <p class="text-gray-600 text-sm font-bold">
             You are about to see if {{ gameState.player.name }} is a demon or angel. You cannot show this screen to
             anyone.
           </p>
         </div>
 
         <div class="flex justify-center">
-          <BaseButton class="px-6 py-3 text-base" variant="primary" @click="() => emit('confirm')">
+          <BaseButton variant="primary" @click="() => emit('confirm')">
             Continue
           </BaseButton>
         </div>
       </div>
 
-      <div v-else class="space-y-6">
+      <div v-else>
         <div class="text-center space-y-1">
           <PlayerPreview
               :game
               :icon-variant="gameState.role === Role.DEMON ? 'demon' : 'angel'"
               :player="gameState.player"
-              class="w-32 h-32 sm:w-40 sm:h-40 mx-auto"
+              class="size-40 mx-auto"
           />
           <p :class="gameState.role === Role.DEMON ? 'text-red-500 font-bold' : 'font-medium text-blue-400'"
-             class="text-base md:text-lg">
+             class="text-base">
             {{ roleName(gameState.role) }}
           </p>
         </div>
 
         <div class="text-center">
-          <p class="text-xs md:text-sm text-gray-800 font-bold">You cannot show anyone this screen</p>
+          <p class="text-xs text-gray-800 font-bold">You cannot show anyone this screen</p>
         </div>
 
         <div class="flex justify-center">
@@ -44,7 +39,6 @@
           </BaseButton>
         </div>
       </div>
-    </BaseCard>
   </div>
 </template>
 

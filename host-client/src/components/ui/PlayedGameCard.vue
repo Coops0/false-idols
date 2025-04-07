@@ -11,10 +11,10 @@
 </template>
 
 <script setup lang="ts">
-import type { Card } from '@/App.vue';
 import NegativeCard from '@/assets/cards/negative-card.png';
 import PositiveCard from '@/assets/cards/positive-card.png';
 import { computed } from 'vue';
+import type { Card } from '@/game/state.ts';
 
 const props = defineProps<{
   card: Card;

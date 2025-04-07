@@ -1,11 +1,11 @@
 <template>
   <div class="flex flex-col items-center space-y-2">
-    <p class="text-lg font-medium text-gray-800">{{ player.name }}</p>
-    <div class="relative w-16 h-16 overflow-hidden">
+    <p class="text-lg text-gray-700 truncate  font-mono">{{ player.name }}</p>
+    <div class="relative size-14 overflow-hidden">
       <img
           :alt="`${player.icon} ${iconVariant}`"
           :src="icon"
-          class="w-full h-full object-cover"
+          class="size-full object-cover"
           draggable="false"
       />
     </div>

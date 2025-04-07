@@ -7,7 +7,7 @@ all: clean build-client build-host-client copy-client copy-host-client build-ser
 clean:
 	rm -rf client/dist
 	rm -rf host-client/dist
-	rm -f $(SERVER_RESOURCES)/assets/*.{js,css}
+	rm -f $(SERVER_RESOURCES)/assets/*.*
 	rm -f $(SERVER_RESOURCES)/{client,host-client}.html
 	rm -rf server/build
 

@@ -14,7 +14,7 @@
       <slot/>
     </span>
     <span v-if="loading" class="absolute inset-0 flex items-center justify-center">
-      <span class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"/>
+      <span class="size-5 border-2 border-white/30 border-t-white rounded-full animate-spin"/>
     </span>
   </button>
 </template>

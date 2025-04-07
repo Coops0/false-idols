@@ -1,48 +1,50 @@
 <template>
-  <div class="h-[calc(100vh-64px)] w-full overflow-x-hidden">
+  <div class="h-[calc(100vh-64px)] w-full overflow-hidden">
     <ErrorToast :message="error"/>
-    <LoginScreen
-        v-if="canShowLogin && !manualIsConnected"
-        v-model="playerName"
-        :is-rejoin="ws.hasEverBeenConnectedSuccessfully"
-        @join="() => tryToConnect()"
-    />
-    <IdleScreen
-        v-else-if="game === null || game.state.type === 'idle'"
-    />
-    <RoleConfirmationScreen
-        v-else-if="game.state.type === 'view_role'"
-        :game
-        :player-icon
-        :player-name
-        @confirm="confirmRole"
-    />
-    <CommitActionScreen
-        v-else-if="game.state.type === 'commit_action'"
-        :game
-        @commit="commitAction"
-    />
-    <ViewInvestigationResultsScreen
-        v-else-if="game.state.type === 'view_investigation_results'"
-        :game
-        @confirm="confirmInvestigation"
-    />
-    <PresidentDiscardCardScreen
-        v-else-if="game.state.type === 'president_discard_card'"
-        :game
-        @discard="discardCard"
-    />
-    <AdvisorChooseCardScreen
-        v-else-if="game.state.type === 'advisor_choose_card'"
-        :game
-        @choose="chooseCard"
-    />
-    <PolicyPeekScreen
-        v-else-if="game.state.type === 'policy_peek'"
-        :game
-        @confirm="confirmPolicyPeek"
-    />
-    <IdleScreen v-else/>
+    <div class="size-full flex justify-center items-center p-4">
+      <LoginScreen
+          v-if="canShowLogin && !manualIsConnected"
+          v-model="playerName"
+          :is-rejoin="ws.hasEverBeenConnectedSuccessfully"
+          @join="() => tryToConnect()"
+      />
+      <IdleScreen
+          v-else-if="game === null || game.state.type === 'idle'"
+      />
+      <RoleConfirmationScreen
+          v-else-if="game.state.type === 'view_role'"
+          :game
+          :player-icon
+          :player-name
+          @confirm="confirmRole"
+      />
+      <CommitActionScreen
+          v-else-if="game.state.type === 'commit_action'"
+          :game
+          @commit="commitAction"
+      />
+      <ViewInvestigationResultsScreen
+          v-else-if="game.state.type === 'view_investigation_results'"
+          :game
+          @confirm="confirmInvestigation"
+      />
+      <PresidentDiscardCardScreen
+          v-else-if="game.state.type === 'president_discard_card'"
+          :game
+          @discard="discardCard"
+      />
+      <AdvisorChooseCardScreen
+          v-else-if="game.state.type === 'advisor_choose_card'"
+          :game
+          @choose="chooseCard"
+      />
+      <PolicyPeekScreen
+          v-else-if="game.state.type === 'policy_peek'"
+          :game
+          @confirm="confirmPolicyPeek"
+      />
+      <IdleScreen v-else/>
+    </div>
   </div>
 </template>
 
@@ -125,7 +127,8 @@ function handleMessage(message: InboundMessage) {
     game.value = new Game({
       type: 'assign_role',
       demon_count: 0,
-      role: Role.ANGEL
+      role: Role.ANGEL,
+      is_small_game: false
     });
 
     game.value.state = { type: 'idle' };

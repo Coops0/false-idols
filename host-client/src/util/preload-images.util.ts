@@ -19,6 +19,8 @@ export const preloadImages = async () => {
         preloadImageImport(import('@/assets/board/board-demon-7-8.png')),
         preloadImageImport(import('@/assets/board/board-demon-9-10.png')),
         preloadImageImport(import('@/assets/board/board-tracker.png')),
+        preloadImageImport(import('@/assets/cards/negative-card.png')),
+        preloadImageImport(import('@/assets/cards/positive-card.png')),
     ]);
 };
 

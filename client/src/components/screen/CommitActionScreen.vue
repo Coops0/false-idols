@@ -1,28 +1,24 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center p-4">
-    <BaseCard class="w-full max-w-4xl mx-4">
-      <template #header>
-        <h1 class="text-xl md:text-2xl font-bold text-gray-800 text-center">Choose who to <span
-            class="font-bold" :class="actionColor">{{ actionName }}</span></h1>
-      </template>
+  <div class="size-full flex items-center justify-center">
+    <h1 class="text-xl font-bold text-gray-800 text-center">Choose who to <span
+        class="font-bold" :class="actionColor">{{ actionName }}</span></h1>
 
-      <div class="space-y-6 md:space-y-8">
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-          <div
-              v-for="player in players"
-              :key="player.name"
-              :class="!player.enabled && 'opacity-50'"
-              class="transition-all duration-200 cursor-pointer active:scale-95"
-              @click="() => player.enabled && commitPlayer(player.name)"
-          >
-            <PlayerPreview
-                :player
-                icon-variant="normal"
-            />
-          </div>
+    <div class="space-y-6">
+      <div class="grid grid-cols-3 gap-4">
+        <div
+            v-for="player in players"
+            :key="player.name"
+            :class="!player.enabled && 'opacity-50'"
+            class="transition-all duration-200 cursor-pointer active:scale-95"
+            @click="() => player.enabled && commitPlayer(player.name)"
+        >
+          <PlayerPreview
+              :player
+              icon-variant="normal"
+          />
         </div>
       </div>
-    </BaseCard>
+    </div>
   </div>
 </template>
 
@@ -31,7 +27,6 @@ import type { CommitActionGameState, Game } from '@/game';
 import { computed } from 'vue';
 import { ActionChoice, type ActionSupplementedPlayer } from '@/game/messages.ts';
 import PlayerPreview from '@/components/ui/PlayerPreview.vue';
-import BaseCard from '@/components/ui/BaseCard.vue';
 
 const props = defineProps<{ game: Game; }>();
 const gameState = computed(() => props.game.state as CommitActionGameState);
