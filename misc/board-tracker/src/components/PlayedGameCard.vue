@@ -1,11 +1,11 @@
 <template>
   <div class="flex justify-center items-center">
     <img :src="cardImg" class="object-scale-down" />
-    <div class="h-5/7 w-3/5 flex absolute overflow-hidden">
-      <p
-          class="text-gray-700"
+    <div class="h-5/7 w-3/5 absolute overflow-hidden">
+      <span
+          class="text-gray-700 line-clamp-6 break-all"
           :style="{ fontSize: `${fontSize}px` }"
-      >{{ card.description }}</p>
+      >{{ card.description }}</span>
     </div>
   </div>
 </template>

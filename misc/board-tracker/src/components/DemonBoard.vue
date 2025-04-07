@@ -65,5 +65,8 @@ const cardWidth = computed(() => {
   return b.width / 9.5;
 });
 
-const fontSize = computed(() => 1);
+const fontSize = computed(() => {
+  const w = cardWidth.value;
+  return w / 10;
+});
 </script>

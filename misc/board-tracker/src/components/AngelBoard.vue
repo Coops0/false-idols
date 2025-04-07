@@ -54,7 +54,7 @@ const bounds = useElementBounds(angelBoardImageEl);
 const topOffset = computed(() => bounds.value.height / 3.55);
 const leftOffset = computed(() => {
   const w = bounds.value.width;
-  return { initial: w / 5.5, offset: w / 7.1 };
+  return { initial: w / 5.95, offset: w / 7.1 };
 });
 
 const cardWidth = computed(() => {
