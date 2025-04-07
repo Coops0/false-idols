@@ -5,13 +5,13 @@
         v-for="(card, index) in positiveCards"
         :key="index"
         :card
+        :font-size
         variant="angel"
         class="absolute"
         :style="{
           top: `${topOffset}px`,
           left: `${leftOffset.initial + (leftOffset.offset * index)}px`,
-          width: `${cardSize.width}px`,
-          height: `${cardSize.height}px`,
+          width: `${cardWidth}px`
         }"
     />
 
@@ -51,15 +51,15 @@ const positiveCards = computed(() => props.cards.filter(card => card.consequence
 const angelBoardImageEl = useTemplateRef('angelBoardImageEl');
 const bounds = useElementBounds(angelBoardImageEl);
 
-const topOffset = computed(() => bounds.value.height / 3.7);
+const topOffset = computed(() => bounds.value.height / 3.55);
 const leftOffset = computed(() => {
   const w = bounds.value.width;
-  return { initial: w / 6, offset: w / 6.95 };
+  return { initial: w / 5.5, offset: w / 7.1 };
 });
 
-const cardSize = computed(() => {
+const cardWidth = computed(() => {
   const b = bounds.value;
-  return { width: b.width / 9.5, height: b.height / 2.2 };
+  return b.width / 9.5;
 });
 
 const topTrackerOffset = computed(() => bounds.value.height * (4.9 / 6));
@@ -72,5 +72,10 @@ const leftTrackerOffset = computed(() => {
 const trackerSize = computed(() => {
   const b = bounds.value;
   return b.width / 27.5;
+});
+
+const fontSize = computed(() => {
+  const w = cardWidth.value;
+  return w / 10;
 });
 </script>

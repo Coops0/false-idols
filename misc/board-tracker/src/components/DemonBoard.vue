@@ -7,11 +7,11 @@
         :card
         variant="demon"
         class="absolute"
+        :font-size
         :style="{
           top: `${topOffset}px`,
           left: `${leftOffset.initial + (leftOffset.offset * index)}px`,
-          width: `${cardSize.width}px`,
-          height: `${cardSize.height}px`,
+          width: `${cardWidth}px`
         }"
     />
   </div>
@@ -60,8 +60,10 @@ const leftOffset = computed(() => {
   return { initial: w / 11.5, offset: w / 6.95 };
 });
 
-const cardSize = computed(() => {
+const cardWidth = computed(() => {
   const b = bounds.value;
-  return { width: b.width / 9.5, height: b.height / 2.2 };
+  return b.width / 9.5;
 });
+
+const fontSize = computed(() => 1);
 </script>

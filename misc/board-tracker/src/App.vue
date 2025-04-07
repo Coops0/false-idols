@@ -50,7 +50,7 @@ export type Card = {
 
 const cards = ref<Card[]>([
   { id: 1, description: 'Card 1', consequence: 'NEGATIVE' },
-  { id: 2, description: 'Card 2', consequence: 'POSITIVE' },
+  { id: 2, description: 'Card one two three four five six seven', consequence: 'POSITIVE' },
 ]);
 
 const failedElections = ref(1);
