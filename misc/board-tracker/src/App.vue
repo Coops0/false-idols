@@ -58,35 +58,35 @@ const playersSize = ref(6);
 
 function addPositiveCard() {
   const newCard: Card = {
-    id: cards.value.length + 1,
-    description: `Card ${cards.value.length + 1}`,
+    id: Math.random(),
+    description: 'Card',
     consequence: 'POSITIVE'
   };
 
-  cards.value.push(newCard);
+  cards.value = [...cards.value, newCard];
 }
 
 function addNegativeCard() {
   const newCard: Card = {
-    id: cards.value.length + 1,
-    description: `Card ${cards.value.length + 1}`,
+    id: Math.random(),
+    description: 'Card',
     consequence: 'NEGATIVE'
   };
 
-  cards.value.push(newCard);
+  cards.value = [...cards.value, newCard];
 }
 
 function removePositiveCard() {
-  const index = cards.value.findIndex(card => card.consequence === 'POSITIVE');
-  if (index !== -1) {
-    cards.value = cards.value.filter((_, i) => i !== index);
+  const card = cards.value.find(card => card.consequence === 'POSITIVE');
+  if (card) {
+    cards.value = cards.value.filter(c => c.id !== card.id);
   }
 }
 
 function removeNegativeCard() {
-  const index = cards.value.findIndex(card => card.consequence === 'NEGATIVE');
-  if (index !== -1) {
-    cards.value = cards.value.filter((_, i) => i !== index);
+  const card = cards.value.find(card => card.consequence === 'NEGATIVE');
+  if (card) {
+    cards.value = cards.value.filter(c => c.id !== card.id);
   }
 }
 

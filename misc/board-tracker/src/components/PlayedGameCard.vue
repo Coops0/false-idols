@@ -1,5 +1,5 @@
 <template>
-  <div class="flex justify-center items-center">
+  <li class="flex justify-center items-center">
     <img :src="cardImg" class="object-scale-down" />
     <div class="h-5/7 w-3/5 absolute overflow-hidden">
       <span
@@ -7,7 +7,7 @@
           :style="{ fontSize: `${fontSize}px` }"
       >{{ card.description }}</span>
     </div>
-  </div>
+  </li>
 </template>
 
 <script setup lang="ts">

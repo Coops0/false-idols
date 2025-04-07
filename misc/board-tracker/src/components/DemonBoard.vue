@@ -1,19 +1,21 @@
 <template>
   <div class="relative w-full">
     <img class="object-scale-down" :src="boardImage" ref="demonBoardImageEl"/>
-    <PlayedGameCard
-        v-for="(card, index) in negativeCards"
-        :key="index"
-        :card
-        variant="demon"
-        class="absolute"
-        :font-size
-        :style="{
-          top: `${topOffset}px`,
-          left: `${leftOffset.initial + (leftOffset.offset * index)}px`,
-          width: `${cardWidth}px`
+    <GameCardTransition>
+      <PlayedGameCard
+          v-for="(card, index) in negativeCards"
+          :key="index"
+          :card
+          variant="demon"
+          class="absolute"
+          :font-size
+          :style="{
+            top: `${topOffset}px`,
+            left: `${leftOffset.initial + (leftOffset.offset * index)}px`,
+            width: `${cardWidth}px`
         }"
-    />
+      />
+    </GameCardTransition>
   </div>
 </template>
 
@@ -25,6 +27,7 @@ import Board78Image from '@/assets/board/board-demon-7-8.png';
 import Board910Image from '@/assets/board/board-demon-9-10.png';
 import { useElementBounds } from '@/util/element-bounds.composable.ts';
 import PlayedGameCard from '@/components/PlayedGameCard.vue';
+import GameCardTransition from '@/components/GameCardTransition.vue';
 
 const props = defineProps<{
   cards: Card[];

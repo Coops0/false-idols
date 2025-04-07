@@ -1,32 +1,36 @@
 <template>
   <div class="relative w-full">
     <img class="object-scale-down" :src="BoardImage" ref="angelBoardImageEl"/>
-    <PlayedGameCard
-        v-for="(card, index) in positiveCards"
-        :key="index"
-        :card
-        :font-size
-        variant="angel"
-        class="absolute"
-        :style="{
-          top: `${topOffset}px`,
-          left: `${leftOffset.initial + (leftOffset.offset * index)}px`,
-          width: `${cardWidth}px`
-        }"
-    />
+    <GameCardTransition>
+      <PlayedGameCard
+          v-for="(card, index) in positiveCards"
+          :key="card.id"
+          class="absolute"
+          :card
+          :font-size
+          variant="angel"
+          :style="{
+              top: `${topOffset}px`,
+              left: `${leftOffset.initial + (leftOffset.offset * index)}px`,
+              width: `${cardWidth}px`
+            }"
+      />
+    </GameCardTransition>
 
-    <img
-        v-for="i in props.failedElections"
-        :key="i"
-        class="absolute object-scale-down"
-        :style="{
-          top: `${topTrackerOffset}px`,
-          left: `${leftTrackerOffset.initial + (leftTrackerOffset.offset * (i - 1))}px`,
-          width: `${trackerSize}px`,
-          height: `${trackerSize}px`,
+    <TransitionGroup name="tracker">
+      <img
+          v-for="i in props.failedElections"
+          :key="i"
+          class="absolute object-scale-down"
+          :style="{
+            top: `${topTrackerOffset}px`,
+            left: `${leftTrackerOffset.initial + (leftTrackerOffset.offset * (i - 1))}px`,
+            width: `${trackerSize}px`,
+            height: `${trackerSize}px`,
         }"
-        :src="FailedElectionTracker"
-    />
+          :src="FailedElectionTracker"
+      />
+    </TransitionGroup>
   </div>
 </template>
 
@@ -37,6 +41,7 @@ import BoardImage from '@/assets/board/board-angel.png';
 import PlayedGameCard from '@/components/PlayedGameCard.vue';
 import FailedElectionTracker from '@/assets/board/board-tracker.png';
 import { useElementBounds } from '@/util/element-bounds.composable.ts';
+import GameCardTransition from '@/components/GameCardTransition.vue';
 
 // 1407x541
 
@@ -79,3 +84,23 @@ const fontSize = computed(() => {
   return w / 10;
 });
 </script>
+
+<style>
+.tracker-enter-active, .tracker-leave-active, .tracker-move {
+  transition: all 0.20s ease-out;
+}
+
+.tracker-enter-from, .tracker-leave-to {
+  opacity: 0;
+  transform: scale(5);
+}
+
+.tracker-leave-to {
+  filter: brightness(500%);
+}
+
+.tracker-enter-to {
+  opacity: 1;
+  transform: scale(1);
+}
+</style>
