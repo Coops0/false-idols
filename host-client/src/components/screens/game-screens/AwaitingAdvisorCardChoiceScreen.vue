@@ -4,7 +4,7 @@
       <div class="relative">
         <PlayerPreview :player="advisor" size="2xl"/>
       </div>
-      <p class="text-gray-700 text-center text-3xl">Choosing a card to play</p>
+      <p class="text-gray-700 font-amazonia font-light text-center text-3xl">Choosing a card to play</p>
     </div>
   </div>
 </template>

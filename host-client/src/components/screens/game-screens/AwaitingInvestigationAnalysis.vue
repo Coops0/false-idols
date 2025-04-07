@@ -8,7 +8,7 @@
       </div>
 
       <div class="flex items-center">
-        <p class="text-center text-2xl text-gray-700">is investigating</p>
+        <p class="text-center font-amazonia font-light text-2xl text-gray-700">is investigating</p>
       </div>
 
       <div class="flex flex-col items-center">

@@ -18,7 +18,7 @@
           </div>
         </div>
         <div class="flex-1 min-w-0">
-          <h3 :class="sizeClasses.name" class="font-medium text-gray-900 truncate">{{ player.name }}</h3>
+          <p :class="sizeClasses.name" class="font-mono text-gray-700 truncate">{{ player.name }}</p>
         </div>
       </div>
     </div>

@@ -4,7 +4,7 @@
       <div class="relative">
         <PlayerPreview :player="nominee" size="2xl"/>
       </div>
-      <p class="text-gray-700 text-center text-3xl">Elect as president?</p>
+      <p class="text-gray-700 font-amazonia font-light text-center text-3xl">Elect as president?</p>
     </div>
   </div>
 </template>

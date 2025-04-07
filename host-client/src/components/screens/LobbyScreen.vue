@@ -2,7 +2,7 @@
   <div class="h-full flex flex-col p-2 gap-2">
     <div class="flex items-center justify-center m-3">
       <div class="text-center">
-        <h1 class="text-9xl font-bold text-gray-900 mb-4">False Idols</h1>
+        <h1 class="text-9xl font-amazonia font-black text-gray-900 mb-4">False Idols</h1>
         <div class="inline-block">
           <QrcodeSvg
               :value="`${domain}/ok`"

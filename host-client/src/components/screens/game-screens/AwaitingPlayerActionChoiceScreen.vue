@@ -4,7 +4,8 @@
       <div class="relative">
         <PlayerPreview :player="president" size="2xl"/>
       </div>
-      <p class="text-gray-700 text-center text-3xl">Choosing who to <span class="font-bold">{{ actionName }}</span></p>
+      <p class="text-gray-700 font-amazonia font-light text-center text-3xl">Choosing who to <span
+          class="!font-bold font-stretch-extra-expanded">{{ actionName }}</span></p>
     </div>
   </div>
 </template>

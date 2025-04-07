@@ -1,1 +1,12 @@
 @import "tailwindcss";
+
+@font-face {
+    font-family: 'Amazonia';
+    src: url('./Amazonia-VAR-VF.woff2') format('woff2-variations');
+    font-stretch: 50% 200%;
+    font-weight: 100 900;
+}
+
+@theme {
+    --font-amazonia: 'Amazonia', sans-serif;
+}

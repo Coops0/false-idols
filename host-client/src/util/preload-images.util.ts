@@ -14,11 +14,11 @@ export const preloadImages = async () => {
 
     await Promise.all([
         ...icons,
-        preloadImageImport('@/assets/board/board-angel.png'),
-        preloadImageImport('@/assets/board/board-demon-5-6.png'),
-        preloadImageImport('@/assets/board/board-demon-7-8.png'),
-        preloadImageImport('@/assets/board/board-demon-9-10.png'),
-        preloadImageImport('@/assets/board/board-tracker.png'),
+        preloadImageImport(import('@/assets/board/board-angel.png')),
+        preloadImageImport(import('@/assets/board/board-demon-5-6.png')),
+        preloadImageImport(import('@/assets/board/board-demon-7-8.png')),
+        preloadImageImport(import('@/assets/board/board-demon-9-10.png')),
+        preloadImageImport(import('@/assets/board/board-tracker.png')),
     ]);
 };
 
@@ -34,10 +34,10 @@ const preloadImageUrl = async (src: string) => {
     });
 };
 
-const preloadImageImport = async (src: string) => {
+const preloadImageImport = async (i: Promise<any>) => {
     try {
-        await import(src);
+        await i;
     } catch (error) {
-        console.warn('error loading image', src, error);
+        console.warn('error loading image', error);
     }
 };
