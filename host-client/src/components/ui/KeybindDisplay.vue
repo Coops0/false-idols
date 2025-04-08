@@ -1,76 +1,79 @@
 <template>
-  <div class="bg-gray-900/50 backdrop-blur-sm rounded-xl shadow-lg p-4 text-gray-50 z-20 font-mono">
-    <div class="gap-y-3 text-xs">
-      <div class="flex items-center gap-2">
-        <kbd class="px-2 py-1 bg-gray-800/50 rounded-lg text-gray-200 border border-gray-700/50">H</kbd>
-        <span class="text-gray-300">Hide</span>
-      </div>
-      <div class="flex items-center gap-2">
-        <kbd class="px-2 py-1 bg-gray-800/50 rounded-lg text-gray-200 border border-gray-700/50">F</kbd>
-        <span class="text-gray-300">Fullscreen</span>
-      </div>
-      <div class="flex items-center gap-2">
-        <kbd class="px-2 py-1 bg-gray-800/50 rounded-lg text-gray-200 border border-gray-700/50">Alt</kbd>
-        <span class="text-gray-300">Cursor</span>
-      </div>
-
-      <template v-if="game.type === 'lobby'">
-        <div class="flex items-center gap-2">
-          <kbd class="px-2 py-1 bg-gray-800/50 rounded-lg text-gray-200 border border-gray-700/50">Enter</kbd>
-          <span class="text-gray-300">Start game</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <kbd class="px-2 py-1 bg-gray-800/50 rounded-lg text-gray-200 border border-gray-700/50">Escape</kbd>
-          <span class="text-gray-300">Reset players</span>
-        </div>
-      </template>
-
-      <template v-if="isSkippableState">
-        <div class="flex items-center gap-2">
-          <kbd class="px-2 py-1 bg-gray-800/50 rounded-lg text-gray-200 border border-gray-700/50">Space</kbd>
-          <span class="text-gray-300">Skip</span>
-        </div>
-      </template>
-
-      <template
-          v-if="game.type === 'game_in_progress' && game.inner_game_state.type === 'awaiting_president_election_outcome'">
-        <div class="flex items-center gap-2">
-          <kbd class="px-2 py-1 bg-gray-800/50 rounded-lg text-gray-200 border border-gray-700/50">Enter</kbd>
-          <span class="text-gray-300">or</span>
-          <kbd class="px-2 py-1 bg-gray-800/50 rounded-lg text-gray-200 border border-gray-700/50">Y</kbd>
-          <span class="text-gray-300">Pass election</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <kbd class="px-2 py-1 bg-gray-800/50 rounded-lg text-gray-200 border border-gray-700/50">Backspace</kbd>
-          <span class="text-gray-300">or</span>
-          <kbd class="px-2 py-1 bg-gray-800/50 rounded-lg text-gray-200 border border-gray-700/50">N</kbd>
-          <span class="text-gray-300">Reject election</span>
-        </div>
-      </template>
-
-      <template
-          v-if="game.type === 'game_in_progress' && game.inner_game_state.type === 'awaiting_advisor_card_choice'">
-        <div class="flex items-center gap-2">
-          <kbd class="px-2 py-1 bg-gray-800/50 rounded-lg text-gray-200 border border-gray-700/50">Backspace</kbd>
-          <span class="text-gray-300">or</span>
-          <kbd class="px-2 py-1 bg-gray-800/50 rounded-lg text-gray-200 border border-gray-700/50">V</kbd>
-          <span class="text-gray-300">Veto</span>
-        </div>
-      </template>
-
-      <template v-if="game.type === 'game_over'">
-        <div class="flex items-center gap-2">
-          <kbd class="px-2 py-1 bg-gray-800/50 rounded-lg text-gray-200 border border-gray-700/50">Enter</kbd>
-          <span class="text-gray-300">Return to lobby</span>
-        </div>
-      </template>
+  <div class="bg-gray-900/50 backdrop-blur-sm rounded-xl shadow-lg p-4 text-gray-50 z-20 font-mono flex flex-col gap-y-2 text-xs">
+    <div class="flex items-center gap-2">
+      <CustomKbd>H</CustomKbd>
+      <span class="text-gray-300">Hide</span>
     </div>
+
+    <div class="flex items-center gap-2">
+      <CustomKbd>F</CustomKbd>
+      <span class="text-gray-300">Fullscreen</span>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <CustomKbd>Alt</CustomKbd>
+      <span class="text-gray-300">Cursor</span>
+    </div>
+
+    <template v-if="game.type === 'lobby'">
+      <div class="flex items-center gap-2">
+        <CustomKbd>Enter</CustomKbd>
+        <span class="text-gray-300">Start game</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <CustomKbd>Escape</CustomKbd>
+        <span class="text-gray-300">Reset players</span>
+      </div>
+    </template>
+
+    <template v-if="isSkippableState">
+      <div class="flex items-center gap-2">
+        <CustomKbd>Space</CustomKbd>
+        <span class="text-gray-300">Skip</span>
+      </div>
+    </template>
+
+    <template
+        v-if="game.type === 'game_in_progress' && game.inner_game_state.type === 'awaiting_president_election_outcome'">
+      <div class="flex items-center gap-2">
+        <CustomKbd>Enter</CustomKbd>
+        <span class="text-gray-300">or</span>
+        <CustomKbd>Y</CustomKbd>
+        <span class="text-gray-300">Pass election</span>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <CustomKbd>Backspace</CustomKbd>
+        <span class="text-gray-300">or</span>
+        <CustomKbd>N</CustomKbd>
+        <span class="text-gray-300">Reject election</span>
+      </div>
+    </template>
+
+    <template
+        v-if="game.type === 'game_in_progress' && game.inner_game_state.type === 'awaiting_advisor_card_choice'">
+      <div class="flex items-center gap-2">
+        <CustomKbd>Backspace</CustomKbd>
+        <span class="text-gray-300">or</span>
+        <CustomKbd>V</CustomKbd>
+        <span class="text-gray-300">Veto</span>
+      </div>
+    </template>
+
+    <template v-if="game.type === 'game_over'">
+      <div class="flex items-center gap-2">
+        <CustomKbd>Enter</CustomKbd>
+        <span class="text-gray-300">Return to lobby</span>
+      </div>
+    </template>
+
   </div>
 </template>
 
 <script lang="ts" setup>
 import type { GameState } from '@/game/state.ts';
 import { computed } from 'vue';
+import CustomKbd from '@/components/ui/CustomKbd.vue';
 
 const props = defineProps<{ game: GameState }>();
 
@@ -84,9 +87,3 @@ const isSkippableState = computed(() => {
       props.game.inner_game_state.type !== 'awaiting_president_election_outcome';
 });
 </script>
-
-<style scoped>
-kbd {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-}
-</style>
