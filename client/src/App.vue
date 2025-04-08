@@ -9,6 +9,7 @@
           @join="() => tryToConnect()"
       />
       <IdleScreen
+          :player-icon
           v-else-if="game === null || game.state.type === 'idle'"
       />
       <RoleConfirmationScreen
@@ -50,8 +51,7 @@
 
 <script lang="ts" setup>
 import { WebsocketOwner } from '@/game/websocket-owner.ts';
-import { type InboundMessage, Role } from '@/game/messages.ts';
-import { PlayerIcon } from '@/game/player-icon.ts';
+import { type InboundMessage } from '@/game/messages.ts';
 import { Game, type ViewInvestigationResultsGameState, type ViewRoleGameState } from '@/game';
 import { onMounted, ref } from 'vue';
 import { isNameValid } from '@/util';
@@ -64,6 +64,7 @@ import ViewInvestigationResultsScreen from '@/components/screen/ViewInvestigatio
 import PresidentDiscardCardScreen from '@/components/screen/PresidentDiscardCardScreen.vue';
 import AdvisorChooseCardScreen from '@/components/screen/AdvisorChooseCardScreen.vue';
 import PolicyPeekScreen from '@/components/screen/PolicyPeekScreen.vue';
+import { preloadImages } from '@/util/preload-images.util.ts';
 
 const playerName = ref<string>('');
 const playerIcon = ref<string>('');
@@ -86,6 +87,8 @@ onMounted(() => {
       canShowLogin.value = true;
     }
   })();
+
+  setTimeout(() => preloadImages());
 });
 
 async function tryToConnect() {
@@ -93,8 +96,6 @@ async function tryToConnect() {
 
   try {
     await ws.connect();
-
-    setTimeout(() => PlayerIcon.preload());
   } catch (err) {
     console.error(err);
     // @ts-ignore
@@ -123,16 +124,16 @@ function handleMessage(message: InboundMessage) {
       break;
   }
 
-  if (game.value === null) {
-    game.value = new Game({
-      type: 'assign_role',
-      demon_count: 0,
-      role: Role.ANGEL,
-      is_small_game: false
-    });
-
-    game.value.state = { type: 'idle' };
-  }
+  // if (game.value === null) {
+  //   game.value = new Game({
+  //     type: 'assign_role',
+  //     demon_count: 0,
+  //     role: Role.ANGEL,
+  //     is_small_game: false
+  //   });
+  //
+  //   game.value.state = { type: 'idle' };
+  // }
 
   switch (message.type) {
     case 'request_action':

@@ -140,10 +140,10 @@ private suspend fun GameState.handlePlayerJoin(message: InnerApplicationMessage.
         existingPlayer.connect(sessionId, channel)
         // If player already exists, send them (important) queued messages
         existingPlayer.queue.forEach { channel.send(it) }
+        message.completable.complete(Result.success(sessionId))
+
         // And also send them their icon
         channel.send(OutboundMessage.AssignIcon(existingPlayer.icon))
-
-        message.completable.complete(Result.success(sessionId))
         return
     }
 

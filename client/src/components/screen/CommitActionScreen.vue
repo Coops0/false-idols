@@ -1,23 +1,16 @@
 <template>
-  <div class="size-full flex items-center justify-center">
-    <h1 class="text-xl font-bold text-gray-800 text-center">Choose who to <span
-        class="font-bold" :class="actionColor">{{ actionName }}</span></h1>
+  <div class="size-full flex flex-col items-center justify-center space-y-4">
+    <p class="text-xl font-bold text-gray-800 text-center">Choose who to <span
+        class="font-bold" :class="actionColor">{{ actionName }}</span></p>
 
-    <div class="space-y-6">
-      <div class="grid grid-cols-3 gap-4">
-        <div
-            v-for="player in players"
-            :key="player.name"
-            :class="!player.enabled && 'opacity-50'"
-            class="transition-all duration-200 cursor-pointer active:scale-95"
-            @click="() => player.enabled && commitPlayer(player.name)"
-        >
-          <PlayerPreview
-              :player
-              icon-variant="normal"
-          />
-        </div>
-      </div>
+    <div class="flex flex-row flex-wrap justify-evenly gap-2">
+      <PlayerPreview
+          v-for="player in players"
+          :key="player.name"
+          :player
+          :class="!player.enabled && 'opacity-50'"
+          @click="() => player.enabled && commitPlayer(player.name)"
+      />
     </div>
   </div>
 </template>

@@ -1,15 +1,13 @@
 <template>
-  <div class="size-full flex items-center justify-center">
+  <div class="size-full flex flex-col items-center justify-center">
     <div class="space-y-6">
-      <div>
-        <input
-            v-model="name"
-            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors text-base"
-            placeholder="Name"
-            type="text"
-            @keydown.enter="join"
-        />
-      </div>
+      <input
+          v-model="name"
+          class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors text-base"
+          placeholder="Name"
+          type="text"
+          @keydown.enter="join"
+      />
 
       <BaseButton
           :disabled="!isNameValid(name)"

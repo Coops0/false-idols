@@ -14,13 +14,12 @@
 import NegativeCard from '@/assets/cards/negative-card.png';
 import PositiveCard from '@/assets/cards/positive-card.png';
 import { computed } from 'vue';
-import type { Card } from '@/game/state.ts';
+import { type Card, CardConsequence } from '@/game/state.ts';
 
 const props = defineProps<{
   card: Card;
-  variant: 'demon' | 'angel';
   fontSize: number;
 }>();
 
-const cardImg = computed(() => props.variant === 'demon' ? NegativeCard : PositiveCard);
+const cardImg = computed(() => props.card.consequence === CardConsequence.NEGATIVE ? NegativeCard : PositiveCard);
 </script>

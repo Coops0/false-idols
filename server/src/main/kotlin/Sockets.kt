@@ -69,7 +69,6 @@ val alphaNumericRegex by lazy { Regex("^[a-zA-Z0-9_]*$") }
 private fun Routing.ws(innerApplicationChannel: Channel<InnerApplicationMessage>) {
     webSocket("/ws") {
         val name = call.request.queryParameters["name"]?.trim() ?: throw IllegalArgumentException("No name provided")
-        println("Player $name init connection")
         if (name.length > 15 || name.length < 3) {
             close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "Name length should be in 3..15"))
             return@webSocket
@@ -89,6 +88,8 @@ private fun Routing.ws(innerApplicationChannel: Channel<InnerApplicationMessage>
         )
 
         val completable = CompletableDeferred<Result<SessionId>>()
+
+        println("Player $name sending off join request...")
         innerApplicationChannel.send(
             InnerApplicationMessage.PlayerJoin(
                 playerName = name,

@@ -2,6 +2,7 @@ import {
     ActionChoice,
     type ActionSupplementedPlayer,
     type Card,
+    CardConsequence,
     type InboundMessage,
     type Player,
     Role,
@@ -83,3 +84,28 @@ export class Game {
         this.isPresident = false;
     }
 }
+
+// const t: Game = {
+//     role: "DEMON",
+//     isPresident: false,
+//     state: {
+//         type: "commit_action",
+//         action: "INVESTIGATE",
+//         supplementedPlayers: [{
+//             name: "Joe",
+//             icon: "pig",
+//             electable: true,
+//             investigatable: false
+//         }, {
+//             name: "Jane",
+//             icon: "fox",
+//             electable: true,
+//             investigatable: true
+//         }, {
+//             name: "Jack",
+//             icon: "dog",
+//             electable: false,
+//             investigatable: true
+//         }]
+//     }
+// }

@@ -22,10 +22,6 @@ sealed class GameState(val type: String) {
     suspend fun sendServer(message: ServerOutboundMessage) {
         try {
             server?.send(message)
-
-            if (server == null) {
-                println("server is null")
-            }
         } catch (err: ClosedSendChannelException) {
             println("Server channel closed: $err")
             server = null

@@ -1,35 +1,28 @@
 <template>
-  <div class="size-full flex items-center justify-center">
+  <div class="size-full flex flex-col items-center justify-center">
 
-    <div v-if="!gameState.hasConfirmed">
-      <div class="text-center space-y-4">
-        <h2 class="text-xl font-bold text-gray-800">Important</h2>
-        <p class="text-gray-600 text-sm">
-          You are about to see your secret role. Ensure nobody else can see your screen. Do not show it to anyone.
-        </p>
-      </div>
+    <div v-if="!gameState.hasConfirmed" class="flex justify-center text-center">
+      <p class="text-gray-600 mt-4">
+        You are about to see your secret role. Ensure nobody else can see your screen. Do not show it to anyone.
+      </p>
 
-      <div class="flex justify-center">
         <BaseButton variant="primary" @click="() => emit('confirm')">
           Continue
         </BaseButton>
-      </div>
     </div>
 
-    <div v-else class="space-y-6">
-      <div class="flex justify-center">
-        <PlayerPreview
-            :icon-variant="roleToVariant(game.role)"
-            :player="{ name: playerName, icon: playerIcon }"
-        />
-      </div>
+    <div v-else class="flex justify-center text-center">
+      <PlayerPreview
+          :icon-variant="roleToVariant(game.role)"
+          :player="{ name: playerName, icon: playerIcon }"
+      />
 
-      <div class="text-center space-y-4">
+      <div class="mt-6 text-center space-y-4">
         <h2 class="text-2xl font-bold text-gray-800">
           Your Role: {{ roleName(game.role) }}
         </h2>
 
-        <div class="bg-gray-50 rounded-lg p-4 space-y-3">
+        <div class="space-y-3">
           <p v-if="game.role === Role.ANGEL" class="text-gray-700 text-sm">
             Play positive cards and try to eliminate all demons.
           </p>
@@ -43,7 +36,7 @@
           </p>
         </div>
 
-        <div v-if="gameState.demons?.length" class="bg-gray-50 rounded-lg p-4 space-y-3">
+        <div v-if="gameState.demons?.length" class="space-y-3">
           <h3 class="text-lg font-semibold text-gray-800">Your Team</h3>
           <div class="space-y-2" v-if="gameState.satan">
             <p class="text-gray-700 text-sm">Satan:</p>
@@ -59,7 +52,7 @@
           </div>
         </div>
 
-        <div v-else-if="demonsText !== null" class="bg-gray-50 rounded-lg p-4">
+        <div v-else-if="demonsText !== null">
           <p class="text-gray-700 text-sm">{{ demonsText }}</p>
         </div>
       </div>

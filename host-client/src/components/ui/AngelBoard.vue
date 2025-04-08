@@ -8,7 +8,6 @@
           class="absolute"
           :card
           :font-size
-          variant="angel"
           :style="{
               top: `${topOffset}px`,
               left: `${leftOffset.initial + (leftOffset.offset * index)}px`,

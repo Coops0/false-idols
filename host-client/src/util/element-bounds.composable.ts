@@ -33,9 +33,13 @@ export const useElementBounds = (element: ReturnType<typeof useTemplateRef<HTMLE
         el.addEventListener('load', updateElementBounds);
     }, { immediate: true, deep: true });
 
+    let updateInterval = -1;
+
     onMounted(() => {
         updateElementBounds();
         window.addEventListener('resize', updateElementBounds);
+
+        updateInterval = setInterval(updateElementBounds, 2000);
     });
 
     onUnmounted(() => {
@@ -44,6 +48,8 @@ export const useElementBounds = (element: ReturnType<typeof useTemplateRef<HTMLE
             element.value.removeEventListener('resize', updateElementBounds);
             element.value.removeEventListener('load', updateElementBounds);
         }
+
+        clearInterval(updateInterval);
     });
 
     return bounds;

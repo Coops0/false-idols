@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col items-center space-y-2">
-    <p class="text-lg text-gray-700 truncate  font-mono">{{ player.name }}</p>
-    <div class="relative size-14 overflow-hidden">
+    <p class="text-lg text-gray-700 truncate font-mono" v-if="!hideName">{{ player.name }}</p>
+    <div class="relative size-14">
       <img
           :alt="`${player.icon} ${iconVariant}`"
           :src="icon"
@@ -22,6 +22,7 @@ export type IconVariant = 'normal' | 'angel' | 'demon' | 'satan';
 const props = withDefaults(defineProps<{
   player: Player;
   iconVariant?: IconVariant;
+  hideName?: boolean;
 }>(), { iconVariant: 'normal' });
 
 const icon = computed(() => {
