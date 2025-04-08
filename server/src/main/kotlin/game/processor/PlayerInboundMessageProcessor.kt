@@ -9,8 +9,13 @@ import com.cooper.message.OutboundMessage
 @Throws(GameOverThrowable::class)
 suspend fun GameState.handlePlayerInboundApplicationMessage(playerName: PlayerName, message: InboundMessage) {
     if (message is InboundMessage.Ping) {
+        val player = this[playerName]!!
         if (message.requestIcon) {
-            this[playerName]?.send(OutboundMessage.AssignIcon(this[playerName]!!.icon))
+            this[playerName]?.send(OutboundMessage.AssignIcon(player.icon))
+        }
+
+        if (message.isIdle && player.queue.isNotEmpty()) {
+            player.queue.forEach { player.send(it) }
         }
         return
     }

@@ -52,8 +52,7 @@ export type OutboundMessage =
     { type: 'discard_one_card', card_id: number } |
     /// As advisor, which card we pick to play.
     { type: 'choose_card', card_id: number } |
-    /// Client side just send every ~15s, ignored by the server.
-    { type: 'ping', request_icon?: boolean };
+    { type: 'ping', request_icon?: boolean, is_idle?: boolean };
 
 
 //@formatter:off

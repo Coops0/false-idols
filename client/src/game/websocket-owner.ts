@@ -16,6 +16,7 @@ export class WebsocketOwner {
         private readonly name: Ref<string>,
         private readonly messageCallback: (message: InboundMessage) => void,
         private readonly shouldRequestIcon: () => boolean,
+        private readonly isIdle: () => boolean,
         private readonly manualIsConnected: Ref<boolean>
     ) {
         const self = this;
@@ -28,7 +29,7 @@ export class WebsocketOwner {
             }
         });
 
-        setInterval(() => self.send({ type: 'ping', request_icon: shouldRequestIcon() }), 1000);
+        setInterval(() => self.send({ type: 'ping', request_icon: shouldRequestIcon(), is_idle: isIdle() }), 1000);
     }
 
     get isConnected() {
