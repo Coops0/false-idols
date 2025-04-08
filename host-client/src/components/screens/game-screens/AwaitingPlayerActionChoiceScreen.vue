@@ -5,7 +5,7 @@
         <PlayerPreview :player="president" size="2xl"/>
       </div>
       <p class="text-gray-700 font-amazonia font-light text-center text-3xl">Choosing who to <span
-          class="!font-bold font-stretch-extra-expanded">{{ actionName }}</span></p>
+          class="!font-bold font-stretch-expanded">{{ actionName }}</span></p>
     </div>
   </div>
 </template>
@@ -34,5 +34,7 @@ const actionName = computed(() => {
     case ActionChoice.NOMINATE_PRESIDENT:
       return 'NOMINATE PRESIDENT';
   }
+
+  return '???';
 });
 </script>

@@ -178,7 +178,7 @@ private fun GameState.GameInProgress.generateAssignRoleMessage(player: GamePlaye
         return OutboundMessage.AssignRole(
             role = player.role,
             demonCount = demons.size,
-            isSmallGame = this.isSmallGame
+            isSmallGame = isSmallGame
         )
     }
 
@@ -190,7 +190,7 @@ private fun GameState.GameInProgress.generateAssignRoleMessage(player: GamePlaye
                 .filter { it != player }
                 .map { it.stripped },
             satan = satan.stripped,
-            isSmallGame = this.isSmallGame
+            isSmallGame = isSmallGame
         )
     }
 
@@ -200,9 +200,7 @@ private fun GameState.GameInProgress.generateAssignRoleMessage(player: GamePlaye
         return OutboundMessage.AssignRole(
             role = player.role,
             demonCount = demons.size,
-            demons = demons
-                .filter { it != player }
-                .map { it.stripped },
+            demons = demons.map { it.stripped },
             isSmallGame = true
         )
     }
@@ -215,5 +213,5 @@ private fun GameState.GameInProgress.generateAssignRoleMessage(player: GamePlaye
 }
 
 suspend fun GameState.GameInProgress.sendPlayerRoles() {
-    players.forEach { player -> player.send(this.generateAssignRoleMessage(player)) }
+    players.forEach { player -> player.send(this.generateAssignRoleMessage(player), significant = true) }
 }

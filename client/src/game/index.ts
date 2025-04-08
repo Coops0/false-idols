@@ -73,8 +73,8 @@ export class Game {
             type: 'view_role',
             hasConfirmed: false,
             demonCount: message.demon_count,
-            demons: (message.role === Role.DEMON || (message.role === Role.SATAN && message.is_small_game)) ? message.demons : null,
-            satan: message.role === Role.DEMON ? message.satan : null,
+            demons: message.demons || null,
+            satan: message.satan || null,
             isSmallGame: message.is_small_game,
         };
 

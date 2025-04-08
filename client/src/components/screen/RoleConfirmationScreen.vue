@@ -35,13 +35,12 @@
 
           <div v-else>
             <p class="text-gray-700 text-xs">Try to subtly work together with the other demons to pass negative cards,
-              and kill
-              angels.</p>
+              and kill angels.</p>
             <p class="mt-4 font-bold text-red-600 text-sm">If you die, the game ends immediately.</p>
           </div>
         </div>
 
-        <div v-if="gameState.demons?.length" class="mt-10">
+        <div v-if="gameState.demons?.length || gameState.satan" class="mt-10">
           <p class="text-lg mb-4 font-semibold text-gray-800">Your Team</p>
 
           <ul class="flex size-full flex-row flex-wrap justify-evenly gap-4">
@@ -88,7 +87,7 @@ const demonsText = computed(() => {
   if (c === 0) return null;
 
   const other = props.game.role === Role.SATAN ? ' other ' : ' ';
-  const includingSatan = props.game.role === Role.SATAN ? ' (not including Satan)' : '';
+  const includingSatan = props.game.role == Role.SATAN ? '' : ' (not including Satan)';
 
   if (c === 1) {
     return `There is 1${other}demon${includingSatan}`;

@@ -40,4 +40,4 @@ out/
 node_modules/
 dist/
 server/src/main/resources/static/*.html
-server/src/main/resources/static/assets/*[.css, .js]
+server/src/main/resources/static/assets/*[.css, .js, .png, .woff2]

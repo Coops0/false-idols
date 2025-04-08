@@ -51,7 +51,7 @@
 
 <script lang="ts" setup>
 import { WebsocketOwner } from '@/game/websocket-owner.ts';
-import { type InboundMessage } from '@/game/messages.ts';
+import { type InboundMessage, Role } from '@/game/messages.ts';
 import { Game, type ViewInvestigationResultsGameState, type ViewRoleGameState } from '@/game';
 import { onMounted, ref } from 'vue';
 import { isNameValid } from '@/util';
@@ -114,15 +114,23 @@ function handleMessage(message: InboundMessage) {
   switch (message.type) {
     case 'assign_icon':
       playerIcon.value = message.icon;
-      break;
+      return;
     case 'assign_role':
       game.value = new Game(message);
-      break;
+      return;
     case 'disconnect':
       game.value = null;
-      playerIcon.value = '' as IconType;
+      playerIcon.value = null;
       ws.disconnect();
-      break;
+      return;
+  }
+
+  if (game.value === null) {
+    console.warn('Received message when game is null', message);
+    game.value = {
+      role: Role.ANGEL,
+      state: { type: 'idle' }
+    };
   }
 
   switch (message.type) {

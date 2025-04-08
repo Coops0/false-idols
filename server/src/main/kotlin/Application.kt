@@ -72,6 +72,17 @@ val DisableCorsPlugin = createApplicationPlugin(name = "DisableCorsPlugin") {
     }
 }
 
+val SecurityPolicyPlugin = createApplicationPlugin(name = "SecurityPolicyPlugin") {
+    onCall { call ->
+        if (call.request.uri == "/host") {
+            call.response.header(
+                "Permissions-Policy",
+                """screen-wake-lock=(self https://false-idols.cooperhanessian.com)"""
+            )
+        }
+    }
+}
+
 fun Application.module(innerApplicationChannel: Channel<InnerApplicationMessage>) {
     if (developmentMode) {
         log.info("Disabled CORS")
@@ -79,6 +90,7 @@ fun Application.module(innerApplicationChannel: Channel<InnerApplicationMessage>
     }
 
     install(SecurityCheckPlugin)
+    install(SecurityPolicyPlugin)
 
     install(Compression) {
         gzip()

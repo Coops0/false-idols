@@ -48,6 +48,7 @@ import KeybindDisplay from '@/components/ui/KeybindDisplay.vue';
 import { useLocalStorage } from '@/util/use-local-storage.ts';
 import { toast } from 'vue3-toastify';
 import { preloadImages } from '@/util/preload-images.util.ts';
+import { setupWakeLock } from '@/util/wake-lock.util.ts';
 
 const ws = new WebsocketOwner(onMessage, shouldRequestState);
 const game = ref<GameState | null>(null);
@@ -96,17 +97,10 @@ function shouldRequestState(): boolean {
   }
 }
 
-(async function () {
-  try {
-    await navigator.wakeLock.request('screen');
-  } catch (err) {
-    console.error('failed to request wake lock', err);
-  }
-
-  await ws.connect();
-})();
-
 onMounted(() => {
+  setupWakeLock();
+  ws.connect();
+
   document.addEventListener('keydown', onKeyPress);
   setTimeout(() => preloadImages());
 });

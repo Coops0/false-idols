@@ -153,7 +153,7 @@ sealed class InnerGameState(val type: String) {
     class AwaitingAdvisorCardChoice(val cards: List<Card>, val advisorName: PlayerName) :
             InnerGameState("awaiting_advisor_card_choice")
 
-    class AwaitingAdvisorElectionResolution(val nominee: PlayerName) : InnerGameState("awaiting_election_outcome")
+    class AwaitingAdvisorElectionResolution(val nominee: PlayerName) : InnerGameState("awaiting_advisor_election_outcome")
 
     class AwaitingPresidentElectionResolution(val nominee: PlayerName) :
             InnerGameState("awaiting_president_election_outcome")
