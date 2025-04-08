@@ -1,68 +1,68 @@
 <template>
-  <div class="size-full flex flex-col items-center justify-center">
+  <div class="size-full flex flex-col items-center justify-center text-center">
 
-    <div v-if="!gameState.hasConfirmed" class="flex justify-center text-center">
-      <p class="text-gray-600 mt-4">
-        You are about to see your secret role. Ensure nobody else can see your screen. Do not show it to anyone.
-      </p>
+    <template v-if="!gameState.hasConfirmed">
+      <p class="text-lg text-gray-600">You are about to see your secret role.</p>
+      <p class="text-lg text-gray-700 font-semibold">Ensure nobody else can see your screen.</p>
 
-        <BaseButton variant="primary" @click="() => emit('confirm')">
-          Continue
-        </BaseButton>
-    </div>
+      <BaseButton class="mt-14" variant="primary" @click="() => emit('confirm')">
+        Okay
+      </BaseButton>
+    </template>
 
-    <div v-else class="flex justify-center text-center">
-      <PlayerPreview
-          :icon-variant="roleToVariant(game.role)"
-          :player="{ name: playerName, icon: playerIcon }"
-      />
+    <template v-else>
+      <div>
+        <PlayerPreview
+            :icon-variant="roleToVariant(game.role)"
+            :player="{ name: playerName, icon: playerIcon }"
+        />
+        <p class="text-4xl font-black mt-4" :class="game.role === Role.ANGEL ? 'text-blue-500' : 'text-red-500'">
+          {{ roleName(game.role) }}</p>
+      </div>
 
       <div class="mt-6 text-center space-y-4">
-        <h2 class="text-2xl font-bold text-gray-800">
-          Your Role: {{ roleName(game.role) }}
-        </h2>
-
         <div class="space-y-3">
           <p v-if="game.role === Role.ANGEL" class="text-gray-700 text-sm">
             Play positive cards and try to eliminate all demons.
           </p>
-          <p v-else-if="game.role === Role.DEMON" class="text-gray-700 text-sm">
-            Work together with the other demons/Satan to kill angels and play negative cards.
-            {{ gameState.isSmallGame ? 'Satan knows who you are.' : 'Satan does not know who the demons are.' }}
-          </p>
-          <p v-else class="text-gray-700 text-sm">
-            Try to subtly work together with the other demons to pass negative cards, and kill angels.
-            <span class="font-bold text-red-600">If you die, the game ends immediately.</span>
-          </p>
-        </div>
 
-        <div v-if="gameState.demons?.length" class="space-y-3">
-          <h3 class="text-lg font-semibold text-gray-800">Your Team</h3>
-          <div class="space-y-2" v-if="gameState.satan">
-            <p class="text-gray-700 text-sm">Satan:</p>
-            <PlayerPreview :player="gameState.satan" icon-variant="satan"/>
+          <div v-else-if="game.role === Role.DEMON">
+            <p class="text-gray-700 text-xs">Subtly work together with the other demons and Satan to kill angels and
+              play negative cards.</p>
+            <p class="mt-4 font-medium text-sm text-gray-700">
+              {{ gameState.isSmallGame ? 'Satan knows who you are.' : 'Satan does not know who the demons are.' }}</p>
           </div>
-          <div v-if="gameState.demons.length" class="space-y-2">
-            <p class="text-gray-700 text-sm">{{ game.role === Role.DEMON ? 'Other ' : '' }}Demons:</p>
-            <ul class="space-y-2">
-              <li v-for="demon in gameState.demons">
-                <PlayerPreview :player="demon" icon-variant="demon"/>
-              </li>
-            </ul>
+
+          <div v-else>
+            <p class="text-gray-700 text-xs">Try to subtly work together with the other demons to pass negative cards,
+              and kill
+              angels.</p>
+            <p class="mt-4 font-bold text-red-600 text-sm">If you die, the game ends immediately.</p>
           </div>
         </div>
 
-        <div v-else-if="demonsText !== null">
-          <p class="text-gray-700 text-sm">{{ demonsText }}</p>
+        <div v-if="gameState.demons?.length" class="mt-10">
+          <p class="text-lg mb-4 font-semibold text-gray-800">Your Team</p>
+
+          <ul class="flex size-full flex-row flex-wrap justify-evenly gap-4">
+            <li v-if="gameState.satan">
+              <PlayerPreview :player="gameState.satan" icon-variant="satan"/>
+              <p class="mt-4 text-xl font-bold text-red-500">SATAN</p>
+            </li>
+            <li v-for="demon in gameState.demons">
+              <PlayerPreview :player="demon" icon-variant="demon"/>
+              <p class="mt-4 text-xl font-bold text-red-500">DEMON</p>
+            </li>
+          </ul>
         </div>
+
+        <p v-else-if="demonsText !== null" class="text-gray-700 text-sm">{{ demonsText }}</p>
       </div>
 
-      <div class="flex justify-center">
-        <BaseButton variant="primary" @click="() => emit('confirm')">
-          Continue
-        </BaseButton>
-      </div>
-    </div>
+      <BaseButton class="mt-14" variant="primary" @click="() => emit('confirm')">
+        Continue
+      </BaseButton>
+    </template>
   </div>
 </template>
 
@@ -73,12 +73,13 @@ import { Role, roleName } from '@/game/messages.ts';
 import PlayerPreview from '@/components/ui/PlayerPreview.vue';
 import { roleToVariant } from '@/util';
 import BaseButton from '@/components/ui/BaseButton.vue';
+import type { IconType } from '@/game/player-icon.ts';
 
 const emit = defineEmits<{ confirm: []; }>();
 const props = defineProps<{
   game: Game;
   playerName: string;
-  playerIcon: string;
+  playerIcon: IconType;
 }>();
 const gameState = computed(() => props.game.state as ViewRoleGameState);
 

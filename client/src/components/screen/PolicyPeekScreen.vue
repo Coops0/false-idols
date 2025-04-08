@@ -1,7 +1,7 @@
 <template>
   <div class="size-full flex flex-col items-center justify-center">
-    <p class="text-sm text-gray-600 text-center">
-      These are the top three cards of the deck.
+    <p class="text-xl text-gray-600 text-center">
+      The top three cards of the deck
     </p>
 
     <div class="mt-6 flex items-center flex-row flex-wrap justify-evenly gap-2 relative">
@@ -13,7 +13,9 @@
       />
     </div>
 
-    <BaseButton class="w-full" variant="primary" @click="() => emit('confirm')">
+    <p class="mt-14 text-xs text-gray-800 font-bold">You cannot show anyone this screen</p>
+
+    <BaseButton class="mt-8" variant="primary" @click="() => emit('confirm')">
       Continue
     </BaseButton>
   </div>

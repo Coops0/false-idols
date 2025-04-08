@@ -2,7 +2,6 @@ import {
     ActionChoice,
     type ActionSupplementedPlayer,
     type Card,
-    CardConsequence,
     type InboundMessage,
     type Player,
     Role,
@@ -63,7 +62,6 @@ export type GameState =
 
 export class Game {
     readonly role: Role;
-    isPresident: boolean;
     state: GameState;
 
     constructor(message: InboundMessage) {
@@ -81,31 +79,17 @@ export class Game {
         };
 
         this.role = message.role;
-        this.isPresident = false;
     }
 }
 
 // const t: Game = {
-//     role: "DEMON",
-//     isPresident: false,
+//     role: "SATAN",
 //     state: {
-//         type: "commit_action",
-//         action: "INVESTIGATE",
-//         supplementedPlayers: [{
-//             name: "Joe",
-//             icon: "pig",
-//             electable: true,
-//             investigatable: false
-//         }, {
-//             name: "Jane",
-//             icon: "fox",
-//             electable: true,
-//             investigatable: true
-//         }, {
-//             name: "Jack",
-//             icon: "dog",
-//             electable: false,
-//             investigatable: true
-//         }]
+//         type: "view_role",
+//         hasConfirmed: true,
+//         demonCount: 1,
+//         isSmallGame: true,
+//         demons: [{name: 'Ok', icon: 'gerbil'}],
+//         // satan: Player | null,
 //     }
 // }

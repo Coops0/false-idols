@@ -11,7 +11,6 @@
 
       <BaseButton
           :disabled="!isNameValid(name)"
-          class="w-full"
           variant="primary"
           @click="join"
       >

@@ -1,14 +1,15 @@
 <template>
   <div class="size-full flex flex-col gap-1 items-center justify-center">
     <p class="text-gray-400 text-sm text-center">(connected)</p>
-    <PlayerPreview :player="mockPlayer" hide-name/>
+    <PlayerPreview v-if="playerIcon !== ''" :player="mockPlayer" hide-name/>
   </div>
 </template>
 <script setup lang="ts">
 import PlayerPreview from '@/components/ui/PlayerPreview.vue';
 import { computed } from 'vue';
 import type { Player } from '@/game/messages.ts';
+import type { IconType } from '@/game/player-icon.ts';
 
-const props = defineProps<{ playerIcon: string }>();
-const mockPlayer = computed<Player>(() => ({ name: '', icon: props.playerIcon }));
+const props = defineProps<{ playerIcon: IconType | '' }>();
+const mockPlayer = computed<Player>(() => ({ name: '', icon: props.playerIcon as IconType }));
 </script>

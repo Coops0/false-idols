@@ -1,3 +1,5 @@
+import type { IconType } from '@/game/player-icon.ts';
+
 export enum ActionChoice {
     INVESTIGATE = 'INVESTIGATE',
     KILL = 'KILL',
@@ -5,7 +7,7 @@ export enum ActionChoice {
     NOMINATE_PRESIDENT = 'NOMINATE_PRESIDENT',
 }
 
-export type Player = { name: string, icon: string };
+export type Player = { name: string, icon: IconType };
 
 export enum Role {
     SATAN = 'SATAN',
@@ -81,7 +83,7 @@ export type InboundMessage =
     /// (same thing as normal role, but if Satan then remap to Demon)
     { type: 'investigation_result', target: Player, simple_role: SimpleRole } |
     /// This should be sent as soon as we join, it just tells us what our icon is.
-    { type: 'assign_icon', icon: string } |
+    { type: 'assign_icon', icon: IconType } |
     /// We get to see the top three cards of the deck.
     { type: 'policy_peek', cards: Card[] } |
     /// This is rare, it's (right now) only used when the server chooses to reset all players from the lobby.

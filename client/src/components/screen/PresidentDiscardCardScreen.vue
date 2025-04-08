@@ -1,7 +1,6 @@
 <template>
   <div class="size-full flex flex-col items-center justify-center">
-    <p class="text-xl font-bold text-gray-800 text-center">Discard a Card</p>
-    <p class="text-sm text-gray-600 text-center mt-2">
+    <p class="text-xl text-gray-600 text-center mt-2">
       Choose one card to <span class="font-bold text-red-600">discard</span>
     </p>
 
@@ -15,7 +14,7 @@
       />
     </div>
 
-    <p class="mt-6 text-xs text-gray-800 font-bold">You cannot show anyone this screen</p>
+    <p class="mt-14 text-xs text-gray-800 font-bold">You cannot show anyone this screen</p>
   </div>
 </template>
 

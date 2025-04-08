@@ -1,5 +1,5 @@
 <template>
-  <li class="flex justify-center items-center" :class="card.consequence === CardConsequence.NEUTRAL && 'bg-gray-300'">
+  <li class="flex justify-center items-center relative" :class="card.consequence === CardConsequence.NEUTRAL && 'bg-gray-300'">
     <img v-if="card.consequence !== CardConsequence.NEUTRAL" :src="cardImg" class="object-scale-down" />
     <div class="h-5/7 w-2/9 absolute overflow-hidden">
       <span

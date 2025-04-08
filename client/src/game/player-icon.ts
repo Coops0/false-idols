@@ -11,6 +11,8 @@ export const ICONS = [
     'koala'
 ] as const;
 
+export type IconType = typeof ICONS[number];
+
 export class PlayerIcon {
     private static hasPreloadedIcons = false;
 
@@ -18,19 +20,19 @@ export class PlayerIcon {
     private constructor() {}
     //@formatter:on
 
-    static normal(icon: string): string {
+    static normal(icon: IconType): string {
         return PlayerIcon.normalize(icon);
     }
 
-    static angel(icon: string): string {
+    static angel(icon: IconType): string {
         return PlayerIcon.normalize(`${icon}_angel`);
     }
 
-    static demon(icon: string): string {
+    static demon(icon: IconType): string {
         return PlayerIcon.normalize(`${icon}_demon`);
     }
 
-    static satan(icon: string): string {
+    static satan(icon: IconType): string {
         return PlayerIcon.normalize(`${icon}_satan`);
     }
 

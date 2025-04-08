@@ -1,10 +1,10 @@
 <template>
   <div class="size-full flex flex-col items-center justify-center">
-    <p class="text-lg text-gray-600 text-center">
+    <p class="text-xl text-gray-600 text-center">
       Choose one card to <span class="font-bold text-green-600">play</span>
     </p>
 
-    <div class="mt-6 flex items-center flex-row flex-wrap justify-evenly gap-2 relative">
+    <div class="mt-6 flex items-center flex-row flex-wrap justify-evenly gap-6 relative">
       <PlayedGameCard
           v-for="card in gameState.cards"
           :key="card.id"
@@ -14,12 +14,10 @@
       />
     </div>
 
-    <div v-if="gameState.vetoable" class="mt-6">
-      <p class="text-xs text-gray-800 font-bold text-center">You cannot show anyone this screen</p>
-      <p class="text-xs text-blue-800 font-extrabold text-center">
-        You may request a veto (out loud), and if the president agrees, all cards will be discarded.
-      </p>
-    </div>
+    <p class="mt-14 text-xs text-gray-800 font-bold text-center">You cannot show anyone this screen</p>
+    <p v-if="gameState.vetoable" class="mt-4 text-xs text-blue-800 font-bold text-center drop-shadow-red-blue/80 drop-shadow-lg">
+      You may request a veto (out loud), and if the president agrees, all cards will be discarded.
+    </p>
   </div>
 </template>
 

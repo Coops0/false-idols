@@ -1,35 +1,32 @@
 <template>
-  <div class="size-full flex flex-col items-center justify-center">
+  <div class="size-full flex flex-col items-center justify-center text-center">
 
-    <div v-if="!gameState.hasConfirmed" class="flex justify-center">
-      <p class="text-gray-600 font-bold text-center">
-        You are about to see if {{ gameState.player.name }} is a demon or angel. You cannot show this screen to
-        anyone.
-      </p>
+    <template v-if="!gameState.hasConfirmed">
+      <p class="text-gray-600">You are about to see if {{ gameState.player.name }} is a demon or angel.</p>
+      <p class="text-gray-700 font-semibold">You cannot show this screen to anyone.</p>
 
-      <BaseButton variant="primary" @click="() => emit('confirm')">
+      <BaseButton class="mt-14" variant="primary" @click="() => emit('confirm')">
+        Okay
+      </BaseButton>
+    </template>
+
+    <template v-else>
+      <div>
+        <PlayerPreview
+            :icon-variant="gameState.role === Role.DEMON ? 'demon' : 'angel'"
+            :player="gameState.player"
+        />
+        <p class="mt-4 text-3xl font-bold" :class="gameState.role === Role.DEMON ? 'text-red-500' : 'text-blue-400'">
+          {{ roleName(gameState.role).toUpperCase() }}
+        </p>
+      </div>
+
+      <p class="mt-14 text-xs text-gray-800 font-bold">You cannot show anyone this screen</p>
+
+      <BaseButton class="mt-8" variant="primary" @click="() => emit('confirm')">
         Continue
       </BaseButton>
-    </div>
-
-    <div v-else class="flex justify-center text-center">
-      <PlayerPreview
-          :game
-          :icon-variant="gameState.role === Role.DEMON ? 'demon' : 'angel'"
-          :player="gameState.player"
-          class="size-40 mx-auto"
-      />
-      <p :class="gameState.role === Role.DEMON ? 'text-red-500 font-bold' : 'font-medium text-blue-400'"
-         class="text-base">
-        {{ roleName(gameState.role) }}
-      </p>
-
-      <p class="text-xs text-gray-800 font-bold">You cannot show anyone this screen</p>
-
-      <BaseButton class="w-full" variant="primary" @click="() => emit('confirm')">
-        Continue
-      </BaseButton>
-    </div>
+    </template>
   </div>
 </template>
 

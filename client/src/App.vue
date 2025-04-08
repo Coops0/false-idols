@@ -44,7 +44,7 @@
           :game
           @confirm="confirmPolicyPeek"
       />
-      <IdleScreen v-else/>
+      <IdleScreen :player-icon v-else/>
     </div>
   </div>
 </template>
@@ -65,9 +65,10 @@ import PresidentDiscardCardScreen from '@/components/screen/PresidentDiscardCard
 import AdvisorChooseCardScreen from '@/components/screen/AdvisorChooseCardScreen.vue';
 import PolicyPeekScreen from '@/components/screen/PolicyPeekScreen.vue';
 import { preloadImages } from '@/util/preload-images.util.ts';
+import type { IconType } from '@/game/player-icon.ts';
 
 const playerName = ref<string>('');
-const playerIcon = ref<string>('');
+const playerIcon = ref<IconType>('' as IconType);
 const error = ref<string>('');
 // Weirdness with websockets and get function properties not triggering a rerender on connection
 const manualIsConnected = ref(false);
@@ -99,7 +100,7 @@ async function tryToConnect() {
   } catch (err) {
     console.error(err);
     // @ts-ignore
-    error.value = err.message;
+    error.value = err.message ?? 'Failed to connect';
   } finally {
     // Either way, we have finished the first initial connection attempt,
     // so we can show them the login now.
@@ -119,21 +120,10 @@ function handleMessage(message: InboundMessage) {
       break;
     case 'disconnect':
       game.value = null;
-      playerIcon.value = '';
+      playerIcon.value = '' as IconType;
       ws.disconnect();
       break;
   }
-
-  // if (game.value === null) {
-  //   game.value = new Game({
-  //     type: 'assign_role',
-  //     demon_count: 0,
-  //     role: Role.ANGEL,
-  //     is_small_game: false
-  //   });
-  //
-  //   game.value.state = { type: 'idle' };
-  // }
 
   switch (message.type) {
     case 'request_action':
