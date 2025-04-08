@@ -1,5 +1,5 @@
 <template>
-  <div class="size-full flex flex-col items-center justify-center space-y-14">
+  <div class="size-full flex flex-col items-center justify-center gap-y-14">
     <p class="text-xl font-bold text-gray-800 text-center">Choose who to <span
         class="font-bold" :class="actionColor">{{ actionName }}</span></p>
 

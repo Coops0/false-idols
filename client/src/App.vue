@@ -1,7 +1,7 @@
 <template>
   <div class="h-[calc(100vh-64px)] w-full overflow-hidden">
-    <ErrorToast :message="error"/>
-    <div class="size-full flex justify-center items-center p-4">
+    <div class="size-full flex flex-col gap-y-4 justify-center items-center p-4">
+      <ErrorMessage :message="error"/>
       <LoginScreen
           v-if="canShowLogin && !manualIsConnected"
           v-model="playerName"
@@ -56,7 +56,7 @@ import { Game, type ViewInvestigationResultsGameState, type ViewRoleGameState } 
 import { onMounted, ref } from 'vue';
 import { isNameValid } from '@/util';
 import LoginScreen from '@/components/screen/LoginScreen.vue';
-import ErrorToast from '@/components/ui/ErrorToast.vue';
+import ErrorMessage from '@/components/ui/ErrorMessage.vue';
 import IdleScreen from '@/components/screen/IdleScreen.vue';
 import RoleConfirmationScreen from '@/components/screen/RoleConfirmationScreen.vue';
 import CommitActionScreen from '@/components/screen/CommitActionScreen.vue';

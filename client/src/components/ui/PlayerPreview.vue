@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col items-center space-y-2">
+  <div class="flex flex-col items-center gap-y-2">
     <p class="text-lg text-gray-700 truncate font-mono" v-if="!hideName">{{ player.name }}</p>
     <div class="relative size-14">
       <img

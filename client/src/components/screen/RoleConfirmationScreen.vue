@@ -20,8 +20,8 @@
           {{ roleName(game.role) }}</p>
       </div>
 
-      <div class="mt-6 text-center space-y-4">
-        <div class="space-y-3">
+      <div class="mt-6 text-center gap-y-4">
+        <div class="gap-y-3">
           <p v-if="game.role === Role.ANGEL" class="text-gray-700 text-sm">
             Play positive cards and try to eliminate all demons.
           </p>

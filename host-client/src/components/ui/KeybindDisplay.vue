@@ -1,6 +1,6 @@
 <template>
   <div class="bg-gray-900/50 backdrop-blur-sm rounded-xl shadow-lg p-4 text-gray-50 z-20 font-mono">
-    <div class="space-y-3 text-xs">
+    <div class="gap-y-3 text-xs">
       <div class="flex items-center gap-2">
         <kbd class="px-2 py-1 bg-gray-800/50 rounded-lg text-gray-200 border border-gray-700/50">H</kbd>
         <span class="text-gray-300">Hide</span>
