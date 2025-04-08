@@ -13,6 +13,7 @@
 <script setup lang="ts">
 import NegativeCard from '@/assets/cards/negative-card.png';
 import PositiveCard from '@/assets/cards/positive-card.png';
+import NeutralCard from '@/assets/cards/neutral-card.png';
 import { computed } from 'vue';
 import { type Card, CardConsequence } from '@/game/state.ts';
 
@@ -21,5 +22,14 @@ const props = defineProps<{
   fontSize: number;
 }>();
 
-const cardImg = computed(() => props.card.consequence === CardConsequence.NEGATIVE ? NegativeCard : PositiveCard);
+const cardImg = computed(() => {
+  switch (props.card.consequence) {
+    case CardConsequence.NEGATIVE:
+      return NegativeCard;
+    case CardConsequence.POSITIVE:
+      return PositiveCard;
+    case CardConsequence.NEUTRAL:
+      return NeutralCard;
+  }
+});
 </script>

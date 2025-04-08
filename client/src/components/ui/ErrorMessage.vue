@@ -1,7 +1,7 @@
 <template>
   <div
       v-if="localMessage.length"
-      class="w-full py-4 bg-red-50 border border-red-200 rounded-lg shadow-lg p-4 max-w-md flex items-center justify-between gap-x-4"
+      class="mb-8 w-full py-4 bg-red-50 border border-red-200 rounded-lg shadow-lg p-4 max-w-md flex items-center justify-between gap-x-4"
       @click="dismiss"
   >
     <p class="text-red-700 text-base">{{ localMessage }}</p>
