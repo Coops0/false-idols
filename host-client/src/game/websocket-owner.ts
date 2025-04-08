@@ -4,8 +4,11 @@ export class WebsocketOwner {
     // @ts-expect-error - Will be initialized immediately after construction
     private ws: WebSocket = null;
 
-    constructor(private readonly onMessageCallback: (message: ServerInboundMessage) => void) {
-        setInterval(() => this.send({ type: 'ping' }), 1000);
+    constructor(
+        private readonly onMessageCallback: (message: ServerInboundMessage) => void,
+        private readonly shouldRequestState: () => boolean
+    ) {
+        setInterval(() => this.send({ type: 'ping', request_state: shouldRequestState() }), 1000);
     }
 
     get isConnected() {

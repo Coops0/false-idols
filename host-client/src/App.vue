@@ -49,7 +49,7 @@ import { useLocalStorage } from '@/util/use-local-storage.ts';
 import { toast } from 'vue3-toastify';
 import { preloadImages } from '@/util/preload-images.util.ts';
 
-const ws = new WebsocketOwner(onMessage);
+const ws = new WebsocketOwner(onMessage, shouldRequestState);
 const game = ref<GameState | null>(null);
 
 const showKeybindDisplay = useLocalStorage('show-keybind-display', true);
@@ -85,6 +85,14 @@ function onMessage(message: ServerInboundMessage) {
         pauseOnHover: true,
       });
       break;
+  }
+}
+
+function shouldRequestState(): boolean {
+  if (game.value === null) {
+    return true;
+  } else {
+    return !game.value.type?.length;
   }
 }
 

@@ -1,7 +1,7 @@
 <template>
   <li class="flex justify-center items-center relative">
     <img :src="cardImg" class="object-scale-down"/>
-    <div class="h-5/7 w-2/9 absolute overflow-hidden">
+    <div class="h-5/7 w-4/9 absolute overflow-hidden">
       <span
           class="text-gray-700 line-clamp-6 break-all font-serif text-sm"
       >{{ card.description }}</span>

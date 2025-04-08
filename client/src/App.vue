@@ -68,12 +68,12 @@ import { preloadImages } from '@/util/preload-images.util.ts';
 import type { IconType } from '@/game/player-icon.ts';
 
 const playerName = ref<string>('');
-const playerIcon = ref<IconType>('' as IconType);
+const playerIcon = ref<IconType | null>(null);
 const error = ref<string>('');
 // Weirdness with websockets and get function properties not triggering a rerender on connection
 const manualIsConnected = ref(false);
 
-const ws = new WebsocketOwner(playerName, handleMessage, manualIsConnected);
+const ws = new WebsocketOwner(playerName, handleMessage, shouldRequestIcon, manualIsConnected);
 const game = ref<Game | null>(null);
 
 const canShowLogin = ref<boolean>(false);
@@ -153,6 +153,10 @@ function handleMessage(message: InboundMessage) {
         cards: message.cards,
       };
   }
+}
+
+function shouldRequestIcon(): boolean {
+  return playerIcon.value === '';
 }
 
 function confirmRole() {

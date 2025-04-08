@@ -15,7 +15,7 @@ export type ServerOutboundMessage =
     { type: 'skip' } |
     { type: 'go_back_to_lobby' } |
     { type: 'veto' } |
-    { type: 'ping' };
+    { type: 'ping', request_state?: boolean };
 
 
 export type ServerInboundMessage =

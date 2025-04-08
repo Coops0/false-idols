@@ -4,6 +4,7 @@ import com.cooper.game.GameState
 import com.cooper.game.InnerGameState
 import com.cooper.message.OutboundMessage
 import com.cooper.message.server.ServerInboundMessage
+import com.cooper.message.server.ServerOutboundMessage
 
 enum class ServerInboundMessageProcessorAction {
     START_GAME,
@@ -81,7 +82,11 @@ suspend fun GameState.handleServerInboundApplicationMessage(message: ServerInbou
             this.rotatePresident()
         }
 
-        is ServerInboundMessage.Ping -> {}
+        is ServerInboundMessage.Ping -> {
+            if (message.requestState) {
+                this.sendServer(ServerOutboundMessage.UpdateGameState(this))
+            }
+        }
     }
 
     return null

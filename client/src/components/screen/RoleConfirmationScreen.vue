@@ -14,7 +14,7 @@
       <div>
         <PlayerPreview
             :icon-variant="roleToVariant(game.role)"
-            :player="{ name: playerName, icon: playerIcon }"
+            :player="{ name: playerName, icon: playerIcon! }"
         />
         <p class="text-4xl font-black mt-4" :class="game.role === Role.ANGEL ? 'text-blue-500' : 'text-red-500'">
           {{ roleName(game.role) }}</p>
@@ -79,7 +79,7 @@ const emit = defineEmits<{ confirm: []; }>();
 const props = defineProps<{
   game: Game;
   playerName: string;
-  playerIcon: IconType;
+  playerIcon: IconType | null;
 }>();
 const gameState = computed(() => props.game.state as ViewRoleGameState);
 

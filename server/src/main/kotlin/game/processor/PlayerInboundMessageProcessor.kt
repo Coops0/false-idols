@@ -4,10 +4,14 @@ import com.cooper.game.GameOverThrowable
 import com.cooper.game.GameState
 import com.cooper.game.PlayerName
 import com.cooper.message.InboundMessage
+import com.cooper.message.OutboundMessage
 
 @Throws(GameOverThrowable::class)
 suspend fun GameState.handlePlayerInboundApplicationMessage(playerName: PlayerName, message: InboundMessage) {
     if (message is InboundMessage.Ping) {
+        if (message.requestIcon) {
+            this[playerName]?.send(OutboundMessage.AssignIcon(this[playerName]!!.icon))
+        }
         return
     }
 
