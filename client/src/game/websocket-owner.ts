@@ -29,7 +29,7 @@ export class WebsocketOwner {
             }
         });
 
-        setInterval(() => self.send({ type: 'ping', request_icon: shouldRequestIcon(), is_idle: isIdle() }), 1000);
+        setInterval(() => self.send({ type: 'ping', request_icon: shouldRequestIcon(), is_idle: isIdle() }), 2000);
     }
 
     get isConnected() {

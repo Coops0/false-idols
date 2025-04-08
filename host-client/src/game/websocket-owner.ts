@@ -8,7 +8,7 @@ export class WebsocketOwner {
         private readonly onMessageCallback: (message: ServerInboundMessage) => void,
         private readonly shouldRequestState: () => boolean
     ) {
-        setInterval(() => this.send({ type: 'ping', request_state: shouldRequestState() }), 1000);
+        setInterval(() => this.send({ type: 'ping', request_state: shouldRequestState() }), 2000);
     }
 
     get isConnected() {
