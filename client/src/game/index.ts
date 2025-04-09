@@ -61,24 +61,24 @@ export type GameState =
     | PolicyPeekGameState;
 
 export class Game {
-    readonly role: Role;
-    state: GameState;
+    readonly role: Role = Role.ANGEL;
+    state: GameState = { type: 'idle' };
 
-    constructor(message: InboundMessage) {
-        if (message.type !== 'assign_role') {
-            throw new Error('Invalid message type');
+    constructor(message: InboundMessage | null) {
+        if (message !== null && message.type === 'assign_role') {
+            this.state = {
+                type: 'view_role',
+                hasConfirmed: false,
+                demonCount: message.demon_count,
+                demons: message.demons || null,
+                satan: message.satan || null,
+                isSmallGame: message.is_small_game,
+            };
+
+            this.role = message.role;
+        } else {
+            console.warn('Game was constructed with non role assignment message of', message);
         }
-
-        this.state = {
-            type: 'view_role',
-            hasConfirmed: false,
-            demonCount: message.demon_count,
-            demons: message.demons || null,
-            satan: message.satan || null,
-            isSmallGame: message.is_small_game,
-        };
-
-        this.role = message.role;
     }
 }
 

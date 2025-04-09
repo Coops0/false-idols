@@ -33,8 +33,9 @@ const actionName = computed(() => {
       return 'NOMINATE';
     case ActionChoice.NOMINATE_PRESIDENT:
       return 'NOMINATE PRESIDENT';
+    default:
+      console.log(`Unknown action: ${gameState.value.action}`);
+      return '???';
   }
-
-  return '???';
 });
 </script>

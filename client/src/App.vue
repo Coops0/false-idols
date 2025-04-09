@@ -2,56 +2,58 @@
   <div class="h-[calc(100vh-64px)] w-full overflow-hidden">
     <div class="size-full flex flex-col gap-y-4 justify-center items-center p-4">
       <ErrorMessage :message="error"/>
-      <LoginScreen
-          v-if="canShowLogin && !manualIsConnected"
-          v-model="playerName"
-          :is-rejoin="ws.hasEverBeenConnectedSuccessfully"
-          @join="() => tryToConnect()"
-      />
-      <IdleScreen
-          :player-icon
-          v-else-if="game === null || game.state.type === 'idle'"
-      />
-      <RoleConfirmationScreen
-          v-else-if="game.state.type === 'view_role'"
-          :game
-          :player-icon
-          :player-name
-          @confirm="confirmRole"
-      />
-      <CommitActionScreen
-          v-else-if="game.state.type === 'commit_action'"
-          :game
-          @commit="commitAction"
-      />
-      <ViewInvestigationResultsScreen
-          v-else-if="game.state.type === 'view_investigation_results'"
-          :game
-          @confirm="confirmInvestigation"
-      />
-      <PresidentDiscardCardScreen
-          v-else-if="game.state.type === 'president_discard_card'"
-          :game
-          @discard="discardCard"
-      />
-      <AdvisorChooseCardScreen
-          v-else-if="game.state.type === 'advisor_choose_card'"
-          :game
-          @choose="chooseCard"
-      />
-      <PolicyPeekScreen
-          v-else-if="game.state.type === 'policy_peek'"
-          :game
-          @confirm="confirmPolicyPeek"
-      />
-      <IdleScreen :player-icon v-else/>
+      <Transition name="fade" mode="out-in">
+        <LoginScreen
+            v-if="canShowLogin && !manualIsConnected"
+            v-model="playerName"
+            :is-rejoin="ws.hasEverBeenConnectedSuccessfully"
+            @join="() => tryToConnect()"
+        />
+        <IdleScreen
+            :player-icon
+            v-else-if="game === null || game.state.type === 'idle'"
+        />
+        <RoleConfirmationScreen
+            v-else-if="game.state.type === 'view_role'"
+            :game
+            :player-icon
+            :player-name
+            @confirm="confirmRole"
+        />
+        <CommitActionScreen
+            v-else-if="game.state.type === 'commit_action'"
+            :game
+            @commit="commitAction"
+        />
+        <ViewInvestigationResultsScreen
+            v-else-if="game.state.type === 'view_investigation_results'"
+            :game
+            @confirm="confirmInvestigation"
+        />
+        <PresidentDiscardCardScreen
+            v-else-if="game.state.type === 'president_discard_card'"
+            :game
+            @discard="discardCard"
+        />
+        <AdvisorChooseCardScreen
+            v-else-if="game.state.type === 'advisor_choose_card'"
+            :game
+            @choose="chooseCard"
+        />
+        <PolicyPeekScreen
+            v-else-if="game.state.type === 'policy_peek'"
+            :game
+            @confirm="confirmPolicyPeek"
+        />
+        <IdleScreen :player-icon v-else/>
+      </Transition>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { WebsocketOwner } from '@/game/websocket-owner.ts';
-import { type InboundMessage, Role } from '@/game/messages.ts';
+import { type InboundMessage } from '@/game/messages.ts';
 import { Game, type ViewInvestigationResultsGameState, type ViewRoleGameState } from '@/game';
 import { onMounted, ref } from 'vue';
 import { isNameValid } from '@/util';
@@ -127,28 +129,25 @@ function handleMessage(message: InboundMessage) {
 
   if (game.value === null) {
     console.warn('Received message when game is null', message);
-    game.value = {
-      role: Role.ANGEL,
-      state: { type: 'idle' }
-    };
+    game.value = new Game(null);
   }
 
   switch (message.type) {
     case 'request_action':
-      game.value!.state = {
+      game.value.state = {
         type: 'commit_action',
         action: message.action,
         supplementedPlayers: message.players
       };
       break;
     case 'request_president_card_discard':
-      game.value!.state = { type: 'president_discard_card', cards: message.cards };
+      game.value.state = { type: 'president_discard_card', cards: message.cards };
       break;
     case 'request_advisor_card_choice':
-      game.value!.state = { type: 'advisor_choose_card', cards: message.cards, vetoable: message.vetoable };
+      game.value.state = { type: 'advisor_choose_card', cards: message.cards, vetoable: message.vetoable };
       break;
     case 'investigation_result':
-      game.value!.state = {
+      game.value.state = {
         type: 'view_investigation_results',
         player: message.target,
         role: message.simple_role,
@@ -156,7 +155,7 @@ function handleMessage(message: InboundMessage) {
       };
       break;
     case 'policy_peek':
-      game.value!.state = {
+      game.value.state = {
         type: 'policy_peek',
         cards: message.cards,
       };
@@ -233,9 +232,13 @@ button, input, select, textarea {
   min-width: 44px;
 }
 
-@media screen and (max-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>
