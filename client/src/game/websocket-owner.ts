@@ -10,7 +10,7 @@ export class WebsocketOwner {
     private lastConnectionAttempt: number = 0;
     private hasEverBeenConnected: boolean = false;
     private wasManuallyDisconnectedLast: boolean = false;
-    private initialMessageBuffer: MessageEvent[] = [];
+    // private initialMessageBuffer: MessageEvent[] = [];
 
     constructor(
         private readonly name: Ref<string>,
@@ -57,8 +57,8 @@ export class WebsocketOwner {
                 // This should be the first immediate message received
                 if (message.type !== 'assign_icon') {
                     console.warn('Got initial message not of type assign icon', message);
-                    self.initialMessageBuffer.push(event);
-                    return;
+                    // self.initialMessageBuffer.push(event);
+                    // return;
                 }
 
                 self.manualIsConnected.value = true;
@@ -79,8 +79,8 @@ export class WebsocketOwner {
                 self.handleMessage(event);
 
                 // Any other messages in the buffer we also send through
-                self.initialMessageBuffer.forEach(event => self.handleMessage(event));
-                self.initialMessageBuffer = [];
+                // self.initialMessageBuffer.forEach(event => self.handleMessage(event));
+                // self.initialMessageBuffer = [];
             };
 
             self.ws = new WebSocket(`${__WS_HOST__}/ws?name=${this.name.value}`);
