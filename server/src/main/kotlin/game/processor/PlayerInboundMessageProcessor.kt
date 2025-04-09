@@ -11,11 +11,11 @@ suspend fun GameState.handlePlayerInboundApplicationMessage(playerName: PlayerNa
     if (message is InboundMessage.Ping) {
         val player = this[playerName]!!
         if (message.requestIcon) {
-            this[playerName]?.send(OutboundMessage.AssignIcon(player.icon))
+            this[playerName]?.emit(OutboundMessage.AssignIcon(player.icon))
         }
 
         if (message.isIdle && player.queue.isNotEmpty()) {
-            player.queue.forEach { player.send(it) }
+            player.queue.forEach { player.emit(it) }
         }
         return
     }

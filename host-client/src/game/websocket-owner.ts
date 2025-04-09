@@ -29,6 +29,12 @@ export class WebsocketOwner {
         }
     }
 
+    close() {
+        if (this.ws) {
+            this.ws.close();
+        }
+    }
+
     private onMessage = (event: MessageEvent) => {
         const message = JSON.parse(event.data) as ServerInboundMessage;
         this.onMessageCallback(message);

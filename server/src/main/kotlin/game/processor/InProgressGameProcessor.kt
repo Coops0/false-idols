@@ -56,7 +56,7 @@ suspend fun GameState.GameInProgress.requestPresidentAction() {
     val actionablePlayers = this.alive.filter { it != this.president }
         .map { OutboundMessage.RequestActionChoice.ActionSupplementedPlayer.fromGamePlayer(playersSize, it) }
 
-    this.president.send(
+    this.president.emit(
         OutboundMessage.RequestActionChoice(
             action = ActionChoice.NOMINATE,
             players = actionablePlayers,
@@ -124,7 +124,7 @@ suspend fun GameState.GameInProgress.handlePlayerActionChoice(aggressor: GamePla
             target.isInvestigated = true
 
             this.innerGameState = InnerGameState.AwaitingInvestigationAnalysis(targetName)
-            aggressor.send(OutboundMessage.InvestigationResult(target.stripped, target.role.simple), significant = true)
+            aggressor.emit(OutboundMessage.InvestigationResult(target.stripped, target.role.simple), significant = true)
         }
 
         ActionChoice.KILL -> {
@@ -176,7 +176,7 @@ suspend fun GameState.GameInProgress.handlePresidentDiscardCard(player: GamePlay
     this.president.clearQueue()
 
     val advisor = this[advisorName]!!
-    advisor.send(
+    advisor.emit(
         OutboundMessage.RequestAdvisorCardChoice(
             cards = newCards,
             vetoable = this.deck.negativeCardsPlayed >= NEGATIVE_CARD_COUNT_VETO
@@ -234,14 +234,14 @@ suspend fun GameState.GameInProgress.handleNegativeCardAction(): Boolean {
     // Policy peek
     if (action == null) {
         val cards = this.deck.cardStack.take(3)
-        this.president.send(OutboundMessage.PolicyPeek(cards), significant = true)
+        this.president.emit(OutboundMessage.PolicyPeek(cards), significant = true)
         this.sendServer(ServerOutboundMessage.PolicyPeeking())
         return false
     }
 
     this.innerGameState = InnerGameState.AwaitingPresidentActionChoice(action, forced = true)
 
-    this.president.send(
+    this.president.emit(
         OutboundMessage.RequestActionChoice(
             action,
             players = this.alive.filter { it != this.president }
@@ -268,7 +268,7 @@ suspend fun GameState.GameInProgress.passAdvisorElection(advisor: GamePlayer) {
 
     this.checkGameOverConditions()
 
-    this.president.send(OutboundMessage.RequestPresidentCardDiscard(cards), significant = true)
+    this.president.emit(OutboundMessage.RequestPresidentCardDiscard(cards), significant = true)
 }
 
 fun GameState.GameInProgress.failAdvisorElection() {

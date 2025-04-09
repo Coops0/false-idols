@@ -2,7 +2,6 @@ package com.cooper.message.server
 
 import com.cooper.FalseIdolsError
 import com.cooper.game.GameState
-import com.cooper.game.PlayerName
 
 sealed class ServerOutboundMessage(val type: String) {
     class UpdateGameState(val gameState: GameState) :
@@ -13,4 +12,6 @@ sealed class ServerOutboundMessage(val type: String) {
 
     class PolicyPeeking :
             ServerOutboundMessage("policy_peeking")
+
+    class Shutdown : ServerOutboundMessage("shutdown")
 }

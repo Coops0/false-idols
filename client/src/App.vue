@@ -224,6 +224,10 @@ body {
   background-color: #f9fafb;
 }
 
+* {
+  user-select: none;
+}
+
 button, input, select, textarea {
   min-height: 44px;
   min-width: 44px;

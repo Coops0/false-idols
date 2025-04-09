@@ -58,6 +58,10 @@ const showKeybindDisplay = useLocalStorage('show-keybind-display', true);
 function onMessage(message: ServerInboundMessage) {
   console.log(message);
   switch (message.type) {
+    case 'shutdown':
+      ws.close();
+      game.value = null;
+      break;
     case 'update_game_state':
       game.value = message.game_state;
       break;

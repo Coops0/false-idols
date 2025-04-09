@@ -1,11 +1,11 @@
 package com.cooper.game
 
-import com.cooper.SocketContentConverterSender
 import com.cooper.message.OutboundMessage
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonSerializer
 import com.fasterxml.jackson.databind.SerializerProvider
+import kotlinx.coroutines.flow.MutableSharedFlow
 import java.util.*
 
 typealias SessionId = UUID
@@ -13,13 +13,13 @@ typealias PlayerName = String
 
 class PlayerConnection(
     val sessionId: SessionId,
-    @JsonIgnore val channel: SocketContentConverterSender<OutboundMessage>,
+    @JsonIgnore val flow: MutableSharedFlow<OutboundMessage>,
 )
 
 open class Player(
     val name: PlayerName,
     val icon: PlayerIcon,
-    @JsonIgnore val channels: MutableList<PlayerConnection>
+    @JsonIgnore val flows: MutableList<PlayerConnection>
 ) {
     /// These messages are important enough to re-send on any future reconnection
     @JsonIgnore val queue = mutableListOf<OutboundMessage>()
@@ -31,25 +31,26 @@ open class Player(
 
     override fun hashCode() = name.hashCode()
 
-    fun connect(sessionId: SessionId, channel: SocketContentConverterSender<OutboundMessage>) {
-        channels.add(PlayerConnection(sessionId, channel))
+    fun connect(sessionId: SessionId, flow: MutableSharedFlow<OutboundMessage>) {
+        flows.add(PlayerConnection(sessionId, flow))
     }
 
     suspend fun disconnectAll(reason: OutboundMessage.Disconnect.DisconnectionReason) {
-        channels.forEach { it.channel.send(OutboundMessage.Disconnect(reason)) }
-        channels.clear()
+        flows.forEach { it.flow.emit(OutboundMessage.Disconnect(reason)) }
+        flows.clear()
     }
 
     fun disconnect(sessionId: SessionId) {
-        channels.removeIf { it.sessionId == sessionId }
+        flows.removeIf { it.sessionId == sessionId }
     }
 
-    suspend fun send(message: OutboundMessage, significant: Boolean = false) {
+    suspend fun emit(message: OutboundMessage, significant: Boolean = false) {
         if (significant) {
             queue.add(message)
         }
 
-        channels.forEach { it.channel.send(message) }
+
+        flows.forEach { it.flow.emit(message) }
     }
 
     fun clearQueue() {
@@ -58,7 +59,7 @@ open class Player(
 }
 
 class GamePlayer(player: Player, val role: ComplexRole) :
-        Player(player.name, player.icon, player.channels) {
+        Player(player.name, player.icon, player.flows) {
     var isAlive = true
     var isInvestigated = false
 

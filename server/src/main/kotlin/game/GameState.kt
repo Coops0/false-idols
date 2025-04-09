@@ -1,10 +1,9 @@
 package com.cooper.game
 
-import com.cooper.SocketContentConverterSender
 import com.cooper.message.OutboundMessage
 import com.cooper.message.server.ServerOutboundMessage
 import com.fasterxml.jackson.annotation.JsonIgnore
-import kotlinx.coroutines.channels.ClosedSendChannelException
+import kotlinx.coroutines.flow.MutableSharedFlow
 
 const val POSITIVE_CARD_COUNT_WIN = 5
 const val NEGATIVE_CARD_COUNT_WIN = 6
@@ -16,14 +15,13 @@ const val FAILED_ELECTIONS_CHAOS = 4
 const val SMALL_GAME_PLAYER_SIZE = 6
 
 sealed class GameState(val type: String) {
-    @get:JsonIgnore abstract var server: SocketContentConverterSender<ServerOutboundMessage>?
+    @get:JsonIgnore abstract var server: MutableSharedFlow<ServerOutboundMessage>?
     abstract val players: List<Player>
 
     suspend fun sendServer(message: ServerOutboundMessage) {
         try {
-            server?.send(message)
-        } catch (err: ClosedSendChannelException) {
-            println("Server channel closed: $err")
+            server?.emit(message)
+        } catch (_: Throwable) {
             server = null
         }
     }
@@ -34,29 +32,29 @@ sealed class GameState(val type: String) {
 
     fun getBySessionId(sessionId: SessionId): Player? {
         return players.firstOrNull { player ->
-            player.channels.any { channel ->
-                channel.sessionId == sessionId
+            player.flows.any { flow ->
+                flow.sessionId == sessionId
             }
         }
     }
 
-    suspend fun send(playerName: PlayerName, message: OutboundMessage, significant: Boolean = false) {
-        this[playerName]?.send(message, significant)
+    suspend fun emit(playerName: PlayerName, message: OutboundMessage, significant: Boolean = false) {
+        this[playerName]?.emit(message, significant)
     }
 
     class Lobby(
-        override var server: SocketContentConverterSender<ServerOutboundMessage>?,
+        override var server: MutableSharedFlow<ServerOutboundMessage>?,
         override val players: MutableList<Player> = mutableListOf()
     ) : GameState("lobby") {
         fun toGameInProgress() = GameInProgress(server, players, _fakeArg = null)
     }
 
     class GameInProgress private constructor(
-        override var server: SocketContentConverterSender<ServerOutboundMessage>?,
+        override var server: MutableSharedFlow<ServerOutboundMessage>?,
         override val players: MutableList<GamePlayer>
     ) : GameState("game_in_progress") {
         @Suppress("UNUSED_PARAMETER", "LocalVariableName") constructor(
-            server: SocketContentConverterSender<ServerOutboundMessage>?,
+            server: MutableSharedFlow<ServerOutboundMessage>?,
             originalPlayers: List<Player>,
             // Need this to prevent constructor declaration clash
             _fakeArg: Unit?
@@ -122,7 +120,7 @@ sealed class GameState(val type: String) {
     }
 
     class GameOver(
-        override var server: SocketContentConverterSender<ServerOutboundMessage>?,
+        override var server: MutableSharedFlow<ServerOutboundMessage>?,
         override val players: MutableList<Player>,
         val winner: PlayerName,
         val satan: PlayerName,
@@ -153,7 +151,8 @@ sealed class InnerGameState(val type: String) {
     class AwaitingAdvisorCardChoice(val cards: List<Card>, val advisorName: PlayerName) :
             InnerGameState("awaiting_advisor_card_choice")
 
-    class AwaitingAdvisorElectionResolution(val nominee: PlayerName) : InnerGameState("awaiting_advisor_election_outcome")
+    class AwaitingAdvisorElectionResolution(val nominee: PlayerName) :
+            InnerGameState("awaiting_advisor_election_outcome")
 
     class AwaitingPresidentElectionResolution(val nominee: PlayerName) :
             InnerGameState("awaiting_president_election_outcome")

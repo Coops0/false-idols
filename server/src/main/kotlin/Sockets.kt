@@ -1,6 +1,9 @@
 package com.cooper
 
-import com.cooper.game.*
+import com.cooper.game.InnerApplicationMessage
+import com.cooper.game.PlayerIcon
+import com.cooper.game.PlayerIconSerializer
+import com.cooper.game.SessionId
 import com.cooper.message.InboundMessage
 import com.cooper.message.OutboundMessage
 import com.cooper.message.server.ServerInboundMessage
@@ -8,7 +11,6 @@ import com.cooper.message.server.ServerOutboundMessage
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import io.ktor.serialization.*
 import io.ktor.serialization.jackson.*
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
@@ -16,13 +18,13 @@ import io.ktor.server.websocket.*
 import io.ktor.util.reflect.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.consumeEach
-import kotlin.time.Duration
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.seconds
 
-fun Application.configureSockets(innerApplicationChannel: Channel<InnerApplicationMessage>) {
+fun Application.configureSockets(innerApplicationFlow: MutableSharedFlow<InnerApplicationMessage>) {
     install(WebSockets) {
         timeout = 15.seconds
         maxFrameSize = 1024 * 1024
@@ -40,32 +42,14 @@ fun Application.configureSockets(innerApplicationChannel: Channel<InnerApplicati
     }
 
     routing {
-        ws(innerApplicationChannel)
-        serverWs(innerApplicationChannel)
+        ws(innerApplicationFlow)
+        serverWs(innerApplicationFlow)
     }
-}
-
-class SocketContentConverterSender<M>(
-    private val channel: SendChannel<Frame>,
-    private val converter: WebsocketContentConverter,
-    private val typeInfo: TypeInfo,
-) {
-    suspend fun send(message: M) {
-        channel.send(
-            converter.serialize(
-                charset = Charsets.UTF_8,
-                typeInfo = typeInfo,
-                value = message,
-            )
-        )
-    }
-
-    fun close(cause: Throwable? = null): Boolean = channel.close(cause)
 }
 
 val alphaNumericRegex by lazy { Regex("^[a-zA-Z0-9_]*$") }
 
-private fun Routing.ws(innerApplicationChannel: Channel<InnerApplicationMessage>) {
+private fun Routing.ws(innerApplicationFlow: MutableSharedFlow<InnerApplicationMessage>) {
     webSocket("/ws") {
         val name = call.request.queryParameters["name"]?.trim() ?: throw IllegalArgumentException("No name provided")
         if (name.length > 15 || name.length < 3) {
@@ -80,19 +64,33 @@ private fun Routing.ws(innerApplicationChannel: Channel<InnerApplicationMessage>
 
         println("Player $name connected")
 
-        val channel = SocketContentConverterSender<OutboundMessage>(
-            channel = outgoing,
-            converter = converter!!,
-            typeInfo = TypeInfo(OutboundMessage::class),
-        )
+        val messageResponseFlow = MutableSharedFlow<OutboundMessage>()
+        val sharedFlow = messageResponseFlow.asSharedFlow()
+
+        val job = launch {
+            sharedFlow.collect { message ->
+                if (message is OutboundMessage.Disconnect) {
+                    close(CloseReason(CloseReason.Codes.NORMAL, "Player disconnected"))
+                    return@collect
+                }
+
+                send(
+                    converter!!.serialize(
+                        charset = Charsets.UTF_8,
+                        typeInfo = TypeInfo(OutboundMessage::class),
+                        value = message,
+                    )
+                )
+            }
+        }
 
         val completable = CompletableDeferred<Result<SessionId>>()
 
         println("Player $name sending off join request...")
-        innerApplicationChannel.send(
+        innerApplicationFlow.emit(
             InnerApplicationMessage.PlayerJoin(
                 playerName = name,
-                channel = channel,
+                flow = messageResponseFlow,
                 completable = completable,
             )
         )
@@ -119,27 +117,42 @@ private fun Routing.ws(innerApplicationChannel: Channel<InnerApplicationMessage>
                 ) as? InboundMessage ?: return@consumeEach
 
                 //@formatter:off
-                innerApplicationChannel.send(InnerApplicationMessage.PlayerInboundMessageInner(sessionId, message))
+                innerApplicationFlow.emit(InnerApplicationMessage.PlayerInboundMessageInner(sessionId, message))
                 //@formatter:on
             }
         }.onFailure { exception ->
             println("WebSocket exception: ${exception.message}")
         }.also {
+            job.cancel()
+            try {
+                innerApplicationFlow.emit(InnerApplicationMessage.PlayerDisconnect(name, sessionId))
+            } catch (_: Throwable) {
+                /* ignored */
+            }
+
             println("player $name disconnect $sessionId")
-            innerApplicationChannel.send(InnerApplicationMessage.PlayerDisconnect(name, sessionId))
         }
     }
 }
 
-private fun Routing.serverWs(innerApplicationChannel: Channel<InnerApplicationMessage>) {
+private fun Routing.serverWs(innerApplicationFlow: MutableSharedFlow<InnerApplicationMessage>) {
     webSocket("/server-ws") {
-        val channel = SocketContentConverterSender<ServerOutboundMessage>(
-            channel = outgoing,
-            converter = converter!!,
-            typeInfo = TypeInfo(ServerOutboundMessage::class),
-        )
+        val messageResponseFlow = MutableSharedFlow<ServerOutboundMessage>()
+        val sharedFlow = messageResponseFlow.asSharedFlow()
 
-        innerApplicationChannel.send(InnerApplicationMessage.NewServerConnection(channel))
+        val job = launch {
+            sharedFlow.collect { message ->
+                send(
+                    converter!!.serialize(
+                        charset = Charsets.UTF_8,
+                        typeInfo = TypeInfo(ServerOutboundMessage::class),
+                        value = message,
+                    )
+                )
+            }
+        }
+
+        innerApplicationFlow.emit(InnerApplicationMessage.NewServerConnection(messageResponseFlow))
 
         runCatching {
             incoming.consumeEach { frame ->
@@ -151,12 +164,19 @@ private fun Routing.serverWs(innerApplicationChannel: Channel<InnerApplicationMe
                     content = frame,
                 ) as? ServerInboundMessage ?: return@consumeEach
 
-                innerApplicationChannel.send(InnerApplicationMessage.ServerInboundMessageInner(message))
+                innerApplicationFlow.emit(InnerApplicationMessage.ServerInboundMessageInner(message))
             }
         }.onFailure { exception ->
             println("WebSocket exception: ${exception.message}")
         }.also {
-            innerApplicationChannel.send(InnerApplicationMessage.NewServerConnection(null))
+            job.cancel()
+
+            try {
+                innerApplicationFlow.emit(InnerApplicationMessage.NewServerConnection(null))
+            } catch (_: Throwable) {
+                /* ignored */
+            }
+
             println("server disconnect")
         }
     }

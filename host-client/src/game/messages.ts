@@ -21,4 +21,5 @@ export type ServerOutboundMessage =
 export type ServerInboundMessage =
     { type: 'update_game_state', game_state: GameState } |
     { type: 'error', error: FalseIdolsError } |
-    { type: 'policy_peeking' };
+    { type: 'policy_peeking' } |
+    { type: 'shutdown' };

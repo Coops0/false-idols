@@ -1,7 +1,6 @@
 package com.cooper.game
 
 import com.cooper.FalseIdolsError
-import com.cooper.SocketContentConverterSender
 import com.cooper.game.processor.ServerInboundMessageProcessorAction
 import com.cooper.game.processor.handlePlayerInboundApplicationMessage
 import com.cooper.game.processor.handleServerInboundApplicationMessage
@@ -11,7 +10,8 @@ import com.cooper.message.OutboundMessage.StrippedPlayer.Companion.stripped
 import com.cooper.message.server.ServerInboundMessage
 import com.cooper.message.server.ServerOutboundMessage
 import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import java.util.*
 
 sealed class InnerApplicationMessage {
@@ -22,15 +22,15 @@ sealed class InnerApplicationMessage {
 
     class PlayerJoin(
         val playerName: PlayerName,
-        val channel: SocketContentConverterSender<OutboundMessage>,
-        /// One-shot channel to receive player's connection session ID or join error
+        val flow: MutableSharedFlow<OutboundMessage>,
+        /// Completable to receive player's connection session ID or join error
         val completable: CompletableDeferred<Result<SessionId>>
     ) : InnerApplicationMessage()
 
     class PlayerDisconnect(val playerName: PlayerName, val sessionId: SessionId) :
             InnerApplicationMessage()
 
-    class NewServerConnection(val server: SocketContentConverterSender<ServerOutboundMessage>?) :
+    class NewServerConnection(val server: MutableSharedFlow<ServerOutboundMessage>?) :
             InnerApplicationMessage()
 
     class Shutdown(val completable: CompletableDeferred<Unit>) : InnerApplicationMessage()
@@ -38,13 +38,13 @@ sealed class InnerApplicationMessage {
 
 class GameOverThrowable(val winner: SimpleRole, val reason: GameState.GameOver.Reason) : Throwable()
 
-suspend fun gameActor(innerApplicationChannel: Channel<InnerApplicationMessage>) {
+suspend fun gameActor(innerApplicationFlow: SharedFlow<InnerApplicationMessage>) {
     var gameState: GameState = GameState.Lobby(null)
 
-    for (message in innerApplicationChannel) {
+    innerApplicationFlow.collect { message ->
         when (message) {
             is InnerApplicationMessage.PlayerInboundMessageInner -> {
-                val player = gameState.getBySessionId(message.sessionId) ?: continue
+                val player = gameState.getBySessionId(message.sessionId) ?: return@collect
 
                 //@formatter:off
                 try {
@@ -81,7 +81,7 @@ suspend fun gameActor(innerApplicationChannel: Channel<InnerApplicationMessage>)
                 when (action) {
                     ServerInboundMessageProcessorAction.START_GAME -> {
                         gameState = (gameState as GameState.Lobby).toGameInProgress()
-                        gameState.sendPlayerRoles()
+                        (gameState as GameState.GameInProgress).sendPlayerRoles()
                     }
 
                     ServerInboundMessageProcessorAction.BACK_TO_LOBBY -> {
@@ -102,34 +102,30 @@ suspend fun gameActor(innerApplicationChannel: Channel<InnerApplicationMessage>)
             is InnerApplicationMessage.Shutdown -> {
                 try {
                     gameState.players.forEach { player -> player.disconnectAll(OutboundMessage.Disconnect.DisconnectionReason.SERVER_SHUTDOWN) }
-                    gameState.server?.close()
+                    gameState.server?.emit(ServerOutboundMessage.Shutdown())
                     gameState.server = null
-                    innerApplicationChannel.close()
                 } finally {
                     message.completable.complete(Unit)
                 }
-                break
+                // We should be cancelled
+                return@collect
             }
         }
 
         // if it is ping, no change -> no need to resend state
         if (
             (message is InnerApplicationMessage.PlayerInboundMessageInner && message.inboundMessage is InboundMessage.Ping) ||
-            (message is InnerApplicationMessage.ServerInboundMessageInner && message.serverInboundMessage is ServerInboundMessage.Ping) ||
-            // Or if it's a shutdown
-            (message is InnerApplicationMessage.Shutdown)
+            (message is InnerApplicationMessage.ServerInboundMessageInner && message.serverInboundMessage is ServerInboundMessage.Ping)
         ) {
-            continue
+            return@collect
         }
 
         gameState.sendServer(ServerOutboundMessage.UpdateGameState(gameState))
     }
-
-    println("Game actor channel closed")
 }
 
 private suspend fun GameState.handlePlayerJoin(message: InnerApplicationMessage.PlayerJoin) {
-    val channel = message.channel
+    val flow = message.flow
     val existingPlayer = this[message.playerName]
 
     val sessionId = UUID.randomUUID()
@@ -137,13 +133,13 @@ private suspend fun GameState.handlePlayerJoin(message: InnerApplicationMessage.
     println("player ${message.playerName} joined with session ID $sessionId (existing: ${existingPlayer != null})")
 
     if (existingPlayer != null) {
-        existingPlayer.connect(sessionId, channel)
+        existingPlayer.connect(sessionId, flow)
         // If player already exists, send them (important) queued messages
-        existingPlayer.queue.forEach { channel.send(it) }
+        existingPlayer.queue.forEach { flow.emit(it) }
         message.completable.complete(Result.success(sessionId))
 
         // And also send them their icon
-        channel.send(OutboundMessage.AssignIcon(existingPlayer.icon))
+        flow.emit(OutboundMessage.AssignIcon(existingPlayer.icon))
         return
     }
 
@@ -154,11 +150,11 @@ private suspend fun GameState.handlePlayerJoin(message: InnerApplicationMessage.
 
     val playerIcon = PlayerIcon[this.players.size]
 
-    val player = Player(message.playerName, playerIcon, PlayerConnection(sessionId, channel))
+    val player = Player(message.playerName, playerIcon, PlayerConnection(sessionId, flow))
     this.players.add(player)
 
     // Send them their icon
-    channel.send(OutboundMessage.AssignIcon(playerIcon))
+    flow.emit(OutboundMessage.AssignIcon(playerIcon))
 
     message.completable.complete(Result.success(sessionId))
 }
@@ -167,7 +163,7 @@ private suspend fun GameState.handlePlayerDisconnect(message: InnerApplicationMe
     val player = this[message.playerName] ?: return
     player.disconnect(message.sessionId)
 
-    if (this is GameState.Lobby && player.channels.isEmpty()) {
+    if (this is GameState.Lobby && player.flows.isEmpty()) {
         players.remove(player)
         sendServer(ServerOutboundMessage.UpdateGameState(this))
     }
@@ -213,5 +209,5 @@ private fun GameState.GameInProgress.generateAssignRoleMessage(player: GamePlaye
 }
 
 suspend fun GameState.GameInProgress.sendPlayerRoles() {
-    players.forEach { player -> player.send(this.generateAssignRoleMessage(player), significant = true) }
+    players.forEach { player -> player.emit(this.generateAssignRoleMessage(player), significant = true) }
 }

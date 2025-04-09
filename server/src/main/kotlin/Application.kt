@@ -12,19 +12,19 @@ import io.ktor.server.plugins.compression.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
-import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.ClosedSendChannelException
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlin.time.Duration.Companion.seconds
 
 fun main(): Unit = runBlocking {
-    val innerApplicationChannel = Channel<InnerApplicationMessage>()
+    val innerApplicationFlow = MutableSharedFlow<InnerApplicationMessage>()
+    val innerApplicationSharedFlow = innerApplicationFlow.asSharedFlow()
 
     val server =
-        embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = { module(innerApplicationChannel) })
+        embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = { module(innerApplicationFlow) })
 
-    launch { gameActor(innerApplicationChannel) }
+    val job = launch { gameActor(innerApplicationSharedFlow) }
 
     server.addShutdownHook {
         println("Shutting down...")
@@ -32,15 +32,23 @@ fun main(): Unit = runBlocking {
             val completable = CompletableDeferred<Unit>()
 
             try {
-                innerApplicationChannel.send(InnerApplicationMessage.Shutdown(completable))
-            } catch (_: ClosedSendChannelException) {
-                println("Channel already closed")
+                innerApplicationFlow.emit(InnerApplicationMessage.Shutdown(completable))
+            } catch (_: Throwable) {
                 return@block
             }
 
             println("Waiting for shutdown to complete")
-            completable.await()
+
+            try {
+                withTimeout(5.seconds) {
+                    completable.await()
+                }
+            } catch (_: TimeoutCancellationException) {
+                println("Shutdown timed out")
+            }
         }
+
+        job.cancel()
 
         println("Shut down successful")
     }
@@ -83,7 +91,7 @@ val SecurityPolicyPlugin = createApplicationPlugin(name = "SecurityPolicyPlugin"
     }
 }
 
-fun Application.module(innerApplicationChannel: Channel<InnerApplicationMessage>) {
+fun Application.module(innerApplicationFlow: MutableSharedFlow<InnerApplicationMessage>) {
     if (developmentMode) {
         log.info("Disabled CORS")
         install(DisableCorsPlugin)
@@ -102,6 +110,6 @@ fun Application.module(innerApplicationChannel: Channel<InnerApplicationMessage>
         }
     }
 
-    configureSockets(innerApplicationChannel)
+    configureSockets(innerApplicationFlow)
     configureRouting()
 }
