@@ -77,7 +77,7 @@ val SecurityPolicyPlugin = createApplicationPlugin(name = "SecurityPolicyPlugin"
         if (call.request.uri == "/host") {
             call.response.header(
                 "Permissions-Policy",
-                """screen-wake-lock=(self https://false-idols.cooperhanessian.com)"""
+                "screen-wake-lock=(self)"
             )
         }
     }

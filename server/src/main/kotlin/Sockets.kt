@@ -24,8 +24,7 @@ import kotlin.time.Duration.Companion.seconds
 
 fun Application.configureSockets(innerApplicationChannel: Channel<InnerApplicationMessage>) {
     install(WebSockets) {
-        pingPeriod = 15.seconds
-        timeout = Duration.INFINITE
+        timeout = 15.seconds
         maxFrameSize = 1024 * 1024
         masking = false
 
@@ -126,6 +125,7 @@ private fun Routing.ws(innerApplicationChannel: Channel<InnerApplicationMessage>
         }.onFailure { exception ->
             println("WebSocket exception: ${exception.message}")
         }.also {
+            println("player $name disconnect $sessionId")
             innerApplicationChannel.send(InnerApplicationMessage.PlayerDisconnect(name, sessionId))
         }
     }
@@ -155,6 +155,9 @@ private fun Routing.serverWs(innerApplicationChannel: Channel<InnerApplicationMe
             }
         }.onFailure { exception ->
             println("WebSocket exception: ${exception.message}")
+        }.also {
+            innerApplicationChannel.send(InnerApplicationMessage.NewServerConnection(null))
+            println("server disconnect")
         }
     }
 }

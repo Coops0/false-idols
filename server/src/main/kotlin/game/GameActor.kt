@@ -30,7 +30,7 @@ sealed class InnerApplicationMessage {
     class PlayerDisconnect(val playerName: PlayerName, val sessionId: SessionId) :
             InnerApplicationMessage()
 
-    class NewServerConnection(val server: SocketContentConverterSender<ServerOutboundMessage>) :
+    class NewServerConnection(val server: SocketContentConverterSender<ServerOutboundMessage>?) :
             InnerApplicationMessage()
 
     class Shutdown(val completable: CompletableDeferred<Unit>) : InnerApplicationMessage()
