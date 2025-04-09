@@ -17,6 +17,7 @@ const val SMALL_GAME_PLAYER_SIZE = 6
 sealed class GameState(val type: String) {
     @get:JsonIgnore abstract var server: MutableSharedFlow<ServerOutboundMessage>?
     abstract val players: List<Player>
+    var playerIconIndex = 0
 
     suspend fun sendServer(message: ServerOutboundMessage) {
         try {
