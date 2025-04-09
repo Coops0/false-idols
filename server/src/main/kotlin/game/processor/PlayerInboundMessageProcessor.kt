@@ -10,11 +10,18 @@ import com.cooper.message.OutboundMessage
 suspend fun GameState.handlePlayerInboundApplicationMessage(playerName: PlayerName, message: InboundMessage) {
     if (message is InboundMessage.Ping) {
         val player = this[playerName]!!
-        if (message.requestIcon) {
-            this[playerName]?.emit(OutboundMessage.AssignIcon(player.icon))
+
+        val sendState = message.isIdle &&
+                player.queue.isNotEmpty() &&
+                this is GameState.GameInProgress &&
+                this.innerGameState.type !== "idle"
+
+
+        if (message.requestIcon || sendState) {
+            player.emit(OutboundMessage.AssignIcon(player.icon))
         }
 
-        if (message.isIdle && player.queue.isNotEmpty()) {
+        if (sendState) {
             player.queue.forEach { player.emit(it) }
         }
         return
