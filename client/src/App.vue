@@ -1,5 +1,6 @@
 <template>
   <div class="h-[calc(100vh-64px)] w-full overflow-hidden">
+    <PreloadImages v-if="canPreloadImages"/>
     <div class="size-full flex flex-col gap-y-4 justify-center items-center p-4">
       <ErrorMessage :message="error"/>
       <Transition name="fade" mode="out-in">
@@ -67,19 +68,19 @@ import ViewInvestigationResultsScreen from '@/components/screen/ViewInvestigatio
 import PresidentDiscardCardScreen from '@/components/screen/PresidentDiscardCardScreen.vue';
 import AdvisorChooseCardScreen from '@/components/screen/AdvisorChooseCardScreen.vue';
 import PolicyPeekScreen from '@/components/screen/PolicyPeekScreen.vue';
-import { preloadImages } from '@/util/preload-images.util.ts';
 import type { IconType } from '@/game/player-icon.ts';
+import PreloadImages from '@/components/PreloadImages.vue';
 
 const playerName = ref<string>('');
 const playerIcon = ref<IconType | null>(null);
 const error = ref<string>('');
 // Weirdness with websockets and get function properties not triggering a rerender on connection
 const manualIsConnected = ref(false);
-
 const ws = new WebsocketOwner(playerName, handleMessage, shouldRequestIcon, manualIsConnected);
 const game = ref<Game | null>(null);
 
 const canShowLogin = ref<boolean>(false);
+const canPreloadImages = ref(false);
 
 onMounted(() => {
   (async function () {
@@ -90,9 +91,9 @@ onMounted(() => {
     } else {
       canShowLogin.value = true;
     }
-  })();
 
-  setTimeout(() => preloadImages());
+    setTimeout(() => (canPreloadImages.value = true), 1500);
+  })();
 });
 
 async function tryToConnect() {

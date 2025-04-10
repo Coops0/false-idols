@@ -1,5 +1,6 @@
 <template>
   <div class="w-full h-screen overflow-hidden">
+    <PreloadImages/>
     <div class="mx-auto h-full flex flex-col">
       <div class="relative flex-1">
         <div v-if="game === null" class="flex items-center justify-center h-full">
@@ -40,8 +41,8 @@ import GameOverScreen from '@/components/screens/GameOverScreen.vue';
 import KeybindDisplay from '@/components/ui/KeybindDisplay.vue';
 import { useLocalStorage } from '@/util/use-local-storage.ts';
 import { toast } from 'vue3-toastify';
-import { preloadImages } from '@/util/preload-images.util.ts';
 import { setupWakeLock } from '@/util/wake-lock.util.ts';
+import PreloadImages from '@/components/PreloadImages.vue';
 
 const ws = new WebsocketOwner(onMessage, shouldRequestState);
 const game = ref<GameState | null>(null);
@@ -99,7 +100,6 @@ onMounted(() => {
   ws.connect();
 
   document.addEventListener('keydown', onKeyPress);
-  setTimeout(() => preloadImages());
 });
 
 onUnmounted(() => document.removeEventListener('keydown', onKeyPress));
