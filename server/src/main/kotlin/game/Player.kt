@@ -21,9 +21,6 @@ open class Player(
     val icon: PlayerIcon,
     @JsonIgnore val flows: MutableList<PlayerConnection>
 ) {
-    /// These messages are important enough to re-send on any future reconnection
-    @JsonIgnore val queue = mutableListOf<OutboundMessage>()
-
     constructor(name: PlayerName, icon: PlayerIcon, connection: PlayerConnection) :
             this(name, icon, mutableListOf(connection))
 
@@ -44,17 +41,8 @@ open class Player(
         flows.removeIf { it.sessionId == sessionId }
     }
 
-    suspend fun emit(message: OutboundMessage, significant: Boolean = false) {
-        if (significant) {
-            queue.add(message)
-        }
-
-
+    suspend fun emit(message: OutboundMessage) {
         flows.forEach { it.flow.emit(message) }
-    }
-
-    fun clearQueue() {
-        queue.clear()
     }
 }
 

@@ -11,6 +11,7 @@
         />
         <IdleScreen
             :player-icon
+            :connected="manualIsConnected"
             v-else-if="game === null || game.state.type === 'idle'"
         />
         <RoleConfirmationScreen
@@ -45,7 +46,7 @@
             :game
             @confirm="confirmPolicyPeek"
         />
-        <IdleScreen :player-icon v-else/>
+        <IdleScreen :connected="manualIsConnected" :player-icon v-else/>
       </Transition>
     </div>
   </div>

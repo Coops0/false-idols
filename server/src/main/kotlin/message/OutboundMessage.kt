@@ -16,7 +16,7 @@ sealed class OutboundMessage(val type: String) {
         val satan: StrippedPlayer? = null,
 
         /// If small game then satan knows who the demons are
-        isSmallGame: Boolean = false
+        val isSmallGame: Boolean = false
     ) : OutboundMessage("assign_role")
 
     /// Sent to a player to request an action choice
@@ -34,7 +34,7 @@ sealed class OutboundMessage(val type: String) {
             name: PlayerName,
             icon: PlayerIcon,
             val investigatable: Boolean,
-            val electable: Boolean
+            var electable: Boolean
         ) : StrippedPlayer(name, icon) {
             companion object {
                 fun fromGamePlayer(playersSize: Int, player: GamePlayer): ActionSupplementedPlayer {

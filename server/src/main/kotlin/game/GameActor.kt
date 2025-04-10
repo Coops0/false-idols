@@ -4,6 +4,7 @@ import com.cooper.FalseIdolsError
 import com.cooper.game.processor.ServerInboundMessageProcessorAction
 import com.cooper.game.processor.handlePlayerInboundApplicationMessage
 import com.cooper.game.processor.handleServerInboundApplicationMessage
+import com.cooper.game.processor.playerMessageFromState
 import com.cooper.message.InboundMessage
 import com.cooper.message.OutboundMessage
 import com.cooper.message.OutboundMessage.StrippedPlayer.Companion.stripped
@@ -137,8 +138,14 @@ private suspend fun GameState.handlePlayerJoin(message: InnerApplicationMessage.
 
         flow.emit(OutboundMessage.AssignIcon(existingPlayer.icon))
 
-        // If player already exists, send them (important) queued messages
-        existingPlayer.queue.forEach { flow.emit(it) }
+        // If player already exists, send them any important messages
+        if (this is GameState.GameInProgress) {
+            val playerMessage = this.playerMessageFromState(existingPlayer as GamePlayer)
+            if (playerMessage != null) {
+                flow.emit(playerMessage)
+            }
+        }
+
         message.completable.complete(Result.success(sessionId))
         return
     }
@@ -150,19 +157,19 @@ private suspend fun GameState.handlePlayerJoin(message: InnerApplicationMessage.
 
     // Players can reconnect causing icon weirdness.
     // Just try to find the first least used icon, this should still maintain default order.
-    val playerIcon = this.players
-        .groupingBy { player -> player.icon }
-        .eachCount()
-        .minByOrNull { (_, count) -> count }
-        ?.key ?: PlayerIcon.entries[0]
+    val playerIcon = PlayerIcon.entries
+        .minByOrNull { icon -> this.players.count { p -> p.icon == icon } }
+        ?: PlayerIcon.entries[0]
+
+    println("${this.players.size} -> $playerIcon")
 
     val player = Player(message.playerName, playerIcon, PlayerConnection(sessionId, flow))
     this.players.add(player)
 
+    message.completable.complete(Result.success(sessionId))
+
     // Send them their icon
     flow.emit(OutboundMessage.AssignIcon(playerIcon))
-
-    message.completable.complete(Result.success(sessionId))
 }
 
 private fun GameState.handlePlayerDisconnect(message: InnerApplicationMessage.PlayerDisconnect) {
@@ -209,5 +216,5 @@ private fun GameState.GameInProgress.generateAssignRoleMessage(player: GamePlaye
 }
 
 suspend fun GameState.GameInProgress.sendPlayerRoles() {
-    players.forEach { player -> player.emit(this.generateAssignRoleMessage(player), significant = true) }
+    players.forEach { player -> player.emit(this.generateAssignRoleMessage(player)) }
 }

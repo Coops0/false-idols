@@ -34,7 +34,7 @@
     </template>
 
     <template
-        v-if="game.type === 'game_in_progress' && game.inner_game_state.type === 'awaiting_president_election_outcome'">
+        v-if="game.type === 'game_in_progress' && (game.inner_game_state.type === 'awaiting_president_election_outcome' || game.inner_game_state.type === 'awaiting_advisor_election_outcome')">
       <div class="flex items-center gap-2">
         <CustomKbd>Enter</CustomKbd>
         <span class="text-gray-300">or</span>

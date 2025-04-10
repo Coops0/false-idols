@@ -1,32 +1,33 @@
 <template>
   <div class="size-full flex flex-col items-center justify-center text-center">
+    <Transition name="fade" mode="out-in">
+      <div v-if="!gameState.hasConfirmed" class="flex flex-col items-center">
+        <p class="text-gray-600">You are about to see if {{ gameState.player.name }} is a demon or angel.</p>
+        <p class="text-gray-700 font-semibold">You cannot show this screen to anyone.</p>
 
-    <template v-if="!gameState.hasConfirmed">
-      <p class="text-gray-600">You are about to see if {{ gameState.player.name }} is a demon or angel.</p>
-      <p class="text-gray-700 font-semibold">You cannot show this screen to anyone.</p>
-
-      <BaseButton class="mt-14" variant="primary" @click="() => emit('confirm')">
-        Okay
-      </BaseButton>
-    </template>
-
-    <template v-else>
-      <div>
-        <PlayerPreview
-            :icon-variant="gameState.role === Role.DEMON ? 'demon' : 'angel'"
-            :player="gameState.player"
-        />
-        <p class="mt-4 text-3xl font-bold" :class="gameState.role === Role.DEMON ? 'text-red-500' : 'text-blue-400'">
-          {{ roleName(gameState.role).toUpperCase() }}
-        </p>
+        <BaseButton class="mt-14" variant="primary" @click="() => emit('confirm')">
+          Okay
+        </BaseButton>
       </div>
 
-      <p class="mt-14 text-xs text-gray-800 font-bold">You cannot show anyone this screen</p>
+      <div v-else class="flex flex-col items-center">
+        <div>
+          <PlayerPreview
+              :icon-variant="gameState.role === Role.DEMON ? 'demon' : 'angel'"
+              :player="gameState.player"
+          />
+          <p class="mt-4 text-3xl font-bold" :class="gameState.role === Role.DEMON ? 'text-red-500' : 'text-blue-400'">
+            {{ roleName(gameState.role).toUpperCase() }}
+          </p>
+        </div>
 
-      <BaseButton class="mt-8" variant="primary" @click="() => emit('confirm')">
-        Continue
-      </BaseButton>
-    </template>
+        <p class="mt-14 text-xs text-gray-800 font-bold">You cannot show anyone this screen</p>
+
+        <BaseButton class="mt-8" variant="primary" @click="() => emit('confirm')">
+          Continue
+        </BaseButton>
+      </div>
+    </Transition>
   </div>
 </template>
 

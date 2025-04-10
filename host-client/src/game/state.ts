@@ -51,8 +51,8 @@ export type CardDeck = {
 export enum ActionChoice {
     INVESTIGATE = 'INVESTIGATE',
     KILL = 'KILL',
-    NOMINATE = 'ELECT',
-    NOMINATE_PRESIDENT = 'ELECT_PRESIDENT',
+    NOMINATE = 'NOMINATE',
+    NOMINATE_PRESIDENT = 'NOMINATE_PRESIDENT',
 }
 
 export type IdleInnerGameState = { type: 'idle' };

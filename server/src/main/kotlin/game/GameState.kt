@@ -38,8 +38,8 @@ sealed class GameState(val type: String) {
         }
     }
 
-    suspend fun emit(playerName: PlayerName, message: OutboundMessage, significant: Boolean = false) {
-        this[playerName]?.emit(message, significant)
+    suspend fun emit(playerName: PlayerName, message: OutboundMessage) {
+        this[playerName]?.emit(message)
     }
 
     class Lobby(

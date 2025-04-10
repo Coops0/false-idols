@@ -1,6 +1,7 @@
 package com.cooper.game.processor
 
 import com.cooper.game.GameOverThrowable
+import com.cooper.game.GamePlayer
 import com.cooper.game.GameState
 import com.cooper.game.PlayerName
 import com.cooper.message.InboundMessage
@@ -12,7 +13,6 @@ suspend fun GameState.handlePlayerInboundApplicationMessage(playerName: PlayerNa
         val player = this[playerName]!!
 
         val sendState = message.isIdle &&
-                player.queue.isNotEmpty() &&
                 this is GameState.GameInProgress &&
                 this.innerGameState.type !== "idle"
 
@@ -21,8 +21,12 @@ suspend fun GameState.handlePlayerInboundApplicationMessage(playerName: PlayerNa
             player.emit(OutboundMessage.AssignIcon(player.icon))
         }
 
-        if (sendState) {
-            player.queue.forEach { player.emit(it) }
+        // this will always be game in progress, but kotlin is too dumb to know that!!!
+        if (sendState && this is GameState.GameInProgress) {
+            val playerMessage = this.playerMessageFromState(player as GamePlayer)
+            if (playerMessage != null) {
+                player.emit(playerMessage)
+            }
         }
         return
     }

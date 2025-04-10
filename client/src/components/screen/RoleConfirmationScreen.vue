@@ -1,67 +1,68 @@
 <template>
   <div class="size-full flex flex-col items-center justify-center text-center">
+    <Transition name="fade" mode="out-in">
+      <div v-if="!gameState.hasConfirmed" class="flex flex-col items-center">
+        <p class="text-lg text-gray-600">You are about to see your secret role.</p>
+        <p class="text-lg text-gray-700 font-semibold">Ensure nobody else can see your screen.</p>
 
-    <template v-if="!gameState.hasConfirmed">
-      <p class="text-lg text-gray-600">You are about to see your secret role.</p>
-      <p class="text-lg text-gray-700 font-semibold">Ensure nobody else can see your screen.</p>
-
-      <BaseButton class="mt-14" variant="primary" @click="() => emit('confirm')">
-        Okay
-      </BaseButton>
-    </template>
-
-    <template v-else>
-      <div>
-        <PlayerPreview
-            :icon-variant="roleToVariant(game.role)"
-            :player="{ name: playerName, icon: playerIcon! }"
-        />
-        <p class="text-4xl font-black mt-4" :class="game.role === Role.ANGEL ? 'text-blue-500' : 'text-red-500'">
-          {{ roleName(game.role) }}</p>
+        <BaseButton class="mt-14" variant="primary" @click="() => emit('confirm')">
+          Okay
+        </BaseButton>
       </div>
 
-      <div class="mt-6 text-center gap-y-4">
-        <div class="gap-y-3">
-          <p v-if="game.role === Role.ANGEL" class="text-gray-700 text-sm">
-            Play positive cards and try to eliminate all demons.
-          </p>
-
-          <div v-else-if="game.role === Role.DEMON">
-            <p class="text-gray-700 text-xs">Subtly work together with the other demons and Satan to kill angels and
-              play negative cards.</p>
-            <p class="mt-4 font-medium text-sm text-gray-700">
-              {{ gameState.isSmallGame ? 'Satan knows who you are.' : 'Satan does not know who the demons are.' }}</p>
-          </div>
-
-          <div v-else>
-            <p class="text-gray-700 text-xs">Try to subtly work together with the other demons to pass negative cards,
-              and kill angels.</p>
-            <p class="mt-4 font-bold text-red-600 text-sm">If you die, the game ends immediately.</p>
-          </div>
+      <div v-else class="flex flex-col items-center">
+        <div>
+          <PlayerPreview
+              :icon-variant="roleToVariant(game.role)"
+              :player="{ name: playerName, icon: playerIcon! }"
+          />
+          <p class="text-4xl font-black mt-4" :class="game.role === Role.ANGEL ? 'text-blue-500' : 'text-red-500'">
+            {{ roleName(game.role) }}</p>
         </div>
 
-        <div v-if="gameState.demons?.length || gameState.satan" class="mt-10">
-          <p class="text-lg mb-4 font-semibold text-gray-800">Your Team</p>
+        <div class="mt-6 text-center gap-y-4">
+          <div class="gap-y-3">
+            <p v-if="game.role === Role.ANGEL" class="text-gray-700 text-sm">
+              Play positive cards and try to eliminate all demons.
+            </p>
 
-          <ul class="flex size-full flex-row flex-wrap justify-evenly gap-4">
-            <li v-if="gameState.satan">
-              <PlayerPreview :player="gameState.satan" icon-variant="satan"/>
-              <p class="mt-4 text-xl font-bold text-red-500">SATAN</p>
-            </li>
-            <li v-for="demon in gameState.demons">
-              <PlayerPreview :player="demon" icon-variant="demon"/>
-              <p class="mt-4 text-xl font-bold text-red-500">DEMON</p>
-            </li>
-          </ul>
+            <div v-else-if="game.role === Role.DEMON">
+              <p class="text-gray-700 text-xs">Subtly work together with the other demons and Satan to kill angels and
+                play negative cards.</p>
+              <p class="mt-4 font-medium text-sm text-gray-700">
+                {{ gameState.isSmallGame ? 'Satan knows who you are.' : 'Satan does not know who the demons are.' }}</p>
+            </div>
+
+            <div v-else>
+              <p class="text-gray-700 text-xs">Try to subtly work together with the other demons to pass negative cards,
+                and kill angels.</p>
+              <p class="mt-4 font-bold text-red-600 text-sm">If you die, the game ends immediately.</p>
+            </div>
+          </div>
+
+          <div v-if="gameState.demons?.length || gameState.satan" class="mt-10">
+            <p class="text-lg mb-4 font-semibold text-gray-800">Your Team</p>
+
+            <ul class="flex size-full flex-row flex-wrap justify-evenly gap-4">
+              <li v-if="gameState.satan">
+                <PlayerPreview :player="gameState.satan" icon-variant="satan"/>
+                <p class="mt-4 text-xl font-bold text-red-500">Satan</p>
+              </li>
+              <li v-for="demon in gameState.demons">
+                <PlayerPreview :player="demon" icon-variant="demon"/>
+                <p class="mt-4 text-xl font-bold text-red-500">Demon</p>
+              </li>
+            </ul>
+          </div>
+
+          <p v-else-if="demonsText !== null" class="text-gray-700 text-sm">{{ demonsText }}</p>
         </div>
 
-        <p v-else-if="demonsText !== null" class="text-gray-700 text-sm">{{ demonsText }}</p>
+        <BaseButton class="mt-14" variant="primary" @click="() => emit('confirm')">
+          Continue
+        </BaseButton>
       </div>
-
-      <BaseButton class="mt-14" variant="primary" @click="() => emit('confirm')">
-        Continue
-      </BaseButton>
-    </template>
+    </Transition>
   </div>
 </template>
 

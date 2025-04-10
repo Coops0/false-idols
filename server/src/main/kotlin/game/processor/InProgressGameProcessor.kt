@@ -3,14 +3,13 @@ package com.cooper.game.processor
 import com.cooper.game.*
 import com.cooper.game.SimpleRole.Companion.simple
 import com.cooper.message.OutboundMessage
+import com.cooper.message.OutboundMessage.RequestActionChoice.ActionSupplementedPlayer
 import com.cooper.message.OutboundMessage.StrippedPlayer.Companion.stripped
 import com.cooper.message.server.ServerOutboundMessage
 
 suspend fun GameState.GameInProgress.rotatePresident() {
     val igs = this.innerGameState
     val wasInitialWaitPeriod = igs is InnerGameState.Idle && igs.initialWaitPeriod
-
-    this.players.forEach(GamePlayer::clearQueue)
 
     val newPresident = if (wasInitialWaitPeriod) {
         // President has already been randomly assigned
@@ -54,14 +53,13 @@ suspend fun GameState.GameInProgress.requestPresidentAction() {
 
     val playersSize = this.players.size
     val actionablePlayers = this.alive.filter { it != this.president }
-        .map { OutboundMessage.RequestActionChoice.ActionSupplementedPlayer.fromGamePlayer(playersSize, it) }
+        .map { ActionSupplementedPlayer.fromGamePlayer(playersSize, it) }
 
     this.president.emit(
         OutboundMessage.RequestActionChoice(
             action = ActionChoice.NOMINATE,
             players = actionablePlayers,
-        ),
-        significant = true
+        )
     )
 }
 
@@ -102,7 +100,6 @@ fun GameState.GameInProgress.checkGameOverConditions() {
 
 fun GameState.GameInProgress.idle() {
     this.innerGameState = InnerGameState.Idle()
-    this.players.forEach(Player::clearQueue)
 }
 
 suspend fun GameState.GameInProgress.handlePlayerActionChoice(aggressor: GamePlayer, targetName: PlayerName) {
@@ -124,7 +121,7 @@ suspend fun GameState.GameInProgress.handlePlayerActionChoice(aggressor: GamePla
             target.isInvestigated = true
 
             this.innerGameState = InnerGameState.AwaitingInvestigationAnalysis(targetName)
-            aggressor.emit(OutboundMessage.InvestigationResult(target.stripped, target.role.simple), significant = true)
+            aggressor.emit(OutboundMessage.InvestigationResult(target.stripped, target.role.simple))
         }
 
         ActionChoice.KILL -> {
@@ -173,14 +170,12 @@ suspend fun GameState.GameInProgress.handlePresidentDiscardCard(player: GamePlay
     val newCards = cards.filter { it.id != cardId }
     this.innerGameState = InnerGameState.AwaitingAdvisorCardChoice(newCards, advisorName)
 
-    this.president.clearQueue()
-
     val advisor = this[advisorName]!!
     advisor.emit(
         OutboundMessage.RequestAdvisorCardChoice(
             cards = newCards,
             vetoable = this.deck.negativeCardsPlayed >= NEGATIVE_CARD_COUNT_VETO
-        ), significant = true
+        )
     )
 }
 
@@ -234,7 +229,7 @@ suspend fun GameState.GameInProgress.handleNegativeCardAction(): Boolean {
     // Policy peek
     if (action == null) {
         val cards = this.deck.cardStack.take(3)
-        this.president.emit(OutboundMessage.PolicyPeek(cards), significant = true)
+        this.president.emit(OutboundMessage.PolicyPeek(cards))
         this.sendServer(ServerOutboundMessage.PolicyPeeking())
         return false
     }
@@ -246,15 +241,15 @@ suspend fun GameState.GameInProgress.handleNegativeCardAction(): Boolean {
             action,
             players = this.alive.filter { it != this.president }
                 .map { p ->
-                    OutboundMessage.RequestActionChoice.ActionSupplementedPlayer(
+                    ActionSupplementedPlayer(
                         name = p.name,
                         icon = p.icon,
                         investigatable = !p.isInvestigated,
                         /// Presidential electable bypasses any prior restrictions
                         electable = true
                     )
-                }),
-        significant = true
+                }
+        )
     )
 
     return true
@@ -268,7 +263,7 @@ suspend fun GameState.GameInProgress.passAdvisorElection(advisor: GamePlayer) {
 
     this.checkGameOverConditions()
 
-    this.president.emit(OutboundMessage.RequestPresidentCardDiscard(cards), significant = true)
+    this.president.emit(OutboundMessage.RequestPresidentCardDiscard(cards))
 }
 
 fun GameState.GameInProgress.failAdvisorElection() {
@@ -280,4 +275,58 @@ fun GameState.GameInProgress.failAdvisorElection() {
     } else {
         this.idle()
     }
+}
+
+fun GameState.GameInProgress.playerMessageFromState(player: GamePlayer): OutboundMessage? {
+    when (val igs = this.innerGameState) {
+        is InnerGameState.AwaitingPresidentElectionResolution -> {}
+        is InnerGameState.AwaitingAdvisorElectionResolution -> {}
+        is InnerGameState.Idle -> {}
+
+        is InnerGameState.AwaitingAdvisorCardChoice -> {
+            if (igs.advisorName == player.name) {
+                return OutboundMessage.RequestAdvisorCardChoice(
+                    cards = igs.cards,
+                    vetoable = this.deck.negativeCardsPlayed >= NEGATIVE_CARD_COUNT_VETO
+                )
+            }
+        }
+
+        is InnerGameState.AwaitingInvestigationAnalysis -> {
+            if (this.president == player) {
+                val target = this[igs.target] ?: return null
+                return OutboundMessage.InvestigationResult(target.stripped, target.role.simple)
+            }
+        }
+
+        is InnerGameState.AwaitingPresidentActionChoice -> {
+            if (this.president != player) {
+                return null
+            }
+
+            val actionSupplementedPlayers = this.alive
+                .filter { it != this.president }
+                .map { p ->
+                    val asp = ActionSupplementedPlayer.fromGamePlayer(this.players.size, p)
+                    if (igs.forced) {
+                        asp.electable = true
+                    }
+
+                    return@map asp
+                }
+
+            return OutboundMessage.RequestActionChoice(
+                action = igs.action,
+                players = actionSupplementedPlayers
+            )
+        }
+
+        is InnerGameState.AwaitingPresidentCardDiscard -> {
+            if (this.president == player) {
+                return OutboundMessage.RequestPresidentCardDiscard(igs.cards)
+            }
+        }
+    }
+
+    return null
 }

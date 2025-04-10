@@ -23,9 +23,11 @@ class CardDeck {
 
     init {
         // get the largest possible deck size
-        for (i in 17..1000) {
+        for (i in 3..1000) {
             originalCards = generateCards(i) ?: break
         }
+
+        require(originalCards.isNotEmpty()) { "No cards found to generate a deck" }
 
         cardStack.addAll(originalCards)
     }
@@ -280,5 +282,25 @@ val cards = listOf(
         description = "Dentist all day",
         consequence = Card.Consequence.NEGATIVE
     ),
+    Card(
+        id = 39,
+        description = "Noah Wagner would you rather",
+        consequence = Card.Consequence.NEGATIVE
+    ),
+    Card(
+        id = 40,
+        description = "Drake fan",
+        consequence = Card.Consequence.NEGATIVE
+    ),
+    Card(
+        id = 41,
+        description = "Android phone",
+        consequence = Card.Consequence.NEGATIVE
+    ),
+    Card(
+        id = 42,
+        description = "positive card",
+        consequence = Card.Consequence.NEGATIVE
+    )
 )
 // </editor-fold>
