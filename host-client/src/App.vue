@@ -33,14 +33,7 @@
 import { WebsocketOwner } from '@/game/websocket-owner.ts';
 import type { ServerInboundMessage, ServerOutboundMessage } from '@/game/messages.ts';
 import { onMounted, onUnmounted, ref } from 'vue';
-import {
-  type AwaitingInvestigationAnalysisInnerGameState,
-  type AwaitingPresidentActionChoiceInnerGameState,
-  CardConsequence,
-  type GameOverGameState,
-  type GameState,
-  type InProgressGameState
-} from '@/game/state.ts';
+import { type GameState } from '@/game/state.ts';
 import LobbyScreen from '@/components/screens/LobbyScreen.vue';
 import InProgressScreen from '@/components/screens/InProgressScreen.vue';
 import GameOverScreen from '@/components/screens/GameOverScreen.vue';
@@ -137,122 +130,6 @@ function onKeyPress(event: KeyboardEvent) {
     return;
   }
 
-  if (key === 'altleft' || key === 'altright') {
-    event.preventDefault();
-    document.body.classList.toggle('no-cursor');
-    return;
-  }
-
-  if (key === 'l') {
-    game.value = <InProgressGameState>{
-      type: 'game_in_progress',
-      inner_game_state: <AwaitingPresidentActionChoiceInnerGameState>{
-        type: 'awaiting_president_action_choice',
-        action: 'KILL'
-      },
-      players: [
-        {
-          name: 'Dog',
-          role: 'ANGEL',
-          icon: 'bear',
-          was_advisor_last_round: false,
-          was_president_last_round: false,
-          is_president: true,
-          is_alive: true
-        },
-        {
-          name: 'Cat',
-          role: 'SATAN',
-          icon: 'panda',
-          was_advisor_last_round: false,
-          was_president_last_round: false,
-          is_president: false,
-          is_alive: true
-        },
-        {
-          name: 'Fish',
-          role: 'DEMON',
-          icon: 'pig',
-          was_advisor_last_round: false,
-          was_president_last_round: false,
-          is_president: false,
-          is_alive: true
-        },
-        {
-          name: 'Bird',
-          role: 'ANGEL',
-          icon: 'mouse',
-          was_advisor_last_round: false,
-          was_president_last_round: false,
-          is_president: false,
-          is_alive: true
-        }
-      ],
-      deck: {
-        played_cards: [{
-          consequence: CardConsequence.POSITIVE,
-          id: 1,
-          description: 'Card 1 woohoo'
-        },
-          {
-            consequence: CardConsequence.NEGATIVE,
-            id: 2,
-            description: 'Card 2 boohoo'
-          },
-          {
-            consequence: CardConsequence.POSITIVE,
-            id: 3,
-            description: 'Card 3 woohoo'
-          },
-          {
-            consequence: CardConsequence.NEGATIVE,
-            id: 4,
-            description: 'Card 4 boohoo'
-          }],
-        card_stack: []
-      },
-      failed_elections: 1
-    };
-    return;
-  }
-
-  if (key === 'o') {
-    game.value = <GameOverGameState>{
-      type: 'game_over',
-      winner: 'ANGELS',
-      reason: 'SATAN_KILLED',
-      players: [{
-        name: 'Dog',
-        icon: 'bear'
-      },
-        {
-          name: 'Cat',
-          icon: 'panda'
-        },
-        {
-          name: 'Fish',
-          icon: 'pig'
-        },
-        {
-          name: 'Bird',
-          icon: 'mouse'
-        }],
-      demons: ['Fish', 'Dog', 'Bird', 'Cat'],
-      satan: 'Cat',
-    };
-    return;
-  }
-
-  if (key === 'k') {
-    const s = { ...game.value } as InProgressGameState;
-    s.inner_game_state = <AwaitingInvestigationAnalysisInnerGameState>{
-      type: 'awaiting_investigation_analysis',
-      target: 'Dog',
-    };
-    game.value = s;
-    return;
-  }
-
   const s = (message: ServerOutboundMessage) => {
     ws.send(message);
     event.preventDefault();
@@ -307,10 +184,6 @@ function kick(playerName: string) {
 <style>
 body {
   background-color: var(--color-gray-50);
-}
-
-.no-cursor {
-  cursor: none;
 }
 
 .fade-enter-active,

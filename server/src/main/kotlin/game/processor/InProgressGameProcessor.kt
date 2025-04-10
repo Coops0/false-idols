@@ -51,9 +51,8 @@ suspend fun GameState.GameInProgress.requestPresidentAction() {
         action = ActionChoice.NOMINATE
     )
 
-    val playersSize = this.players.size
     val actionablePlayers = this.alive.filter { it != this.president }
-        .map { ActionSupplementedPlayer.fromGamePlayer(playersSize, it) }
+        .map(this::playerToActionSupplementedPlayer)
 
     this.president.emit(
         OutboundMessage.RequestActionChoice(
@@ -241,13 +240,8 @@ suspend fun GameState.GameInProgress.handleNegativeCardAction(): Boolean {
             action,
             players = this.alive.filter { it != this.president }
                 .map { p ->
-                    ActionSupplementedPlayer(
-                        name = p.name,
-                        icon = p.icon,
-                        investigatable = !p.isInvestigated,
-                        /// Presidential electable bypasses any prior restrictions
-                        electable = true
-                    )
+                    /// Presidential electable bypasses any prior restrictions
+                    this.playerToActionSupplementedPlayer(p, bypassElection = true)
                 }
         )
     )
@@ -306,14 +300,7 @@ fun GameState.GameInProgress.playerMessageFromState(player: GamePlayer): Outboun
 
             val actionSupplementedPlayers = this.alive
                 .filter { it != this.president }
-                .map { p ->
-                    val asp = ActionSupplementedPlayer.fromGamePlayer(this.players.size, p)
-                    if (igs.forced) {
-                        asp.electable = true
-                    }
-
-                    return@map asp
-                }
+                .map { p -> playerToActionSupplementedPlayer(p, bypassElection = igs.forced) }
 
             return OutboundMessage.RequestActionChoice(
                 action = igs.action,
@@ -329,4 +316,22 @@ fun GameState.GameInProgress.playerMessageFromState(player: GamePlayer): Outboun
     }
 
     return null
+}
+
+fun GameState.GameInProgress.playerToActionSupplementedPlayer(
+    player: GamePlayer,
+    bypassElection: Boolean = false
+): ActionSupplementedPlayer {
+    val electable = bypassElection || if (this.isSmallGame) {
+        !player.wasAdvisorLastRound
+    } else {
+        (!player.wasPresidentLastRound && !player.wasAdvisorLastRound)
+    }
+
+    return ActionSupplementedPlayer(
+        player.name,
+        player.icon,
+        !player.isInvestigated,
+        electable
+    )
 }

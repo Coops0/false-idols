@@ -35,25 +35,7 @@ sealed class OutboundMessage(val type: String) {
             icon: PlayerIcon,
             val investigatable: Boolean,
             var electable: Boolean
-        ) : StrippedPlayer(name, icon) {
-            companion object {
-                fun fromGamePlayer(playersSize: Int, player: GamePlayer): ActionSupplementedPlayer {
-                    val electable = if (playersSize <= 5) {
-                        // if player size <= 5, then we only care if they were advisor last round
-                        !player.wasAdvisorLastRound
-                    } else {
-                        (!player.wasPresidentLastRound && !player.wasAdvisorLastRound)
-                    }
-
-                    return ActionSupplementedPlayer(
-                        player.name,
-                        player.icon,
-                        !player.isInvestigated,
-                        electable
-                    )
-                }
-            }
-        }
+        ) : StrippedPlayer(name, icon)
     }
 
     /// Sent to president when they must discard a card

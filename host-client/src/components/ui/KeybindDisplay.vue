@@ -10,11 +10,6 @@
       <span class="text-gray-300">Fullscreen</span>
     </div>
 
-    <div class="flex items-center gap-2">
-      <CustomKbd>Alt</CustomKbd>
-      <span class="text-gray-300">Cursor</span>
-    </div>
-
     <template v-if="game.type === 'lobby'">
       <div class="flex items-center gap-2">
         <CustomKbd>Enter</CustomKbd>
