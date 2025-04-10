@@ -59,9 +59,9 @@ watch(() => props.game, (game, oldGame) => {
 
   if (newNegativeCards >= NEGATIVE_CARD_COUNT_SATAN_ELECTION_WIN && oldNegativeCards < NEGATIVE_CARD_COUNT_SATAN_ELECTION_WIN) {
     toast('Demons will win if Satan is elected as advisor', {
+      position: toast.POSITION.TOP_RIGHT,
       type: toast.TYPE.WARNING,
-      autoClose: 5000,
-      position: toast.POSITION.BOTTOM_RIGHT
+      autoClose: 5000
     });
   }
 });

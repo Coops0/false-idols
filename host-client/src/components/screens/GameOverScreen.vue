@@ -45,7 +45,7 @@ const reasonText = computed(() => {
     case 'ALL_ANGELS_DEAD':
       return 'All angels were killed';
     case 'SATAN_ELECTED_ADVISOR_LATE_GAME':
-      return 'Satan was elected when the score was too low';
+      return 'Satan was elected after enough negative cards were played';
     case 'SATAN_KILLED':
       return 'Satan was killed';
   }

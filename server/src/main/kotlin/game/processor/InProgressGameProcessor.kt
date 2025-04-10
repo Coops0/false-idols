@@ -134,11 +134,12 @@ suspend fun GameState.GameInProgress.handlePlayerActionChoice(aggressor: GamePla
         }
 
         ActionChoice.NOMINATE -> {
-            if (this.players.size > 5) {
-                require(!target.wasPresidentLastRound && !target.wasAdvisorLastRound) { "Target must not have been president or advisor last round" }
-            } else {
+            if (this.isSmallGame) {
                 require(!target.wasAdvisorLastRound) { "Target must not have been advisor last round" }
+            } else {
+                require(!target.wasPresidentLastRound && !target.wasAdvisorLastRound) { "Target must not have been president or advisor last round" }
             }
+
             this.innerGameState = InnerGameState.AwaitingAdvisorElectionResolution(
                 nominee = target.name
             )
