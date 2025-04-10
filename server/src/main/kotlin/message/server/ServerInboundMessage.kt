@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
 )
 @JsonSubTypes(
     JsonSubTypes.Type(value = ServerInboundMessage.ResetPlayers::class, name = "reset_players"),
+    JsonSubTypes.Type(value = ServerInboundMessage.Kick::class, name = "kick"),
     JsonSubTypes.Type(value = ServerInboundMessage.StartGame::class, name = "start_game"),
     JsonSubTypes.Type(value = ServerInboundMessage.ResolveElection::class, name = "resolve_election"),
     JsonSubTypes.Type(value = ServerInboundMessage.Skip::class, name = "skip"),
@@ -18,6 +19,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
 )
 sealed class ServerInboundMessage {
     class ResetPlayers : ServerInboundMessage()
+
+    class Kick(val playerName: String) : ServerInboundMessage()
 
     class StartGame : ServerInboundMessage()
 

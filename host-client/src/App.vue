@@ -11,7 +11,7 @@
 
         <Transition v-else mode="out-in" name="fade">
           <template v-if="game.type === 'lobby'">
-            <LobbyScreen :game/>
+            <LobbyScreen :game @kick="playerName => kick(playerName)"/>
           </template>
           <template v-else-if="game.type === 'game_in_progress'">
             <InProgressScreen :game/>
@@ -297,6 +297,10 @@ function onKeyPress(event: KeyboardEvent) {
       }
       break;
   }
+}
+
+function kick(playerName: string) {
+  ws.send({ type: 'kick', player_name: playerName });
 }
 </script>
 

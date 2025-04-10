@@ -10,6 +10,7 @@ export type FalseIdolsError = {
 
 export type ServerOutboundMessage =
     { type: 'reset_players' } |
+    { type: 'kick', player_name: string } |
     { type: 'start_game' } |
     { type: 'resolve_election', passed: boolean } |
     { type: 'skip' } |

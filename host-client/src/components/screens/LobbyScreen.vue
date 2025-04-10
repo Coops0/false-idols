@@ -15,7 +15,13 @@
 
     <div class="flex-grow m-3">
       <div class="w-full flex flex-row gap-x-14 gap-y-7">
-        <PlayerPreview v-for="player in game.players" :key="player.name" :player size="lg"/>
+        <PlayerPreview
+            v-for="player in game.players"
+            :key="player.name"
+            :player
+            @click="() => emit('kick', player.name)"
+            size="lg"
+        />
       </div>
     </div>
   </div>
@@ -28,6 +34,8 @@ import PlayerPreview from '@/components/ui/PlayerPreview.vue';
 import { QrcodeSvg } from 'qrcode.vue';
 
 defineProps<{ game: LobbyGameState }>();
+const emit = defineEmits<{ kick: [playerName: string] }>();
+
 const domain = computed(() => {
   if (!window.location) return 'LOADING';
   return `${window.location.protocol}//${window.location.host}`;

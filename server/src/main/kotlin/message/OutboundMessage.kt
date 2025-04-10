@@ -84,6 +84,7 @@ sealed class OutboundMessage(val type: String) {
         enum class DisconnectionReason {
             HOST_RESET_PLAYERS,
             SERVER_SHUTDOWN,
+            KICKED,
         }
     }
 

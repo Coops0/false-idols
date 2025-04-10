@@ -20,6 +20,16 @@ suspend fun GameState.handleServerInboundApplicationMessage(message: ServerInbou
             }
         }
 
+        is ServerInboundMessage.Kick -> {
+            require(this is GameState.Lobby) { "Must be in lobby to kick a player" }
+
+            val player = this.players.firstOrNull { it.name == message.playerName }
+                ?: throw IllegalArgumentException("Player not found")
+
+            player.disconnectAll(OutboundMessage.Disconnect.DisconnectionReason.KICKED)
+            this.players.remove(player)
+        }
+
         is ServerInboundMessage.StartGame -> {
             require(this is GameState.Lobby) { "Game must be in lobby to start" }
             require(this.players.size >= 4) { "Must have at least 4 players to start a game" }

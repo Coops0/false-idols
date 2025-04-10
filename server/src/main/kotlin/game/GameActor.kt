@@ -148,7 +148,13 @@ private suspend fun GameState.handlePlayerJoin(message: InnerApplicationMessage.
         return
     }
 
-    val playerIcon = PlayerIcon[playerIconIndex++]
+    // Players can reconnect causing icon weirdness.
+    // Just try to find the first least used icon, this should still maintain default order.
+    val playerIcon = this.players
+        .groupingBy { player -> player.icon }
+        .eachCount()
+        .minByOrNull { (_, count) -> count }
+        ?.key ?: PlayerIcon.entries[0]
 
     val player = Player(message.playerName, playerIcon, PlayerConnection(sessionId, flow))
     this.players.add(player)
@@ -159,14 +165,8 @@ private suspend fun GameState.handlePlayerJoin(message: InnerApplicationMessage.
     message.completable.complete(Result.success(sessionId))
 }
 
-private suspend fun GameState.handlePlayerDisconnect(message: InnerApplicationMessage.PlayerDisconnect) {
-    val player = this[message.playerName] ?: return
-    player.disconnect(message.sessionId)
-
-    if (this is GameState.Lobby && player.flows.isEmpty()) {
-        players.remove(player)
-        sendServer(ServerOutboundMessage.UpdateGameState(this))
-    }
+private fun GameState.handlePlayerDisconnect(message: InnerApplicationMessage.PlayerDisconnect) {
+    this[message.playerName]?.disconnect(message.sessionId)
 }
 
 private fun GameState.GameInProgress.generateAssignRoleMessage(player: GamePlayer): OutboundMessage.AssignRole {
