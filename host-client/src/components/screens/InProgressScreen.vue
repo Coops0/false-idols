@@ -50,7 +50,7 @@ const props = defineProps<{ game: InProgressGameState }>();
 
 const negativeCards = (deck: CardDeck) => deck.played_cards.filter(card => card.consequence === CardConsequence.NEGATIVE).length;
 
-const NEGATIVE_CARD_COUNT_SATAN_ELECTION_WIN = 3;
+const NEGATIVE_CARD_COUNT_SATAN_ELECTION_WIN = 4;
 watch(() => props.game, (game, oldGame) => {
   if (!oldGame || !game) return;
 

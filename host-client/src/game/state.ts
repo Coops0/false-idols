@@ -104,7 +104,7 @@ export type InProgressGameState = {
 export type GameOverGameState = {
     type: 'game_over';
     players: Player[];
-    winner: 'ANGELS' | 'DEMONS';
+    winner: 'ANGEL' | 'DEMON';
     satan: string;
     demons: string[];
     reason: 'SATAN_KILLED' | 'SATAN_ELECTED_ADVISOR_LATE_GAME' | 'POSITIVE_THRESHOLD_REACHED' | 'NEGATIVE_THRESHOLD_REACHED' | 'ALL_ANGELS_DEAD';

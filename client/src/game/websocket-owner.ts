@@ -10,13 +10,13 @@ export class WebsocketOwner {
     private lastConnectionAttempt: number = 0;
     private hasEverBeenConnected: boolean = false;
     private wasManuallyDisconnectedLast: boolean = false;
+
     // private initialMessageBuffer: MessageEvent[] = [];
 
     constructor(
         private readonly name: Ref<string>,
         private readonly messageCallback: (message: InboundMessage) => void,
         private readonly shouldRequestIcon: () => boolean,
-        private readonly isIdle: () => boolean,
         private readonly manualIsConnected: Ref<boolean>
     ) {
         const self = this;
@@ -29,7 +29,7 @@ export class WebsocketOwner {
             }
         });
 
-        setInterval(() => self.send({ type: 'ping', request_icon: shouldRequestIcon(), is_idle: isIdle() }), 2000);
+        setInterval(() => self.ping(), 2000);
     }
 
     get isConnected() {
@@ -53,14 +53,6 @@ export class WebsocketOwner {
             const resolveOnOpen = (event: MessageEvent) => {
                 this.hasEverBeenConnected = true;
 
-                const message = JSON.parse(event.data) as InboundMessage;
-                // This should be the first immediate message received
-                if (message.type !== 'assign_icon') {
-                    console.warn('Got initial message not of type assign icon', message);
-                    // self.initialMessageBuffer.push(event);
-                    // return;
-                }
-
                 self.manualIsConnected.value = true;
 
                 // Remove our temporary initial event listeners
@@ -75,12 +67,10 @@ export class WebsocketOwner {
 
                 resolve();
 
+                this.ping();
+
                 // Finally fall back to real message handling
                 self.handleMessage(event);
-
-                // Any other messages in the buffer we also send through
-                // self.initialMessageBuffer.forEach(event => self.handleMessage(event));
-                // self.initialMessageBuffer = [];
             };
 
             self.ws = new WebSocket(`${__WS_HOST__}/ws?name=${this.name.value}`);
@@ -126,6 +116,10 @@ export class WebsocketOwner {
             }
             this.ws.send(JSON.stringify(message));
         }
+    }
+
+    ping() {
+        this.send({ type: 'ping', request_icon: this.shouldRequestIcon() });
     }
 
     disconnect() {

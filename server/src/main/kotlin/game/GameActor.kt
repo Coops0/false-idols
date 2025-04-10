@@ -136,6 +136,8 @@ private suspend fun GameState.handlePlayerJoin(message: InnerApplicationMessage.
     if (existingPlayer != null) {
         existingPlayer.connect(sessionId, flow)
 
+        message.completable.complete(Result.success(sessionId))
+
         flow.emit(OutboundMessage.AssignIcon(existingPlayer.icon))
 
         // If player already exists, send them any important messages
@@ -145,8 +147,6 @@ private suspend fun GameState.handlePlayerJoin(message: InnerApplicationMessage.
                 flow.emit(playerMessage)
             }
         }
-
-        message.completable.complete(Result.success(sessionId))
         return
     }
 
@@ -160,8 +160,6 @@ private suspend fun GameState.handlePlayerJoin(message: InnerApplicationMessage.
     val playerIcon = PlayerIcon.entries
         .minByOrNull { icon -> this.players.count { p -> p.icon == icon } }
         ?: PlayerIcon.entries[0]
-
-    println("${this.players.size} -> $playerIcon")
 
     val player = Player(message.playerName, playerIcon, PlayerConnection(sessionId, flow))
     this.players.add(player)

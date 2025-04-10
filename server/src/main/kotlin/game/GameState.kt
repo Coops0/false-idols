@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 const val POSITIVE_CARD_COUNT_WIN = 5
 const val NEGATIVE_CARD_COUNT_WIN = 6
 
-const val NEGATIVE_CARD_COUNT_SATAN_ELECTION_WIN = 3
+const val NEGATIVE_CARD_COUNT_SATAN_ELECTION_WIN = 4
 const val NEGATIVE_CARD_COUNT_VETO = 5
 
 const val FAILED_ELECTIONS_CHAOS = 4
@@ -117,7 +117,7 @@ sealed class GameState(val type: String) {
     class GameOver(
         override var server: MutableSharedFlow<ServerOutboundMessage>?,
         override val players: MutableList<Player>,
-        val winner: PlayerName,
+        val winner: String,
         val satan: PlayerName,
         val demons: List<PlayerName>,
         val reason: Reason

@@ -76,7 +76,7 @@ const error = ref<string>('');
 // Weirdness with websockets and get function properties not triggering a rerender on connection
 const manualIsConnected = ref(false);
 
-const ws = new WebsocketOwner(playerName, handleMessage, shouldRequestIcon, isIdle, manualIsConnected);
+const ws = new WebsocketOwner(playerName, handleMessage, shouldRequestIcon, manualIsConnected);
 const game = ref<Game | null>(null);
 
 const canShowLogin = ref<boolean>(false);
@@ -165,10 +165,6 @@ function handleMessage(message: InboundMessage) {
 
 function shouldRequestIcon(): boolean {
   return playerIcon.value === null;
-}
-
-function isIdle(): boolean {
-  return game.value === null || game.value.state.type === 'idle';
 }
 
 function confirmRole() {

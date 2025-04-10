@@ -52,7 +52,7 @@ export type OutboundMessage =
     { type: 'discard_one_card', card_id: number } |
     /// As advisor, which card we pick to play.
     { type: 'choose_card', card_id: number } |
-    { type: 'ping', request_icon?: boolean, is_idle?: boolean };
+    { type: 'ping', request_icon?: boolean };
 
 
 //@formatter:off

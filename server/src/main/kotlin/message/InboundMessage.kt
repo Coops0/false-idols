@@ -27,5 +27,5 @@ sealed class InboundMessage {
     /// Advisor picks one of two cards to play
     class ChooseCard(val cardId: CardId) : InboundMessage()
 
-    class Ping(val requestIcon: Boolean = false, val isIdle: Boolean = false) : InboundMessage()
+    class Ping(val requestIcon: Boolean = false) : InboundMessage()
 }

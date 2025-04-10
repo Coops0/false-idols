@@ -1,7 +1,6 @@
 package com.cooper.game.processor
 
 import com.cooper.game.GameOverThrowable
-import com.cooper.game.GamePlayer
 import com.cooper.game.GameState
 import com.cooper.game.PlayerName
 import com.cooper.message.InboundMessage
@@ -12,20 +11,8 @@ suspend fun GameState.handlePlayerInboundApplicationMessage(playerName: PlayerNa
     if (message is InboundMessage.Ping) {
         val player = this[playerName]!!
 
-        val sendState = message.isIdle &&
-                this is GameState.GameInProgress &&
-                this.innerGameState.type !== "idle"
-
-
-        if (message.requestIcon || sendState) {
+        if (message.requestIcon) {
             player.emit(OutboundMessage.AssignIcon(player.icon))
-        }
-
-        if (sendState) {
-            val playerMessage = this.playerMessageFromState(player as GamePlayer)
-            if (playerMessage != null) {
-                player.emit(playerMessage)
-            }
         }
         return
     }

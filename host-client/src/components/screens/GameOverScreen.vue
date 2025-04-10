@@ -2,9 +2,9 @@
   <div class="h-full flex flex-col m-2 gap-2">
     <div class="flex items-center justify-center">
       <div class="text-center">
-        <h1 :class="game.winner === 'ANGELS' ? 'text-blue-600' : 'text-red-600'"
+        <h1 :class="game.winner === 'ANGEL' ? 'text-blue-600' : 'text-red-600'"
             class="text-9xl font-amazonia font-black mb-2">
-          {{ game.winner === 'ANGELS' ? 'ANGELS WIN' : 'DEMONS WIN' }}
+          {{ game.winner === 'ANGEL' ? 'ANGELS WIN' : 'DEMONS WIN' }}
         </h1>
         <p class="text-lg font-amazonia text-gray-800 font-bold">{{ reasonText }}</p>
       </div>
@@ -20,7 +20,7 @@
 
       <div v-if="demons.length" class="flex flex-col gap-4 basis-1/2">
         <p class="text-4xl font-amazonia font-semibold text-red-600 text-right">Demons</p>
-        <div class="flex flex-row flex-wrap items-center basis-full justify-between">
+        <div class="flex flex-row flex-wrap items-center basis-full justify-end">
           <PlayerPreview v-for="player in demons" :key="player.name" class="relative" :player icon-variant="demon"
                          ignore-modifiers size="xl"/>
         </div>

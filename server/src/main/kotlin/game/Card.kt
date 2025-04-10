@@ -73,9 +73,9 @@ private fun generateCards(deckSize: Int): List<Card>? {
     val negativeCount = (deckSize * NEGATIVE_RATIO).toInt()
     val neutralCount = deckSize - positiveCount - negativeCount
 
-    if (positiveCount <= positiveCards.size) return null
-    if (negativeCount <= negativeCards.size) return null
-    if (neutralCount <= neutralCards.size) return null
+    if (positiveCount > positiveCards.size) return null
+    if (negativeCount > negativeCards.size) return null
+    if (neutralCount > neutralCards.size) return null
 
     return listOf(
         *positiveCards.shuffled().take(positiveCount).toTypedArray(),
