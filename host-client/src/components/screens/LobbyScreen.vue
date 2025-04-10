@@ -5,8 +5,8 @@
         <h1 class="text-9xl font-amazonia font-black text-gray-900 mb-4">False Idols</h1>
         <div class="inline-block">
           <QrcodeSvg
-              :value="`${domain}/ok`"
               :size="150"
+              :value="`${domain}/ok`"
               level="L"
           />
         </div>
@@ -19,8 +19,8 @@
             v-for="player in game.players"
             :key="player.name"
             :player
-            @click="() => emit('kick', player.name)"
             size="lg"
+            @click="() => emit('kick', player.name)"
         />
       </div>
     </div>

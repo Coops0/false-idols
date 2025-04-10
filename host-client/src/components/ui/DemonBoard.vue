@@ -1,24 +1,24 @@
 <template>
   <div class="relative w-full">
-    <img class="object-scale-down" :src="boardImage" ref="demonBoardImageEl"/>
+    <img ref="demonBoardImageEl" :src="boardImage" class="object-scale-down"/>
     <GameCardTransition>
       <PlayedGameCard
           v-for="(card, index) in negativeCards"
           :key="index"
           :card
-          class="absolute"
           :font-size
           :style="{
             top: `${topOffset}px`,
             left: `${leftOffset.initial + (leftOffset.offset * index)}px`,
             width: `${cardWidth}px`
         }"
+          class="absolute"
       />
     </GameCardTransition>
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { computed, useTemplateRef } from 'vue';
 import Board56Image from '@/assets/board/board-demon-5-6.png';
 import Board78Image from '@/assets/board/board-demon-7-8.png';

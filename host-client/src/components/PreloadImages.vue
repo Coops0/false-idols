@@ -18,7 +18,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import NegativeCard from '@/assets/cards/negative-card.png';
 import PositiveCard from '@/assets/cards/positive-card.png';
 import BoardAngel from '@/assets/board/board-angel.png';

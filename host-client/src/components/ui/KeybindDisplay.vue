@@ -1,5 +1,6 @@
 <template>
-  <div class="bg-gray-900/50 backdrop-blur-sm rounded-xl shadow-lg p-4 text-gray-50 z-20 font-mono flex flex-col gap-y-2 text-xs">
+  <div
+      class="bg-gray-900/50 backdrop-blur-sm rounded-xl shadow-lg p-4 text-gray-50 z-20 font-mono flex flex-col gap-y-2 text-xs">
     <div class="flex items-center gap-2">
       <CustomKbd>H</CustomKbd>
       <span class="text-gray-300">Hide</span>

@@ -14,14 +14,14 @@
       <div class="flex flex-col gap-4 basis-1/2">
         <p class="text-5xl font-amazonia font-bold text-red-500">Satan</p>
         <div class="flex items-center basis-full">
-          <PlayerPreview class="relative" :player="satan" icon-variant="satan" ignore-modifiers size="2xl"/>
+          <PlayerPreview :player="satan" class="relative" icon-variant="satan" ignore-modifiers size="2xl"/>
         </div>
       </div>
 
       <div v-if="demons.length" class="flex flex-col gap-4 basis-1/2">
         <p class="text-4xl font-amazonia font-semibold text-red-600 text-right">Demons</p>
         <div class="flex flex-row flex-wrap items-center basis-full justify-end">
-          <PlayerPreview v-for="player in demons" :key="player.name" class="relative" :player icon-variant="demon"
+          <PlayerPreview v-for="player in demons" :key="player.name" :player class="relative" icon-variant="demon"
                          ignore-modifiers size="xl"/>
         </div>
       </div>

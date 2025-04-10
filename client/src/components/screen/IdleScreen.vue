@@ -4,7 +4,7 @@
     <PlayerPreview v-if="mockPlayer !== null" :player="mockPlayer" hide-name/>
   </div>
 </template>
-<script setup lang="ts">
+<script lang="ts" setup>
 import PlayerPreview from '@/components/ui/PlayerPreview.vue';
 import { computed } from 'vue';
 import type { Player } from '@/game/messages.ts';

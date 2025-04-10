@@ -15,7 +15,8 @@
     </div>
 
     <p class="mt-14 text-xs text-gray-800 font-bold text-center">You cannot show anyone this screen</p>
-    <p v-if="gameState.vetoable" class="mt-4 text-xs text-blue-800 font-bold text-center drop-shadow-red-blue/80 drop-shadow-lg">
+    <p v-if="gameState.vetoable"
+       class="mt-4 text-xs text-blue-800 font-bold text-center drop-shadow-red-blue/80 drop-shadow-lg">
       You may request a veto (out loud), and if the president agrees, all cards will be discarded.
     </p>
   </div>

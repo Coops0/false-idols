@@ -1,14 +1,14 @@
 <template>
   <div class="size-full flex flex-col items-center justify-center gap-y-14">
     <p class="text-xl font-bold text-gray-800 text-center">Choose who to <span
-        class="font-bold" :class="actionColor">{{ actionName }}</span></p>
+        :class="actionColor" class="font-bold">{{ actionName }}</span></p>
 
     <div class="flex flex-row flex-wrap justify-evenly gap-6 w-full">
       <PlayerPreview
           v-for="player in players"
           :key="player.name"
-          :player
           :class="!player.enabled && 'opacity-50'"
+          :player
           @click="() => player.enabled && commitPlayer(player.name)"
       />
     </div>

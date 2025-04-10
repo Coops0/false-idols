@@ -3,7 +3,7 @@
     <PreloadImages v-if="canPreloadImages"/>
     <div class="size-full flex flex-col gap-y-4 justify-center items-center p-4">
       <ErrorMessage :message="error"/>
-      <Transition name="fade" mode="out-in">
+      <Transition mode="out-in" name="fade">
         <LoginScreen
             v-if="canShowLogin && !manualIsConnected"
             v-model="playerName"
@@ -11,9 +11,9 @@
             @join="() => tryToConnect()"
         />
         <IdleScreen
-            :player-icon
-            :connected="manualIsConnected"
             v-else-if="game === null || game.state.type === 'idle'"
+            :connected="manualIsConnected"
+            :player-icon
         />
         <RoleConfirmationScreen
             v-else-if="game.state.type === 'view_role'"
@@ -47,7 +47,7 @@
             :game
             @confirm="confirmPolicyPeek"
         />
-        <IdleScreen :connected="manualIsConnected" :player-icon v-else/>
+        <IdleScreen v-else :connected="manualIsConnected" :player-icon/>
       </Transition>
     </div>
   </div>

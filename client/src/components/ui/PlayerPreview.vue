@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col items-center gap-y-2">
-    <p class="text-lg text-gray-700 truncate font-mono" v-if="!hideName">{{ player.name }}</p>
+    <p v-if="!hideName" class="text-lg text-gray-700 truncate font-mono">{{ player.name }}</p>
     <div class="relative size-14">
       <img
           :alt="`${player.icon} ${iconVariant}`"

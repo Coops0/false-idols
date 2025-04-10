@@ -1,11 +1,10 @@
 <template>
   <div class="relative w-full">
-    <img class="object-scale-down" :src="BoardImage" ref="angelBoardImageEl"/>
+    <img ref="angelBoardImageEl" :src="BoardImage" class="object-scale-down"/>
     <GameCardTransition>
       <PlayedGameCard
           v-for="(card, index) in positiveCards"
           :key="card.id"
-          class="absolute"
           :card
           :font-size
           :style="{
@@ -13,6 +12,7 @@
               left: `${leftOffset.initial + (leftOffset.offset * index)}px`,
               width: `${cardWidth}px`
             }"
+          class="absolute"
       />
     </GameCardTransition>
 
@@ -20,20 +20,20 @@
       <img
           v-for="i in props.failedElections"
           :key="i"
-          class="absolute object-scale-down"
+          :src="FailedElectionTracker"
           :style="{
             top: `${topTrackerOffset}px`,
             left: `${leftTrackerOffset.initial + (leftTrackerOffset.offset * (i - 1))}px`,
             width: `${trackerSize}px`,
             height: `${trackerSize}px`,
         }"
-          :src="FailedElectionTracker"
+          class="absolute object-scale-down"
       />
     </TransitionGroup>
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { computed, useTemplateRef } from 'vue';
 import BoardImage from '@/assets/board/board-angel.png';
 import FailedElectionTracker from '@/assets/board/board-tracker.png';

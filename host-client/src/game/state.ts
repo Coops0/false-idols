@@ -70,7 +70,10 @@ export type AwaitingAdvisorCardChoiceInnerGameState = {
     cards: Card[],
     advisor_name: string
 };
-export type AwaitingAdvisorElectionOutcomeInnerGameState = { type: 'awaiting_advisor_election_outcome', nominee: string };
+export type AwaitingAdvisorElectionOutcomeInnerGameState = {
+    type: 'awaiting_advisor_election_outcome',
+    nominee: string
+};
 export type AwaitingPresidentElectionOutcomeInnerGameState = {
     type: 'awaiting_president_election_outcome',
     nominee: string

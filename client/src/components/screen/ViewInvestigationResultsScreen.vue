@@ -1,6 +1,6 @@
 <template>
   <div class="size-full flex flex-col items-center justify-center text-center">
-    <Transition name="fade" mode="out-in">
+    <Transition mode="out-in" name="fade">
       <div v-if="!gameState.hasConfirmed" class="flex flex-col items-center">
         <p class="text-gray-600">You are about to see if {{ gameState.player.name }} is a demon or angel.</p>
         <p class="text-gray-700 font-semibold">You cannot show this screen to anyone.</p>
@@ -16,7 +16,7 @@
               :icon-variant="gameState.role === Role.DEMON ? 'demon' : 'angel'"
               :player="gameState.player"
           />
-          <p class="mt-4 text-3xl font-bold" :class="gameState.role === Role.DEMON ? 'text-red-500' : 'text-blue-400'">
+          <p :class="gameState.role === Role.DEMON ? 'text-red-500' : 'text-blue-400'" class="mt-4 text-3xl font-bold">
             {{ roleName(gameState.role).toUpperCase() }}
           </p>
         </div>

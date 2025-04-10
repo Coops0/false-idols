@@ -1,6 +1,6 @@
 <template>
   <div class="size-full flex flex-col items-center justify-center text-center">
-    <Transition name="fade" mode="out-in">
+    <Transition mode="out-in" name="fade">
       <div v-if="!gameState.hasConfirmed" class="flex flex-col items-center">
         <p class="text-lg text-gray-600">You are about to see your secret role.</p>
         <p class="text-lg text-gray-700 font-semibold">Ensure nobody else can see your screen.</p>
@@ -16,7 +16,7 @@
               :icon-variant="roleToVariant(game.role)"
               :player="{ name: playerName, icon: playerIcon! }"
           />
-          <p class="text-4xl font-black mt-4" :class="game.role === Role.ANGEL ? 'text-blue-500' : 'text-red-500'">
+          <p :class="game.role === Role.ANGEL ? 'text-blue-500' : 'text-red-500'" class="text-4xl font-black mt-4">
             {{ roleName(game.role) }}</p>
         </div>
 

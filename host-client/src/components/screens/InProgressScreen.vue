@@ -5,7 +5,7 @@
     </div>
 
     <div class="flex flex-auto size-full items-center justify-center">
-      <Transition name="fade" mode="out-in">
+      <Transition mode="out-in" name="fade">
         <!--@formatter:off-->
         <AwaitingAdvisorCardChoiceScreen v-if="game.inner_game_state.type === 'awaiting_advisor_card_choice'" :game/>
         <AwaitingPresidentCardDiscardScreen v-else-if="game.inner_game_state.type === 'awaiting_president_card_discard'" :game/>
@@ -20,8 +20,8 @@
 
     <div class="flex h-auto items-center justify-center">
       <div class="relative justify-center items-center flex flex-row gap-2">
-        <AngelBoard :cards="game.deck.played_cards" :players-size="game.players.length"
-                    :failed-elections="game.failed_elections"/>
+        <AngelBoard :cards="game.deck.played_cards" :failed-elections="game.failed_elections"
+                    :players-size="game.players.length"/>
         <DemonBoard :cards="game.deck.played_cards" :players-size="game.players.length"/>
       </div>
     </div>
