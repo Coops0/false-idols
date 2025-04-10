@@ -21,8 +21,7 @@ suspend fun GameState.handlePlayerInboundApplicationMessage(playerName: PlayerNa
             player.emit(OutboundMessage.AssignIcon(player.icon))
         }
 
-        // this will always be game in progress, but kotlin is too dumb to know that!!!
-        if (sendState && this is GameState.GameInProgress) {
+        if (sendState) {
             val playerMessage = this.playerMessageFromState(player as GamePlayer)
             if (playerMessage != null) {
                 player.emit(playerMessage)

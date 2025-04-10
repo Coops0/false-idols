@@ -1,6 +1,5 @@
 package com.cooper.message
 
-import com.cooper.game.ActionChoice
 import com.cooper.game.CardId
 import com.cooper.game.PlayerName
 import com.fasterxml.jackson.annotation.JsonSubTypes

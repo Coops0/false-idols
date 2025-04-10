@@ -1,6 +1,5 @@
 package com.cooper.game
 
-import com.cooper.message.OutboundMessage
 import com.cooper.message.server.ServerOutboundMessage
 import com.fasterxml.jackson.annotation.JsonIgnore
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -36,10 +35,6 @@ sealed class GameState(val type: String) {
                 flow.sessionId == sessionId
             }
         }
-    }
-
-    suspend fun emit(playerName: PlayerName, message: OutboundMessage) {
-        this[playerName]?.emit(message)
     }
 
     class Lobby(
