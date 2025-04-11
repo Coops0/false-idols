@@ -12,11 +12,7 @@ export const ICONS = [
 ] as const;
 
 export class PlayerIcon {
-    private static hasPreloadedIcons = false;
-
-    //@formatter:off
     private constructor() {}
-    //@formatter:on
 
     static normal(icon: string): string {
         return PlayerIcon.normalize(icon);

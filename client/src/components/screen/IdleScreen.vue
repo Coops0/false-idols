@@ -1,7 +1,9 @@
 <template>
   <div class="size-full flex flex-col gap-1 items-center justify-center">
-    <p v-if="connected" class="text-gray-400 text-sm text-center">(connected)</p>
-    <PlayerPreview v-if="mockPlayer !== null" :player="mockPlayer" hide-name/>
+    <p :class="!connected && 'opacity-0'" class="text-gray-400 text-sm text-center">(connected)</p>
+    <div class="size-14">
+      <PlayerPreview v-if="mockPlayer !== null" :player="mockPlayer" hide-name/>
+    </div>
   </div>
 </template>
 <script lang="ts" setup>

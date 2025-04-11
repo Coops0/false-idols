@@ -14,11 +14,7 @@ export const ICONS = [
 export type IconType = typeof ICONS[number];
 
 export class PlayerIcon {
-    private static hasPreloadedIcons = false;
-
-    //@formatter:off
     private constructor() {}
-    //@formatter:on
 
     static normal(icon: IconType): string {
         return PlayerIcon.normalize(icon);

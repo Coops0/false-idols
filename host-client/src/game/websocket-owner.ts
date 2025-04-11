@@ -17,7 +17,7 @@ export class WebsocketOwner {
 
     async connect() {
         this.ws = new WebSocket(`${__WS_HOST__}/server-ws`);
-        this.ws.addEventListener('message', this.onMessage);
+        this.ws.onmessage = event => this.onMessage(event);
     }
 
     send(message: ServerOutboundMessage) {
@@ -35,8 +35,8 @@ export class WebsocketOwner {
         }
     }
 
-    private onMessage = (event: MessageEvent) => {
+    private onMessage(event: MessageEvent) {
         const message = JSON.parse(event.data) as ServerInboundMessage;
         this.onMessageCallback(message);
-    };
+    }
 }

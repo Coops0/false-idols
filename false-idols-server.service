@@ -7,8 +7,8 @@ WorkingDirectory=/usr/local/bin/
 
 ExecStart=/usr/local/java/jdk-23.0.2/bin/java -jar /usr/local/bin/false-idols-server.jar
 
-StandardOutput=append:/root/false-idols-server.log
-StandardError=append:/root/false-idols-server-error.log
+StandardOutput=file:/root/false-idols-server.log
+StandardError=file:/root/false-idols-server-error.log
 
 [Install]
 WantedBy=default.target

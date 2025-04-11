@@ -10,9 +10,7 @@ export const useElementBounds = (element: ReturnType<typeof useTemplateRef<HTMLE
         right: 0,
         x: 0,
         y: 0,
-        //@formatter:off
         toJSON() {}
-        //@formatter:on
     });
 
     function updateElementBounds() {

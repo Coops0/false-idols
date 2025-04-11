@@ -74,9 +74,7 @@ private fun Routing.ws(innerApplicationFlow: MutableSharedFlow<InnerApplicationM
                     return@collect
                 }
 
-                //@formatter:off
                 send(converter!!.serialize(charset = Charsets.UTF_8, typeInfo = TypeInfo(OutboundMessage::class), value = message))
-                //@formatter:on
             }
         }
 
@@ -112,9 +110,7 @@ private fun Routing.ws(innerApplicationFlow: MutableSharedFlow<InnerApplicationM
                     content = frame,
                 ) as? InboundMessage ?: return@consumeEach
 
-                //@formatter:off
                 innerApplicationFlow.emit(InnerApplicationMessage.PlayerInboundMessageInner(sessionId, message))
-                //@formatter:on
             }
         }.onFailure { exception ->
             println("WebSocket exception: ${exception.message}")
@@ -138,9 +134,7 @@ private fun Routing.serverWs(innerApplicationFlow: MutableSharedFlow<InnerApplic
 
         val job = launch {
             sharedFlow.collect { message ->
-                //@formatter:off
                 send(converter!!.serialize(charset = Charsets.UTF_8, typeInfo = TypeInfo(ServerOutboundMessage::class), value = message))
-                //@formatter:on
             }
         }
 

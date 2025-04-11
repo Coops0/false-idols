@@ -46,7 +46,7 @@ export type Card = {
 }
 
 export type OutboundMessage =
-    /// Our response to play an action on a player.
+/// Our response to play an action on a player.
     { type: 'choose_action', target: string } |
     /// As president, which card we pick to **discard**.
     { type: 'discard_one_card', card_id: number } |
@@ -59,6 +59,7 @@ export type OutboundMessage =
 export type InboundMessage =
     /// Game start, server has assigned a role to player.
     { type: 'assign_role', role: Role.ANGEL, demon_count: number, demons?: Player[] | null, satan?: Player | null, is_small_game: boolean } |
+    //@formatter:on
     /// The server is requesting us to play an action, most likely when we are president.
     /// It will supply the players we can run actions on, and the actions we can run.
     /// For an action to be valid, it has to be both a permitted action, and be valid on the ActionSupplementedPlayer.
@@ -79,4 +80,3 @@ export type InboundMessage =
     { type: 'policy_peek', cards: Card[] } |
     /// This is rare, it's (right now) only used when the server chooses to reset all players from the lobby.
     { type: 'disconnect', reason: string };
-//@formatter:on

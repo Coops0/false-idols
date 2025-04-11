@@ -50,7 +50,6 @@ suspend fun gameActor(innerApplicationFlow: SharedFlow<InnerApplicationMessage>)
             is InnerApplicationMessage.PlayerInboundMessageInner -> {
                 val player = gameState.getBySessionId(message.sessionId) ?: return@collect
 
-                //@formatter:off
                 try {
                     gameState.handlePlayerInboundApplicationMessage(player.name, message.inboundMessage)
                 } catch (e: GameOverThrowable) {
@@ -62,7 +61,6 @@ suspend fun gameActor(innerApplicationFlow: SharedFlow<InnerApplicationMessage>)
                 } catch (e: AssertionError) {
                     gameState.sendServer(ServerOutboundMessage.Error(FalseIdolsError.assertionError(player.name, e.message)))
                 }
-                //@formatter:on
             }
 
             is InnerApplicationMessage.ServerInboundMessageInner -> {

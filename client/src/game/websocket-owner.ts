@@ -53,9 +53,9 @@ export class WebsocketOwner {
                 self.manualIsConnected.value = true;
 
                 // Add the real event listeners
-                self.ws.onmessage = self.handleMessage;
+                self.ws.onmessage = event => self.handleMessage(event);
                 self.ws.onerror = err => console.warn(err);
-                self.ws.onclose = self.handleClosure;
+                self.ws.onclose = event => self.handleClosure(event);
                 self.ws.onopen = null;
 
                 this.ping(true);
@@ -99,7 +99,9 @@ export class WebsocketOwner {
 
     send(message: OutboundMessage) {
         if (this.isConnected) {
-            console.debug('sending', message);
+            if (message.type !== 'ping') {
+                console.debug('sending', message);
+            }
             this.ws.send(JSON.stringify(message));
         } else {
             console.log('refusing to send message, not connected', message);
