@@ -1,6 +1,6 @@
 <template>
   <div
-      class="bg-gray-900/25 backdrop-blur-xs rounded-lg shadow-lg p-1.5 text-gray-50 z-20 font-mono flex flex-col gap-y-1 text-xs">
+      class="bg-gray-900/50 backdrop-blur-xs rounded-lg shadow-lg p-1.5 text-gray-50 z-20 font-mono flex flex-col gap-y-1 text-xs">
     <div class="flex items-center gap-2">
       <CustomKbd>H</CustomKbd>
       <span class="text-gray-300">Hide</span>
@@ -67,7 +67,6 @@
         <span class="text-gray-300">Return to lobby</span>
       </div>
     </template>
-
   </div>
 </template>
 
