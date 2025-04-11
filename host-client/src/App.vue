@@ -144,6 +144,11 @@ function onKeyPress(event: KeyboardEvent) {
       }
       break;
     case 'game_in_progress':
+      if (key === 'escape') {
+        s({ type: 'end_game' });
+        return;
+      }
+
       switch (game.value.inner_game_state.type) {
         case 'awaiting_president_card_discard':
         case 'idle':

@@ -39,6 +39,9 @@ sealed class InnerApplicationMessage {
 
 class GameOverThrowable(val winner: SimpleRole, val reason: GameState.GameOver.Reason) : Throwable()
 
+/// Only happens when host calls end game
+class EndGameThrowable() : Throwable()
+
 suspend fun gameActor(innerApplicationFlow: SharedFlow<InnerApplicationMessage>) {
     var gameState: GameState = GameState.Lobby(null)
 
@@ -67,6 +70,9 @@ suspend fun gameActor(innerApplicationFlow: SharedFlow<InnerApplicationMessage>)
                     gameState.handleServerInboundApplicationMessage(message.serverInboundMessage)
                 } catch (e: GameOverThrowable) {
                     gameState = (gameState as GameState.GameInProgress).toGameOver(e.winner, e.reason)
+                    null
+                } catch (e: EndGameThrowable) {
+                    gameState = GameState.Lobby(gameState.server, gameState.players.toMutableList())
                     null
                 } catch (e: IllegalStateException) {
                     gameState.sendServer(ServerOutboundMessage.Error(FalseIdolsError.illegalState(message = e.message)))

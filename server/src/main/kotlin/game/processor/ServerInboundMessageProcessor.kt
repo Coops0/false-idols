@@ -1,5 +1,7 @@
 package com.cooper.game.processor
 
+import com.cooper.game.EndGameThrowable
+import com.cooper.game.GameOverThrowable
 import com.cooper.game.GameState
 import com.cooper.game.InnerGameState
 import com.cooper.message.OutboundMessage
@@ -11,6 +13,7 @@ enum class ServerInboundMessageProcessorAction {
     BACK_TO_LOBBY
 }
 
+@Throws(GameOverThrowable::class, EndGameThrowable::class)
 suspend fun GameState.handleServerInboundApplicationMessage(message: ServerInboundMessage): ServerInboundMessageProcessorAction? {
     when (message) {
         is ServerInboundMessage.ResetPlayers -> {
@@ -96,6 +99,10 @@ suspend fun GameState.handleServerInboundApplicationMessage(message: ServerInbou
             if (message.requestState) {
                 this.sendServer(ServerOutboundMessage.UpdateGameState(this))
             }
+        }
+
+        is ServerInboundMessage.EndGame -> {
+            throw EndGameThrowable()
         }
     }
 

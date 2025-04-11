@@ -62,7 +62,7 @@ suspend fun GameState.GameInProgress.requestPresidentAction() {
     )
 }
 
-// throws GameOverThrowable
+@Throws(GameOverThrowable::class)
 fun GameState.GameInProgress.checkGameOverConditions() {
     if (deck.negativeCardsPlayed >= NEGATIVE_CARD_COUNT_SATAN_ELECTION_WIN) {
         val igs = innerGameState

@@ -1,6 +1,10 @@
 <template>
   <div class="h-[calc(100vh-64px)] w-full overflow-hidden">
-    <PreloadImages v-if="canPreloadImages"/>
+    <PreloadImages
+        v-if="playerIcon"
+        :player-icon
+    />
+
     <div class="size-full flex flex-col gap-y-4 justify-center items-center p-4">
       <ErrorMessage :message="error"/>
       <Transition mode="out-in" name="fade">
@@ -80,7 +84,6 @@ const ws = new WebsocketOwner(playerName, handleMessage, shouldRequestIcon, manu
 const game = ref<Game | null>(null);
 
 const canShowLogin = ref<boolean>(false);
-const canPreloadImages = ref(false);
 
 onMounted(() => {
   (async function () {
@@ -91,8 +94,6 @@ onMounted(() => {
     } else {
       canShowLogin.value = true;
     }
-
-    setTimeout(() => (canPreloadImages.value = true), 1500);
   })();
 });
 

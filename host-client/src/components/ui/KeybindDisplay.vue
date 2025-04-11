@@ -1,6 +1,6 @@
 <template>
   <div
-      class="bg-gray-900/50 backdrop-blur-sm rounded-xl shadow-lg p-4 text-gray-50 z-20 font-mono flex flex-col gap-y-2 text-xs">
+      class="bg-gray-900/25 backdrop-blur-xs rounded-lg shadow-lg p-1.5 text-gray-50 z-20 font-mono flex flex-col gap-y-1 text-xs">
     <div class="flex items-center gap-2">
       <CustomKbd>H</CustomKbd>
       <span class="text-gray-300">Hide</span>
@@ -55,6 +55,11 @@
         <span class="text-gray-300">Veto</span>
       </div>
     </template>
+
+    <div class="flex items-center gap-2" v-if="game.type === 'game_in_progress'">
+      <CustomKbd>Escape</CustomKbd>
+      <span class="text-gray-300">End Game</span>
+    </div>
 
     <template v-if="game.type === 'game_over'">
       <div class="flex items-center gap-2">

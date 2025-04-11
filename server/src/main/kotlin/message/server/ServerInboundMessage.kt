@@ -15,6 +15,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
     JsonSubTypes.Type(value = ServerInboundMessage.ResolveElection::class, name = "resolve_election"),
     JsonSubTypes.Type(value = ServerInboundMessage.Skip::class, name = "skip"),
     JsonSubTypes.Type(value = ServerInboundMessage.GoBackToLobby::class, name = "go_back_to_lobby"),
+    JsonSubTypes.Type(value = ServerInboundMessage.Veto::class, name = "veto"),
+    JsonSubTypes.Type(value = ServerInboundMessage.EndGame::class, name = "end_game"),
     JsonSubTypes.Type(value = ServerInboundMessage.Ping::class, name = "ping"),
 )
 sealed class ServerInboundMessage {
@@ -33,6 +35,8 @@ sealed class ServerInboundMessage {
     /// After 5 negative cards, after the advisor receives their cards,
     /// if the president and advisor agree, they can just nullify all the cards
     class Veto : ServerInboundMessage()
+
+    class EndGame: ServerInboundMessage()
 
     class Ping(val requestState: Boolean = false) : ServerInboundMessage()
 }
