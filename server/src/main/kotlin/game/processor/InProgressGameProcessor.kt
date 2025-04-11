@@ -18,20 +18,20 @@ suspend fun GameState.GameInProgress.rotatePresident() {
         var currentPresidentIndex = this.alive.indexOf(this.president)
 
         // President was elected, so we need to return back to the previous order
-        if (this.previousPresidentIndex != -1) {
-            currentPresidentIndex = this.previousPresidentIndex
-            this.previousPresidentIndex = -1
+        if (this.presidentialElectionPreviousPresidentIndex != -1) {
+            currentPresidentIndex = this.presidentialElectionPreviousPresidentIndex
+            this.presidentialElectionPreviousPresidentIndex = -1
         }
 
         if (currentPresidentIndex == -1) {
             // President has been killed (shouldn't be possible)
             currentPresidentIndex = this.players
-                // Find who the next president would be if the president was alive
+                // Find who was next in line to be president
                 .filter { player -> player.isAlive || player == this.president }
                 .indexOf(this.president)
         }
 
-        // Find next president in line, or wrap around to the first alive player
+        // Find president or wrap around to the first alive player
         this.alive[(currentPresidentIndex + 1) % this.alive.size]
     }
 
@@ -234,14 +234,14 @@ suspend fun GameState.GameInProgress.handleNegativeCardAction(): Boolean {
         return false
     }
 
-    this.innerGameState = InnerGameState.AwaitingPresidentActionChoice(action, forced = true)
+    this.innerGameState = InnerGameState.AwaitingPresidentActionChoice(action)
 
     this.president.emit(
         OutboundMessage.RequestActionChoice(
             action,
             players = this.alive.filter { it != this.president }
                 .map { p ->
-                    /// Presidential electable bypasses any prior restrictions
+                    /// Forced presidential election bypasses any prior restrictions
                     this.playerToActionSupplementedPlayer(p, bypassElection = true)
                 }
         )
@@ -256,6 +256,7 @@ suspend fun GameState.GameInProgress.passAdvisorElection(advisor: GamePlayer) {
     val cards = this.deck.pickAndTakeThree()
     this.innerGameState = InnerGameState.AwaitingPresidentCardDiscard(cards, advisor.name)
 
+    /// If advisor is Satan and enough negative cards have been played, game ends
     this.checkGameOverConditions()
 
     this.president.emit(OutboundMessage.RequestPresidentCardDiscard(cards))
@@ -301,7 +302,7 @@ fun GameState.GameInProgress.playerMessageFromState(player: GamePlayer): Outboun
 
             val actionSupplementedPlayers = this.alive
                 .filter { it != this.president }
-                .map { p -> playerToActionSupplementedPlayer(p, bypassElection = igs.forced) }
+                .map { p -> playerToActionSupplementedPlayer(p, bypassElection = true) }
 
             return OutboundMessage.RequestActionChoice(
                 action = igs.action,
@@ -321,6 +322,8 @@ fun GameState.GameInProgress.playerMessageFromState(player: GamePlayer): Outboun
 
 fun GameState.GameInProgress.playerToActionSupplementedPlayer(
     player: GamePlayer,
+    /// This should only be set to true when this is a presidential election,
+    // since we don't care about any prior restrictions
     bypassElection: Boolean = false
 ): ActionSupplementedPlayer {
     val electable = bypassElection || if (this.isSmallGame) {

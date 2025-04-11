@@ -52,7 +52,7 @@ suspend fun GameState.handleServerInboundApplicationMessage(message: ServerInbou
 
                 is InnerGameState.AwaitingPresidentElectionResolution -> {
                     if (message.passed) {
-                        this.previousPresidentIndex = this.players.indexOf(this.president)
+                        this.presidentialElectionPreviousPresidentIndex = this.players.indexOf(this.president)
                         this.players.forEach { player -> player.wasPresidentLastRound = false }
                         this.president.wasPresidentLastRound = true
                         this.president.isPresident = false

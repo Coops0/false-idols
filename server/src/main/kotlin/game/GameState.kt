@@ -69,7 +69,7 @@ sealed class GameState(val type: String) {
         val isSmallGame: Boolean get() = players.size <= SMALL_GAME_PLAYER_SIZE
 
         /// If a president is forced to elect the next president, then we must return back to the proper order after
-        var previousPresidentIndex: Int = -1
+        var presidentialElectionPreviousPresidentIndex: Int = -1
 
         fun toGameOver(winner: SimpleRole, cause: GameOver.Reason) = GameOver(
             server,
@@ -137,7 +137,7 @@ sealed class GameState(val type: String) {
 sealed class InnerGameState(val type: String) {
     class Idle(val initialWaitPeriod: Boolean = false) : InnerGameState("idle")
 
-    class AwaitingPresidentActionChoice(val action: ActionChoice, val forced: Boolean = false) :
+    class AwaitingPresidentActionChoice(val action: ActionChoice) :
             InnerGameState("awaiting_president_action_choice")
 
     class AwaitingPresidentCardDiscard(val cards: List<Card>, val advisorName: PlayerName) :
