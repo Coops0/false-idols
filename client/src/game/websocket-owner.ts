@@ -11,8 +11,6 @@ export class WebsocketOwner {
     private hasEverBeenConnected: boolean = false;
     private wasManuallyDisconnectedLast: boolean = false;
 
-    // private initialMessageBuffer: MessageEvent[] = [];
-
     constructor(
         private readonly name: Ref<string>,
         private readonly messageCallback: (message: InboundMessage) => void,
@@ -60,7 +58,7 @@ export class WebsocketOwner {
                 self.ws.onclose = self.handleClosure;
                 self.ws.onopen = null;
 
-                this.ping();
+                this.ping(true);
 
                 resolve();
             };
@@ -101,17 +99,15 @@ export class WebsocketOwner {
 
     send(message: OutboundMessage) {
         if (this.isConnected) {
-            // if (message.type !== 'ping') {
-            console.log('sending', message);
-            // }
+            console.debug('sending', message);
             this.ws.send(JSON.stringify(message));
         } else {
             console.log('refusing to send message, not connected', message);
         }
     }
 
-    ping() {
-        this.send({ type: 'ping', request_icon: this.shouldRequestIcon() });
+    ping(forceRequestIcon: boolean = false) {
+        this.send({ type: 'ping', request_icon: forceRequestIcon || this.shouldRequestIcon() });
     }
 
     disconnect() {
