@@ -49,34 +49,24 @@ export class WebsocketOwner {
 
         const self = this;
         return new Promise<void>((resolve, reject) => {
-            const rejectOnError = (err: Event) => reject(err);
-            const resolveOnOpen = (event: MessageEvent) => {
-                this.hasEverBeenConnected = true;
-
+            self.ws = new WebSocket(`${__WS_HOST__}/ws?name=${self.name.value}`);
+            self.ws.onopen = () => {
+                self.hasEverBeenConnected = true;
                 self.manualIsConnected.value = true;
 
-                // Remove our temporary initial event listeners
-                self.ws.removeEventListener('message', event => resolveOnOpen(event));
-                self.ws.removeEventListener('error', err => rejectOnError(err));
-                self.ws.removeEventListener('close', err => rejectOnError(err));
-
                 // Add the real event listeners
-                self.ws.addEventListener('message', message => this.handleMessage(message));
-                self.ws.addEventListener('close', event => this.handleClosure(event));
-                self.ws.addEventListener('error', err => console.warn(err));
-
-                resolve();
+                self.ws.onmessage = self.handleMessage;
+                self.ws.onerror = err => console.warn(err);
+                self.ws.onclose = self.handleClosure;
+                self.ws.onopen = null;
 
                 this.ping();
 
-                // Finally fall back to real message handling
-                self.handleMessage(event);
+                resolve();
             };
 
-            self.ws = new WebSocket(`${__WS_HOST__}/ws?name=${this.name.value}`);
-            self.ws.addEventListener('message', event => resolveOnOpen(event));
-            self.ws.addEventListener('error', err => rejectOnError(err));
-            self.ws.addEventListener('close', err => rejectOnError(err));
+            self.ws.onerror = reject;
+            self.ws.onclose = reject;
         });
     }
 
@@ -111,10 +101,12 @@ export class WebsocketOwner {
 
     send(message: OutboundMessage) {
         if (this.isConnected) {
-            if (message.type !== 'ping') {
-                console.log('sending', message);
-            }
+            // if (message.type !== 'ping') {
+            console.log('sending', message);
+            // }
             this.ws.send(JSON.stringify(message));
+        } else {
+            console.log('refusing to send message, not connected', message);
         }
     }
 

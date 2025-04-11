@@ -3,7 +3,7 @@
     <img :src="cardImg" class="object-scale-down"/>
     <div class="h-5/7 w-4/9 absolute overflow-hidden">
       <span
-          class="text-gray-700 line-clamp-6 break-all font-serif text-sm"
+          class="text-gray-700 line-clamp-6 break-all font-serif text-xs"
       >{{ card.description }}</span>
     </div>
   </li>
