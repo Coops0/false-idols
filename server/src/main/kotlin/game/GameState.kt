@@ -71,14 +71,7 @@ sealed class GameState(val type: String) {
         /// If a president is forced to elect the next president, then we must return back to the proper order after
         var presidentialElectionPreviousPresidentIndex: Int = -1
 
-        fun toGameOver(winner: SimpleRole, cause: GameOver.Reason) = GameOver(
-            server,
-            players.toMutableList(),
-            winner.name,
-            satan.name,
-            demons.map(Player::name),
-            cause
-        )
+        fun toGameOver(winner: SimpleRole, cause: GameOver.Reason) = GameOver(server, players.toMutableList(), winner.name, satan.name, demons.map(Player::name), cause)
 
         override operator fun get(playerName: PlayerName): GamePlayer? {
             return players.firstOrNull { it.name == playerName }

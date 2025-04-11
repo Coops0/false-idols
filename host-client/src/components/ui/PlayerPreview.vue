@@ -9,13 +9,6 @@
                 class="size-full object-cover player-icon"
             />
           </div>
-          <div
-              v-if="isPresident"
-              :class="sizeClasses.crown"
-              class="absolute -top-1 -right-1 rounded-full flex items-center justify-center text-white font-bold shadow-sm bg-yellow-100"
-          >
-            👑
-          </div>
         </div>
         <div class="flex-1 min-w-0">
           <p :class="sizeClasses.name" class="font-mono text-gray-700 truncate">{{ player.name }}</p>
@@ -80,7 +73,6 @@ const sizeClasses = computed(() => {
 });
 
 const isGamePlayer = computed(() => 'role' in props.player);
-const isPresident = computed(() => !props.ignoreModifiers && isGamePlayer.value && (props.player as GamePlayer).is_president);
 const isDead = computed(() => !props.ignoreModifiers && isGamePlayer.value && !(props.player as GamePlayer).is_alive);
 
 const icon = computed(() => {

@@ -20,6 +20,7 @@
             :key="player.name"
             :player
             size="lg"
+            ignore-modifiers
             @click="() => emit('kick', player.name)"
         />
       </div>
