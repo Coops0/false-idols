@@ -1,5 +1,7 @@
 # False Idols
 
+A jackbox style game based off of mafia. 
+
 Some assets used from [ShrimpCryptid's game](https://github.com/ShrimpCryptid/Secret-Hitler-Online)
 
 Derived from a game by GOAT, WOLF, & CABBAGE
