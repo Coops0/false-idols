@@ -62,7 +62,7 @@ private fun Routing.ws(innerApplicationFlow: MutableSharedFlow<InnerApplicationM
             return@webSocket
         }
 
-        println("Player $name connected")
+        application.log.info("Player $name connected")
 
         val messageResponseFlow = MutableSharedFlow<OutboundMessage>()
         val sharedFlow = messageResponseFlow.asSharedFlow()
@@ -80,7 +80,7 @@ private fun Routing.ws(innerApplicationFlow: MutableSharedFlow<InnerApplicationM
 
         val completable = CompletableDeferred<Result<SessionId>>()
 
-        println("Player $name sending off join request...")
+        application.log.info("Player $name sending off join request...")
         innerApplicationFlow.emit(
             InnerApplicationMessage.PlayerJoin(
                 playerName = name,
@@ -89,16 +89,16 @@ private fun Routing.ws(innerApplicationFlow: MutableSharedFlow<InnerApplicationM
             )
         )
 
-        println("Player $name waiting for one shot...")
+        application.log.info("Player $name waiting for one shot...")
         val oneShotResponse = completable.await()
         if (oneShotResponse.isFailure) {
-            println("Player $name failed to join: ${oneShotResponse.exceptionOrNull()}")
+            application.log.info("Player $name failed to join: ${oneShotResponse.exceptionOrNull()}")
             close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, oneShotResponse.exceptionOrNull()!!.toString()))
             return@webSocket
         }
 
         val sessionId = oneShotResponse.getOrThrow()
-        println("Player $name joined with session ID $sessionId")
+        application.log.info("Player $name joined with session ID $sessionId")
 
         runCatching {
             incoming.consumeEach { frame ->
@@ -113,7 +113,7 @@ private fun Routing.ws(innerApplicationFlow: MutableSharedFlow<InnerApplicationM
                 innerApplicationFlow.emit(InnerApplicationMessage.PlayerInboundMessageInner(sessionId, message))
             }
         }.onFailure { exception ->
-            println("WebSocket exception: ${exception.message}")
+            application.log.info("WebSocket exception: ${exception.message}")
         }.also {
             job.cancel()
             try {
@@ -122,7 +122,7 @@ private fun Routing.ws(innerApplicationFlow: MutableSharedFlow<InnerApplicationM
                 /* ignored */
             }
 
-            println("player $name disconnect $sessionId")
+            application.log.info("player $name disconnect $sessionId")
         }
     }
 }
@@ -153,7 +153,7 @@ private fun Routing.serverWs(innerApplicationFlow: MutableSharedFlow<InnerApplic
                 innerApplicationFlow.emit(InnerApplicationMessage.ServerInboundMessageInner(message))
             }
         }.onFailure { exception ->
-            println("WebSocket exception: ${exception.message}")
+            application.log.info("WebSocket exception: ${exception.message}")
         }.also {
             job.cancel()
 
@@ -163,7 +163,7 @@ private fun Routing.serverWs(innerApplicationFlow: MutableSharedFlow<InnerApplic
                 /* ignored */
             }
 
-            println("server disconnect")
+            application.log.info("server disconnect")
         }
     }
 }
