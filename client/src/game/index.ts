@@ -1,12 +1,4 @@
-import {
-    ActionChoice,
-    type ActionSupplementedPlayer,
-    type Card,
-    type InboundMessage,
-    type Player,
-    Role,
-    type SimpleRole
-} from './messages.ts';
+import { ActionChoice, type ActionSupplementedPlayer, type Card, type InboundMessage, type Player, Role, type SimpleRole } from './messages.ts';
 
 export type IdleGameState = {
     type: 'idle';
@@ -81,15 +73,3 @@ export class Game {
         }
     }
 }
-
-// const t: Game = {
-//     role: "SATAN",
-//     state: {
-//         type: "view_role",
-//         hasConfirmed: true,
-//         demonCount: 1,
-//         isSmallGame: true,
-//         demons: [{name: 'Ok', icon: 'gerbil'}],
-//         // satan: Player | null,
-//     }
-// }
