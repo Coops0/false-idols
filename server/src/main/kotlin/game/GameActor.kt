@@ -112,7 +112,7 @@ suspend fun gameActor(innerApplicationFlow: SharedFlow<InnerApplicationMessage>)
                 } finally {
                     message.completable.complete(Unit)
                 }
-                // We should be cancelled
+                // We should be canceled
                 return@collect
             }
         }
@@ -144,7 +144,7 @@ private suspend fun GameState.handlePlayerJoin(message: InnerApplicationMessage.
 
         flow.emit(OutboundMessage.AssignIcon(existingPlayer.icon))
 
-        // If player already exists, send them any important messages
+        // If the player already exists, send them any important messages
         if (this is GameState.GameInProgress) {
             val playerMessage = this.playerMessageFromState(existingPlayer as GamePlayer)
             if (playerMessage != null) {
@@ -160,7 +160,7 @@ private suspend fun GameState.handlePlayerJoin(message: InnerApplicationMessage.
     }
 
     // Players can reconnect causing icon weirdness.
-    // Just try to find the first least used icon, this should still maintain default order.
+    // Try to find the first least used icon, this should still maintain the default order.
     val playerIcon = PlayerIcon.entries
         .minByOrNull { icon -> this.players.count { p -> p.icon == icon } }
         ?: PlayerIcon.entries[0]

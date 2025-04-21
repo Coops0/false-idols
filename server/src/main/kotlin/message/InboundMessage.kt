@@ -21,8 +21,8 @@ sealed class InboundMessage {
     /// President chooses a player to execute an action upon
     class ChooseActionOnPlayer(val target: PlayerName) : InboundMessage()
 
-    /// President chooses one card to discard from deck (of 3) before
-    /// being handed to advisor to select
+    /// President chooses one card to discard from the deck (of 3) before
+    /// being handed to the advisor to select
     class DiscardOneCard(val cardId: CardId) : InboundMessage()
 
     /// Advisor picks one of two cards to play

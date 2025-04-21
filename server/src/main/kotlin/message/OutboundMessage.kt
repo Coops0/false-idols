@@ -11,11 +11,11 @@ sealed class OutboundMessage(val type: String) {
         /// Excluding satan
         val demonCount: Int,
 
-        /// These will only be non-null if complex role == DEMON || isSmallGame && complex role == SATAN
+        /// These will only be non-null if the complex role == DEMON || isSmallGame && complex role == SATAN
         val demons: List<StrippedPlayer>? = null,
         val satan: StrippedPlayer? = null,
 
-        /// If small game then satan knows who the demons are
+        /// If small game, then satan knows who the demons are
         val isSmallGame: Boolean = false
     ) : OutboundMessage("assign_role")
 
@@ -38,7 +38,7 @@ sealed class OutboundMessage(val type: String) {
         ) : StrippedPlayer(name, icon)
     }
 
-    /// Sent to president when they must discard a card
+    /// Sent to the president when they must discard a card
     class RequestPresidentCardDiscard(val cards: List<Card>) :
             OutboundMessage("request_president_card_discard") {
         init {
@@ -46,7 +46,7 @@ sealed class OutboundMessage(val type: String) {
         }
     }
 
-    /// Sent to advisor when they must choose a card to play
+    /// Sent to an advisor when they must choose a card to play
     class RequestAdvisorCardChoice(val cards: List<Card>, val vetoable: Boolean = false) :
             OutboundMessage("request_advisor_card_choice") {
         init {
@@ -55,7 +55,6 @@ sealed class OutboundMessage(val type: String) {
     }
 
     /// Sent when a player (usually president) investigates another player.
-    /// Includes simple role.
     class InvestigationResult(
         val target: StrippedPlayer,
         val simpleRole: SimpleRole,
@@ -76,7 +75,7 @@ sealed class OutboundMessage(val type: String) {
     /// When a fascist card action is played and policy peek is the action
     class PolicyPeek(val cards: List<Card>) : OutboundMessage("policy_peek")
 
-    /// Utility class to serialize player name & icon
+    /// Utility class to serialize player name and icon
     open class StrippedPlayer(val name: String, val icon: PlayerIcon) {
         companion object {
             val Player.stripped get() = StrippedPlayer(this.name, this.icon)

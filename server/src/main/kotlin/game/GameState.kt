@@ -68,7 +68,7 @@ sealed class GameState(val type: String) {
 
         val isSmallGame: Boolean get() = players.size <= SMALL_GAME_PLAYER_SIZE
 
-        /// If a president is forced to elect the next president, then we must return back to the proper order after
+        /// If a president is forced to elect the next president, then we must return to the proper order after
         var presidentialElectionPreviousPresidentIndex: Int = -1
 
         fun toGameOver(winner: SimpleRole, cause: GameOver.Reason) = GameOver(server, players.toMutableList(), winner.name, satan.name, demons.map(Player::name), cause)
