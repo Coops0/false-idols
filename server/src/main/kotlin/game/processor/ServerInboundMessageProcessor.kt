@@ -21,6 +21,8 @@ suspend fun GameState.handleServerInboundApplicationMessage(message: ServerInbou
             this.players.forEach { player ->
                 player.disconnectAll(OutboundMessage.Disconnect.DisconnectionReason.HOST_RESET_PLAYERS)
             }
+
+            this.players.clear()
         }
 
         is ServerInboundMessage.Kick -> {
