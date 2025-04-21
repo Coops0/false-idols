@@ -164,9 +164,9 @@ suspend fun GameState.GameInProgress.handlePresidentDiscardCard(player: GamePlay
     val cards = igs.cards
     val advisorName = igs.advisorName
 
-    require(cards.any { it.id == cardId }) { "Card not found" }
-
     val newCards = cards.filter { it.id != cardId }
+    require(newCards.size != cards.size) { "Card ID not found" }
+
     this.innerGameState = InnerGameState.AwaitingAdvisorCardChoice(newCards, advisorName)
 
     val advisor = this[advisorName]!!

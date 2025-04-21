@@ -9,10 +9,19 @@
           v-for="card in gameState.cards"
           :key="card.id"
           :card
+          :selected="selectedCard === card.id"
           class="w-30"
-          @click="() => choose(card)"
+          @click="() => select(card)"
       />
     </div>
+
+    <BaseButton
+        class="mt-8"
+        variant="primary"
+        :disabled="selectedCard === null"
+        @click="choose">
+      Submit
+    </BaseButton>
 
     <p class="mt-14 text-xs text-gray-800 font-bold text-center">You cannot show anyone this screen</p>
     <p v-if="gameState.vetoable"
@@ -24,15 +33,25 @@
 
 <script lang="ts" setup>
 import type { AdvisorChooseCardGameState, Game } from '@/game';
-import { computed } from 'vue';
+import { computed, ref, watch } from 'vue';
 import type { Card } from '@/game/messages.ts';
 import PlayedGameCard from '@/components/ui/PlayedGameCard.vue';
+import BaseButton from '@/components/ui/BaseButton.vue';
 
 const props = defineProps<{ game: Game; }>();
 const gameState = computed(() => props.game.state as AdvisorChooseCardGameState);
 const emit = defineEmits<{ choose: [cardId: number] }>();
 
-function choose(card: Card) {
-  emit('choose', card.id);
+const selectedCard = ref<number | null>(null);
+watch(gameState, () => (selectedCard.value = null), { deep: true });
+
+function select(card: Card) {
+  selectedCard.value = card.id;
+}
+
+function choose() {
+  if (selectedCard.value !== null) {
+    emit('choose', selectedCard.value);
+  }
 }
 </script>

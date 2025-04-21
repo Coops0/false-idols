@@ -39,7 +39,7 @@ sealed class InnerApplicationMessage {
 
 class GameOverThrowable(val winner: SimpleRole, val reason: GameState.GameOver.Reason) : Throwable()
 
-/// Only happens when host calls end game
+/// Only happens when the host calls end game
 class EndGameThrowable() : Throwable()
 
 suspend fun gameActor(innerApplicationFlow: SharedFlow<InnerApplicationMessage>) {
