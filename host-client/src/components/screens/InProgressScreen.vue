@@ -13,6 +13,7 @@
         <AwaitingPresidentElectionOutcomeScreen v-else-if="game.inner_game_state.type === 'awaiting_president_election_outcome'" :game/>
         <AwaitingInvestigationAnalysis v-else-if="game.inner_game_state.type === 'awaiting_investigation_analysis'" :game/>
         <AwaitingPlayerActionChoiceScreen v-else-if="game.inner_game_state.type === 'awaiting_president_action_choice'" :game/>
+        <AwaitingRoleConfirmationsScreen v-else-if="game.inner_game_state.type === 'awaiting_role_confirmations'" :game/>
         <IdleScreen v-else-if="game.inner_game_state.type === 'idle'" :game/>
         <!--@formatter:on-->
       </Transition>
@@ -45,6 +46,7 @@ import AngelBoard from '@/components/ui/AngelBoard.vue';
 import DemonBoard from '@/components/ui/DemonBoard.vue';
 import { watch } from 'vue';
 import { toast } from 'vue3-toastify';
+import AwaitingRoleConfirmationsScreen from '@/components/screens/game-screens/AwaitingRoleConfirmationsScreen.vue';
 
 const props = defineProps<{ game: InProgressGameState }>();
 

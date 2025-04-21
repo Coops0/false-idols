@@ -24,6 +24,7 @@ suspend fun GameState.handlePlayerInboundApplicationMessage(playerName: PlayerNa
         is InboundMessage.ChooseActionOnPlayer -> this.handlePlayerActionChoice(player, message.target)
         is InboundMessage.DiscardOneCard -> this.handlePresidentDiscardCard(player, message.cardId)
         is InboundMessage.ChooseCard -> this.handleAdvisorChooseCard(player, message.cardId)
+        is InboundMessage.ConfirmRole -> this.handlePlayerConfirmRole(player)
         else -> throw IllegalArgumentException("Unknown message type: $message")
     }
 }

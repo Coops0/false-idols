@@ -78,9 +78,12 @@ export type AwaitingPresidentElectionOutcomeInnerGameState = {
     type: 'awaiting_president_election_outcome',
     nominee: string
 };
+export type AwaitingRoleConfirmationsInnerGameState = {
+    type: 'awaiting_role_confirmations';
+    confirmed: string[]
+}
 
 export type AwaitingInvestigationAnalysisInnerGameState = { type: 'awaiting_investigation_analysis', target: string };
-
 
 export type InnerGameState =
     IdleInnerGameState
@@ -89,7 +92,8 @@ export type InnerGameState =
     | AwaitingAdvisorCardChoiceInnerGameState
     | AwaitingAdvisorElectionOutcomeInnerGameState
     | AwaitingPresidentElectionOutcomeInnerGameState
-    | AwaitingInvestigationAnalysisInnerGameState;
+    | AwaitingInvestigationAnalysisInnerGameState
+    | AwaitingRoleConfirmationsInnerGameState;
 
 export type LobbyGameState = {
     type: 'lobby';

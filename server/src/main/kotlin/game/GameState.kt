@@ -130,6 +130,8 @@ sealed class GameState(val type: String) {
 sealed class InnerGameState(val type: String) {
     class Idle(val initialWaitPeriod: Boolean = false) : InnerGameState("idle")
 
+    class AwaitingRoleConfirmations(val confirmed: MutableList<PlayerName>) : InnerGameState("awaiting_role_confirmations")
+
     class AwaitingPresidentActionChoice(val action: ActionChoice) :
             InnerGameState("awaiting_president_action_choice")
 

@@ -178,7 +178,7 @@ private fun GameState.handlePlayerDisconnect(message: InnerApplicationMessage.Pl
     this[message.playerName]?.disconnect(message.sessionId)
 }
 
-private fun GameState.GameInProgress.generateAssignRoleMessage(player: GamePlayer): OutboundMessage.AssignRole {
+fun GameState.GameInProgress.generateAssignRoleMessage(player: GamePlayer): OutboundMessage.AssignRole {
     if (player.role == ComplexRole.ANGEL) {
         return OutboundMessage.AssignRole(
             role = player.role,

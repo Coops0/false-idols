@@ -154,6 +154,7 @@ function onKeyPress(event: KeyboardEvent) {
         case 'idle':
         case 'awaiting_investigation_analysis':
         case 'awaiting_president_action_choice':
+        case 'awaiting_role_confirmations':
           if (key === 'space') {
             s({ type: 'skip' });
           }

@@ -72,6 +72,7 @@ suspend fun GameState.handleServerInboundApplicationMessage(message: ServerInbou
             require(this is GameState.GameInProgress) { "Game must be in progress to skip" }
             when (val igs = this.innerGameState) {
                 is InnerGameState.Idle -> this.rotatePresident()
+                is InnerGameState.AwaitingRoleConfirmations -> this.rotatePresident()
                 is InnerGameState.AwaitingPresidentCardDiscard ->
                     this.handlePresidentDiscardCard(this.president, igs.cards.random().id)
 

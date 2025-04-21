@@ -173,6 +173,7 @@ function confirmRole() {
   const state = game.value!.state as ViewRoleGameState;
   if (state.hasConfirmed) {
     game.value!.state = { type: 'idle' };
+    ws.send({ type: 'confirm_role' });
   } else {
     state.hasConfirmed = true;
   }

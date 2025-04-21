@@ -9,9 +9,8 @@ import com.cooper.message.server.ServerOutboundMessage
 
 suspend fun GameState.GameInProgress.rotatePresident() {
     val igs = this.innerGameState
-    val wasInitialWaitPeriod = igs is InnerGameState.Idle && igs.initialWaitPeriod
 
-    val newPresident = if (wasInitialWaitPeriod) {
+    val newPresident = if (igs is InnerGameState.AwaitingRoleConfirmations) {
         // President has already been randomly assigned
         this.president
     } else {
@@ -35,7 +34,7 @@ suspend fun GameState.GameInProgress.rotatePresident() {
         this.alive[(currentPresidentIndex + 1) % this.alive.size]
     }
 
-    if (!wasInitialWaitPeriod) {
+    if (igs !is InnerGameState.AwaitingRoleConfirmations) {
         this.players.forEach { player -> player.wasPresidentLastRound = false }
         this.president.wasPresidentLastRound = true
         this.president.isPresident = false
@@ -279,6 +278,12 @@ fun GameState.GameInProgress.playerMessageFromState(player: GamePlayer): Outboun
         is InnerGameState.AwaitingAdvisorElectionResolution -> {}
         is InnerGameState.Idle -> {}
 
+        is InnerGameState.AwaitingRoleConfirmations -> {
+            if (player.name !in igs.confirmed) {
+                return generateAssignRoleMessage(player)
+            }
+        }
+
         is InnerGameState.AwaitingAdvisorCardChoice -> {
             if (igs.advisorName == player.name) {
                 return OutboundMessage.RequestAdvisorCardChoice(
@@ -338,4 +343,15 @@ fun GameState.GameInProgress.playerToActionSupplementedPlayer(
         !player.isInvestigated,
         electable
     )
+}
+
+fun GameState.GameInProgress.handlePlayerConfirmRole(player: GamePlayer) {
+    val igs = this.innerGameState
+    require(igs is InnerGameState.AwaitingRoleConfirmations) { "Game must be awaiting role confirmation to confirm role" }
+    require(player.name !in igs.confirmed) { "Player must not have already confirmed role" }
+
+    igs.confirmed.add(player.name)
+    if (igs.confirmed.size == this.players.size) {
+        this.idle()
+    }
 }
