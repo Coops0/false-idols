@@ -16,7 +16,7 @@ suspend fun GameState.GameInProgress.rotatePresident() {
     } else {
         var currentPresidentIndex = this.alive.indexOf(this.president)
 
-        // President was elected, so we need to return to the previous order
+        // President was elected, so we need to return back to the previous order
         if (this.presidentialElectionPreviousPresidentIndex != -1) {
             currentPresidentIndex = this.presidentialElectionPreviousPresidentIndex
             this.presidentialElectionPreviousPresidentIndex = -1
@@ -30,7 +30,7 @@ suspend fun GameState.GameInProgress.rotatePresident() {
                 .indexOf(this.president)
         }
 
-        // Find a president or wrap around to the first alive player
+        // Find president or wrap around to the first alive player
         this.alive[(currentPresidentIndex + 1) % this.alive.size]
     }
 
@@ -143,7 +143,7 @@ suspend fun GameState.GameInProgress.handlePlayerActionChoice(aggressor: GamePla
                 nominee = target.name
             )
 
-            // now the host will decide an outcome
+            // now the host will decide outcome
         }
 
         ActionChoice.NOMINATE_PRESIDENT -> {
@@ -256,7 +256,7 @@ suspend fun GameState.GameInProgress.passAdvisorElection(advisor: GamePlayer) {
     val cards = this.deck.pickAndTakeThree()
     this.innerGameState = InnerGameState.AwaitingPresidentCardDiscard(cards, advisor.name)
 
-    /// If the advisor is Satan and enough negative cards have been played, the game ends
+    /// If advisor is Satan and enough negative cards have been played, game ends
     this.checkGameOverConditions()
 
     this.president.emit(OutboundMessage.RequestPresidentCardDiscard(cards))
@@ -268,8 +268,6 @@ fun GameState.GameInProgress.failAdvisorElection() {
     if (this.failedElections >= FAILED_ELECTIONS_CHAOS) {
         this.failedElections = 0
         this.deck.playOneBlind()
-        this.checkGameOverConditions()
-        // We ignore any action that may be triggered by the blind card
     } else {
         this.idle()
     }
