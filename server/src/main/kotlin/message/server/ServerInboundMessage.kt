@@ -36,7 +36,7 @@ sealed class ServerInboundMessage {
     /// if the president and advisor agree, they can just nullify all the cards
     class Veto : ServerInboundMessage()
 
-    class EndGame: ServerInboundMessage()
+    class EndGame : ServerInboundMessage()
 
     class Ping(val requestState: Boolean = false) : ServerInboundMessage()
 }

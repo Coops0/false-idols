@@ -157,10 +157,10 @@ suspend fun GameState.GameInProgress.handlePlayerActionChoice(aggressor: GamePla
 }
 
 suspend fun GameState.GameInProgress.handlePresidentDiscardCard(player: GamePlayer, cardId: Int) {
-    require(this.innerGameState is InnerGameState.AwaitingPresidentCardDiscard) { "Game must be awaiting president card discard to discard card" }
+    val igs = this.innerGameState
+    require(igs is InnerGameState.AwaitingPresidentCardDiscard) { "Game must be awaiting president card discard to discard card" }
     require(this.president == player)
 
-    val igs = this.innerGameState as InnerGameState.AwaitingPresidentCardDiscard
     val cards = igs.cards
     val advisorName = igs.advisorName
 
@@ -180,8 +180,8 @@ suspend fun GameState.GameInProgress.handlePresidentDiscardCard(player: GamePlay
 
 @Throws(GameOverThrowable::class)
 suspend fun GameState.GameInProgress.handleAdvisorChooseCard(player: GamePlayer, cardId: CardId) {
-    require(this.innerGameState is InnerGameState.AwaitingAdvisorCardChoice) { "Game must be awaiting advisor card choice to choose card" }
-    val igs = this.innerGameState as InnerGameState.AwaitingAdvisorCardChoice
+    val igs = this.innerGameState
+    require(igs is InnerGameState.AwaitingAdvisorCardChoice) { "Game must be awaiting advisor card choice to choose card" }
 
     require(igs.advisorName == player.name) { "Player must be advisor" }
     val card = igs.cards.firstOrNull { it.id == cardId } ?: throw IllegalArgumentException("Card ID not found")

@@ -36,7 +36,6 @@ class CardDeck {
         if (cardStack.size > 3) return
 
         // don't clear played cards, they are used for scoring
-
         // prevent any duplicates
         cardStack.clear()
         cardStack.addAll(originalCards)

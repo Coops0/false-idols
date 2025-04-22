@@ -48,12 +48,16 @@ suspend fun gameActor(innerApplicationFlow: SharedFlow<InnerApplicationMessage>)
     innerApplicationFlow.collect { message ->
         when (message) {
             is InnerApplicationMessage.PlayerInboundMessageInner -> {
-                val player = gameState.getBySessionId(message.sessionId) ?: return@collect
+                val player = gameState.getBySessionId(message.sessionId) ?: return@collect run {
+                    println("Unknown player sent message: ${message.inboundMessage}")
+                }
 
                 try {
                     gameState.handlePlayerInboundApplicationMessage(player.name, message.inboundMessage)
                 } catch (e: GameOverThrowable) {
                     gameState = (gameState as GameState.GameInProgress).toGameOver(e.winner, e.reason)
+                } catch (e: EndGameThrowable) {
+                    gameState = GameState.Lobby(gameState.server, gameState.players.toMutableList())
                 } catch (e: IllegalStateException) {
                     gameState.sendServer(ServerOutboundMessage.Error(FalseIdolsError.illegalState(player.name, e.message)))
                 } catch (e: IllegalArgumentException) {
