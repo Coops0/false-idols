@@ -1,7 +1,7 @@
 <template>
   <li class="flex justify-center items-center">
     <img :src="cardImg" class="object-scale-down"/>
-    <div class="h-5/7 w-3/5 absolute overflow-hidden">
+    <div class="h-5/7 w-3/5      absolute overflow-hidden">
       <span
           :style="{ fontSize: `${fontSize}px` }"
           class="text-gray-700 line-clamp-6 break-all font-serif"

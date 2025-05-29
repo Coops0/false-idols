@@ -121,7 +121,7 @@ suspend fun gameActor(innerApplicationFlow: SharedFlow<InnerApplicationMessage>)
             }
         }
 
-        // if it is ping, no change -> no need to resend state
+        // if it is ping, no change so no need to resend state
         if (
             (message is InnerApplicationMessage.PlayerInboundMessageInner && message.inboundMessage is InboundMessage.Ping) ||
             (message is InnerApplicationMessage.ServerInboundMessageInner && message.serverInboundMessage is ServerInboundMessage.Ping)

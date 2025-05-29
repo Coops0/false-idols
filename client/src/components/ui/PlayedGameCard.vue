@@ -1,11 +1,7 @@
 <template>
   <li class="flex justify-center items-center relative">
-    <img :src="cardImg" class="object-scale-down" :class="props.selected && 'border-2 border-blue-500'"/>
-    <div class="h-5/7 w-4/9 absolute overflow-hidden">
-      <span
-          class="text-gray-700 line-clamp-6 break-all font-serif text-xs"
-      >{{ card.description }}</span>
-    </div>
+    <img :src="cardImg" class="object-scale-down" :class="props.selected && 'border-3 border-blue-500'"/>
+    <div class="h-5/7 w-4/9 absolute overflow-hidden"/>
   </li>
 </template>
 
