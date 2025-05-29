@@ -55,7 +55,7 @@ sealed class GameState(val type: String) {
             _fakeArg: Unit?
         ) : this(server, assignPlayerRoles(originalPlayers))
 
-        var innerGameState: InnerGameState = InnerGameState.Idle(initialWaitPeriod = true)
+        var innerGameState: InnerGameState = InnerGameState.AwaitingRoleConfirmations(mutableListOf())
         val deck: CardDeck = CardDeck()
 
         var failedElections: Int = 0
@@ -128,7 +128,7 @@ sealed class GameState(val type: String) {
 }
 
 sealed class InnerGameState(val type: String) {
-    class Idle(val initialWaitPeriod: Boolean = false) : InnerGameState("idle")
+    class Idle() : InnerGameState("idle")
 
     class AwaitingRoleConfirmations(val confirmed: MutableList<PlayerName>) : InnerGameState("awaiting_role_confirmations")
 

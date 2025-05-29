@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col items-center">
-    <div class="flex items-center gap-6">
+    <div class="flex justify-center items-center flex-col">
       <div class="relative">
         <PlayerPreview :player="nominee" size="2xl"/>
       </div>

@@ -4,7 +4,8 @@
       <div class="relative">
         <PlayerPreview :player="president" size="2xl"/>
       </div>
-      <p class="text-gray-700 font-amazonia font-light text-center text-3xl">Choosing a card to remove</p>
+      <p class="text-gray-700 font-amazonia font-light text-center text-2xl">Choosing two cards to send to the
+        chancellor</p>
     </div>
   </div>
 </template>

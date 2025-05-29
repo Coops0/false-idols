@@ -29,7 +29,7 @@ dependencies {
     implementation(libs.logback.classic)
     testImplementation(libs.ktor.server.test.host)
     testImplementation(libs.kotlin.test.junit)
-    testImplementation("org.junit.platform:junit-platform-launcher:1.13.0-M2")
+    testImplementation("org.junit.platform:junit-platform-launcher:1.13.0-RC1")
 
     // resolve vulnerable version
     implementation("commons-codec:commons-codec:1.18.0")

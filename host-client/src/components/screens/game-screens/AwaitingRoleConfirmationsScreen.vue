@@ -2,7 +2,7 @@
   <div class="flex flex-col items-center">
     <div class="flex justify-center items-center flex-col">
       <p class="text-gray-700 font-amazonia font-light text-center text-3xl">Waiting for <span
-          class="font-bold">{{ unconfirmed }}</span> {{ confirmations }}</p>
+          class="font-bold">{{ unconfirmed }}</span> role {{ confirmations }}</p>
     </div>
   </div>
 </template>
