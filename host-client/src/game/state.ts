@@ -118,3 +118,54 @@ export type GameOverGameState = {
 }
 
 export type GameState = LobbyGameState | InProgressGameState | GameOverGameState;
+
+
+const s = <GameState>{
+    type: 'game_in_progress',
+    players: [
+        {
+            name: 'Player1',
+            icon: ICONS[0],
+            role: Role.ANGEL,
+            is_president: true,
+            is_alive: true,
+            was_president_last_round: false,
+            was_advisor_last_round: false
+        },
+        {
+            name: 'Player2',
+            icon: ICONS[1],
+            role: Role.DEMON,
+            is_president: false,
+            is_alive: true,
+            was_president_last_round: false,
+            was_advisor_last_round: false
+
+        },
+        {
+            name: 'Player3',
+            icon: ICONS[2],
+            role: Role.SATAN,
+            is_president: false,
+            is_alive: true,
+            was_president_last_round: false,
+            was_advisor_last_round: false
+        }
+    ],
+    inner_game_state: {
+        type: 'awaiting_advisor_election_outcome',
+        nominee: 'Player2'
+    },
+    deck: {
+        card_stack: [
+            { id: 1, description: 'Card 1', consequence: CardConsequence.POSITIVE },
+            { id: 2, description: 'Card 2', consequence: CardConsequence.NEGATIVE }
+        ],
+        played_cards: [
+            { id: 1, description: 'Card 1', consequence: CardConsequence.POSITIVE },
+            { id: 2, description: 'Card 2', consequence: CardConsequence.NEGATIVE }
+
+        ]
+    },
+    failed_elections: 1,
+};

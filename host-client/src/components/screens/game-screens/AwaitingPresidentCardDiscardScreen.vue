@@ -5,7 +5,7 @@
         <PlayerPreview :player="president" size="2xl"/>
       </div>
       <p class="text-gray-700 font-amazonia font-light text-center text-2xl">Choosing two cards to send to the
-        chancellor</p>
+        advisor</p>
     </div>
   </div>
 </template>

@@ -1,7 +1,13 @@
 <template>
   <div class="h-full flex flex-col p-2 gap-1.5">
     <div class="w-full flex flex-row items-center justify-center gap-x-15">
-      <PlayerPreview v-for="player in game.players" :key="player.name" :player size="md"/>
+      <PlayerPreview
+          v-for="player in game.players"
+          :key="player.name"
+          :player
+          :is-president="player.is_president"
+          size="md"
+      />
     </div>
 
     <div class="flex flex-auto size-full items-center justify-center">

@@ -23,11 +23,15 @@
       Submit
     </BaseButton>
 
-    <p class="mt-14 text-xs text-gray-800 font-bold text-center">You cannot show anyone this screen</p>
-    <p v-if="gameState.vetoable"
-       class="mt-4 text-xs text-blue-800 font-bold text-center drop-shadow-red-blue/80 drop-shadow-lg">
-      You may request a veto (out loud), and if the president agrees, all cards will be discarded.
-    </p>
+    <div class="mt-14 mx-auto space-y-4">
+      <Alert type="info" size="large">
+        You may request a veto (out loud), and if the president agrees, all cards will be discarded.
+      </Alert>
+
+      <Alert type="error">
+        You cannot say <span class="font-bold">anything</span> until a card is played
+      </Alert>
+    </div>
   </div>
 </template>
 
@@ -37,6 +41,7 @@ import { computed, ref, watch } from 'vue';
 import type { Card } from '@/game/messages.ts';
 import PlayedGameCard from '@/components/ui/PlayedGameCard.vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
+import Alert from '@/components/ui/Alert.vue';
 
 const props = defineProps<{ game: Game; }>();
 const gameState = computed(() => props.game.state as AdvisorChooseCardGameState);

@@ -3,9 +3,13 @@
     <Transition mode="out-in" name="fade">
       <div v-if="!gameState.hasConfirmed" class="flex flex-col items-center">
         <p class="text-gray-600">You are about to see if {{ gameState.player.name }} is a demon or angel.</p>
-        <p class="text-gray-700 font-semibold">You cannot show this screen to anyone.</p>
+        <div class="mt-14 mx-auto">
+          <Alert type="warning" size="small">
+            You cannot show anyone this screen
+          </Alert>
+        </div>
 
-        <BaseButton class="mt-14" variant="primary" @click="() => emit('confirm')">
+        <BaseButton class="mt-6" variant="primary" @click="() => emit('confirm')">
           Okay
         </BaseButton>
       </div>
@@ -21,7 +25,11 @@
           </p>
         </div>
 
-        <p class="mt-14 text-xs text-gray-800 font-bold">You cannot show anyone this screen</p>
+        <div class="mt-10 mx-auto">
+          <Alert type="warning" size="small">
+            You cannot show anyone this screen
+          </Alert>
+        </div>
 
         <BaseButton class="mt-8" variant="primary" @click="() => emit('confirm')">
           Continue
@@ -37,6 +45,7 @@ import type { Game, ViewInvestigationResultsGameState } from '@/game';
 import { Role, roleName } from '@/game/messages.ts';
 import BaseButton from '@/components/ui/BaseButton.vue';
 import PlayerPreview from '@/components/ui/PlayerPreview.vue';
+import Alert from '@/components/ui/Alert.vue';
 
 const emit = defineEmits<{ confirm: []; }>();
 const props = defineProps<{ game: Game; }>();

@@ -6,6 +6,11 @@
     <img :src="PositiveCard">
     <img :src="NeutralCard">
 
+    <img :src="ErrorIcon"/>
+    <img :src="WarningIcon"/>
+    <img :src="InfoIcon"/>
+    <img :src="SuccessIcon"/>
+
     <template v-if="loadAll" v-for="icon in otherIcons" :key="icon">
       <PreloadPlayerIcon :icon/>
     </template>
@@ -16,6 +21,10 @@
 import NegativeCard from '@/assets/cards/negative-card.png';
 import PositiveCard from '@/assets/cards/positive-card.png';
 import NeutralCard from '@/assets/cards/neutral-card.png';
+import ErrorIcon from '@/assets/icons/error.svg';
+import WarningIcon from '@/assets/icons/warning.svg';
+import InfoIcon from '@/assets/icons/info.svg';
+import SuccessIcon from '@/assets/icons/success.svg';
 
 import { ICONS, type IconType } from '@/game/player-icon.ts';
 import { computed, onMounted, ref } from 'vue';

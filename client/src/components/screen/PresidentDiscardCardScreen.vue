@@ -23,7 +23,11 @@
       Submit
     </BaseButton>
 
-    <p class="mt-14 text-xs text-gray-800 font-bold">You cannot show anyone this screen</p>
+    <div class="mt-14 mx-auto">
+      <Alert type="error">
+        You cannot say <span class="font-bold">anything</span> until a card is played
+      </Alert>
+    </div>
   </div>
 </template>
 
@@ -33,6 +37,7 @@ import { Game, type PresidentDiscardCardGameState } from '@/game';
 import type { Card } from '@/game/messages.ts';
 import PlayedGameCard from '@/components/ui/PlayedGameCard.vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
+import Alert from '@/components/ui/Alert.vue';
 
 const props = defineProps<{ game: Game; }>();
 const gameState = computed(() => props.game.state as PresidentDiscardCardGameState);

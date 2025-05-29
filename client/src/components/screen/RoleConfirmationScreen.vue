@@ -3,7 +3,11 @@
     <Transition mode="out-in" name="fade">
       <div v-if="!gameState.hasConfirmed" class="flex flex-col items-center">
         <p class="text-lg text-gray-600">You are about to see your secret role.</p>
-        <p class="text-lg text-gray-700 font-semibold">Ensure nobody else can see your screen.</p>
+        <div class="mt-2 max-w-md mx-auto">
+          <Alert type="warning" size="large">
+            Ensure nobody else can see your screen.
+          </Alert>
+        </div>
 
         <BaseButton class="mt-14" variant="primary" @click="() => emit('confirm')">
           Okay
@@ -15,6 +19,7 @@
           <PlayerPreview
               :icon-variant="roleToVariant(game.role)"
               :player="{ name: playerName, icon: playerIcon! }"
+              hide-name
           />
           <p :class="game.role === Role.ANGEL ? 'text-blue-500' : 'text-red-500'" class="text-4xl font-black mt-4">
             {{ roleName(game.role) }}</p>
@@ -74,6 +79,7 @@ import PlayerPreview from '@/components/ui/PlayerPreview.vue';
 import { roleToVariant } from '@/util';
 import BaseButton from '@/components/ui/BaseButton.vue';
 import type { IconType } from '@/game/player-icon.ts';
+import Alert from '@/components/ui/Alert.vue';
 
 const emit = defineEmits<{ confirm: []; }>();
 const props = defineProps<{
