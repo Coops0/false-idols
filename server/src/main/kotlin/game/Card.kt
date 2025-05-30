@@ -56,17 +56,17 @@ val positiveCards get() = cards.filter { it.consequence == POSITIVE }
 val negativeCards get() = cards.filter { it.consequence == NEGATIVE }
 val neutralCards get() = cards.filter { it.consequence == NEUTRAL }
 
+const val NEGATIVE_COUNT = 11
+const val POSITIVE_COUNT = 6
+
 // 11-6, then discard the last two
 private fun generateCards(): List<Card> {
-    val negativeCount = 11
-    val positiveCount = 6
-
-    require(negativeCount <= negativeCards.size) { "Not enough negative cards available" }
-    require(positiveCount <= positiveCards.size) { "Not enough positive cards available" }
+    require(NEGATIVE_COUNT <= negativeCards.size) { "Not enough negative cards available" }
+    require(POSITIVE_COUNT <= positiveCards.size) { "Not enough positive cards available" }
 
     return listOf(
-        *negativeCards.shuffled(SecureRandom.getInstanceStrong()).take(negativeCount).toTypedArray(),
-        *positiveCards.shuffled(SecureRandom.getInstanceStrong()).take(positiveCount).toTypedArray(),
+        *negativeCards.shuffled(SecureRandom.getInstanceStrong()).take(NEGATIVE_COUNT).toTypedArray(),
+        *positiveCards.shuffled(SecureRandom.getInstanceStrong()).take(POSITIVE_COUNT).toTypedArray(),
     ).shuffled(SecureRandom.getInstanceStrong())
 }
 

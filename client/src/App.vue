@@ -54,6 +54,18 @@
         <IdleScreen v-else :connected="manualIsConnected" :player-icon/>
       </Transition>
     </div>
+
+    <Transition mode="out-in" name="fade">
+      <div v-if="showRolePopup && lastShownRoleState"
+           class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+        <RoleConfirmationScreen
+            :game="lastShownRoleState"
+            :player-icon
+            :player-name
+            @confirm="confirmRole"
+        />
+      </div>
+    </Transition>
   </div>
 </template>
 
@@ -74,6 +86,7 @@ import AdvisorChooseCardScreen from '@/components/screen/AdvisorChooseCardScreen
 import PolicyPeekScreen from '@/components/screen/PolicyPeekScreen.vue';
 import type { IconType } from '@/game/player-icon.ts';
 import PreloadImages from '@/components/PreloadImages.vue';
+import { registerHoldListener } from '@/util/hold-listener.ts';
 
 const playerName = ref<string>('');
 const playerIcon = ref<IconType | null>(null);
@@ -85,6 +98,9 @@ const game = ref<Game | null>(null);
 
 const canShowLogin = ref<boolean>(false);
 
+const lastShownRoleState = ref<Game | null>(null);
+const showRolePopup = ref(false);
+
 onMounted(() => {
   (async function () {
     playerName.value = localStorage.getItem('name') ?? '';
@@ -95,6 +111,8 @@ onMounted(() => {
       canShowLogin.value = true;
     }
   })();
+
+  // registerHoldListener(showRole);
 });
 
 async function tryToConnect() {
@@ -185,8 +203,11 @@ function commitAction(playerName: string) {
 }
 
 function confirmInvestigation() {
+  lastShownRoleState.value = structuredClone(game.value);
+
   const state = game.value!.state as ViewInvestigationResultsGameState;
   if (state.hasConfirmed) {
+    showRolePopup.value = false;
     game.value!.state = { type: 'idle' };
   } else {
     ws.send({ type: 'confirm' });
@@ -207,6 +228,13 @@ function chooseCard(cardId: number) {
 function confirmPolicyPeek() {
   ws.send({ type: 'confirm' });
   game.value!.state = { type: 'idle' };
+}
+
+function showRole() {
+  if (game.value === null || lastShownRoleState.value === null) return;
+
+  (lastShownRoleState.value.state as ViewRoleGameState).hasConfirmed = true;
+  showRolePopup.value = true;
 }
 </script>
 

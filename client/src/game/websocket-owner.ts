@@ -52,7 +52,7 @@ export class WebsocketOwner {
                 self.hasEverBeenConnected = true;
                 self.manualIsConnected.value = true;
 
-                // Add the real event listeners
+                // Replace with the real event listeners
                 self.ws.onmessage = event => self.handleMessage(event);
                 self.ws.onerror = err => console.warn(err);
                 self.ws.onclose = event => self.handleClosure(event);
