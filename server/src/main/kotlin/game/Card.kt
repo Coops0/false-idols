@@ -1,6 +1,7 @@
 package com.cooper.game
 
 import com.cooper.game.Card.Consequence.*
+import java.security.SecureRandom
 
 typealias CardId = Int
 
@@ -29,8 +30,8 @@ class CardDeck {
         if (cardStack.size <= 2) {
             cardStack = originalCards
                 .filter { card -> !playedCards.contains(card) }
-                .shuffled()
                 .toMutableList()
+            cardStack.shuffle(SecureRandom.getInstanceStrong())
         }
     }
 
@@ -64,9 +65,9 @@ private fun generateCards(): List<Card> {
     require(positiveCount <= positiveCards.size) { "Not enough positive cards available" }
 
     return listOf(
-        *negativeCards.shuffled().take(negativeCount).toTypedArray(),
-        *positiveCards.shuffled().take(positiveCount).toTypedArray(),
-    ).shuffled()
+        *negativeCards.shuffled(SecureRandom.getInstanceStrong()).take(negativeCount).toTypedArray(),
+        *positiveCards.shuffled(SecureRandom.getInstanceStrong()).take(positiveCount).toTypedArray(),
+    ).shuffled(SecureRandom.getInstanceStrong())
 }
 
 // <editor-fold desc="Card definitions">

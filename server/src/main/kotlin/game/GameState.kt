@@ -102,7 +102,7 @@ sealed class GameState(val type: String) {
                 players.addAll(demons.map { GamePlayer(it, ComplexRole.DEMON) })
                 players.addAll(shuffledPlayers.map { GamePlayer(it, ComplexRole.ANGEL) })
 
-                players.shuffle()
+                players.shuffle(SecureRandom.getInstanceStrong())
                 players[0].isPresident = true
 
                 return players
