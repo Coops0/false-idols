@@ -173,8 +173,8 @@ function confirmRole() {
   const state = game.value!.state as ViewRoleGameState;
   if (state.hasConfirmed) {
     game.value!.state = { type: 'idle' };
-    ws.send({ type: 'confirm_role' });
   } else {
+    ws.send({ type: 'confirm' });
     state.hasConfirmed = true;
   }
 }
@@ -189,6 +189,7 @@ function confirmInvestigation() {
   if (state.hasConfirmed) {
     game.value!.state = { type: 'idle' };
   } else {
+    ws.send({ type: 'confirm' });
     state.hasConfirmed = true;
   }
 }
@@ -204,6 +205,7 @@ function chooseCard(cardId: number) {
 }
 
 function confirmPolicyPeek() {
+  ws.send({ type: 'confirm' });
   game.value!.state = { type: 'idle' };
 }
 </script>

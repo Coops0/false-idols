@@ -83,6 +83,7 @@ suspend fun GameState.handleServerInboundApplicationMessage(message: ServerInbou
 
                 is InnerGameState.AwaitingPresidentActionChoice -> this.rotatePresident()
                 is InnerGameState.AwaitingInvestigationAnalysis -> this.rotatePresident()
+                is InnerGameState.AwaitingPolicyPeek -> this.rotatePresident()
                 else -> throw IllegalStateException("Cannot skip in state ${igs.type}")
             }
         }

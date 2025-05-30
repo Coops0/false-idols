@@ -59,17 +59,6 @@ function onMessage(message: ServerInboundMessage) {
     case 'update_game_state':
       game.value = message.game_state;
       break;
-    case 'policy_peeking':
-      const g = game.value;
-      if (g === null || g.type !== 'game_in_progress') return;
-
-      const presidentName = g.players.find(p => p.is_president)?.name;
-      toast(`${presidentName} is policy peeking`, {
-        type: toast.TYPE.INFO,
-        position: toast.POSITION.TOP_CENTER,
-        autoClose: 6000
-      });
-      break;
     case 'error':
       let m = message.error.error_type;
       if (message.error.player_name) {

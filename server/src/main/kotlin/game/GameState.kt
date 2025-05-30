@@ -3,6 +3,7 @@ package com.cooper.game
 import com.cooper.message.server.ServerOutboundMessage
 import com.fasterxml.jackson.annotation.JsonIgnore
 import kotlinx.coroutines.flow.MutableSharedFlow
+import java.security.SecureRandom
 
 const val POSITIVE_CARD_COUNT_WIN = 5
 const val NEGATIVE_CARD_COUNT_WIN = 6
@@ -89,7 +90,9 @@ sealed class GameState(val type: String) {
                     else -> 3
                 }
 
-                val shuffledPlayers = originalPlayers.shuffled().toMutableList()
+                val shuffledPlayers = originalPlayers.toMutableList()
+                shuffledPlayers.shuffle(SecureRandom.getInstanceStrong())
+
                 val demons = List(demonCount) { shuffledPlayers.removeAt(0) }
                 val satan = shuffledPlayers.removeAt(0)
 
@@ -148,4 +151,6 @@ sealed class InnerGameState(val type: String) {
             InnerGameState("awaiting_president_election_outcome")
 
     class AwaitingInvestigationAnalysis(val target: PlayerName) : InnerGameState("awaiting_investigation_analysis")
+
+    class AwaitingPolicyPeek() : InnerGameState("awaiting_policy_peek")
 }

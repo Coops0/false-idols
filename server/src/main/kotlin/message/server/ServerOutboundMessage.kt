@@ -10,8 +10,5 @@ sealed class ServerOutboundMessage(val type: String) {
     class Error(val error: FalseIdolsError) :
             ServerOutboundMessage("error")
 
-    class PolicyPeeking :
-            ServerOutboundMessage("policy_peeking")
-
     class Shutdown : ServerOutboundMessage("shutdown")
 }

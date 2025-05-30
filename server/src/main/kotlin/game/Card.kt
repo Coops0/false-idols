@@ -14,37 +14,28 @@ data class Card(
         NEGATIVE,
         NEUTRAL
     }
+
+    override fun equals(other: Any?) = other is Card && id == other.id
+
+    override fun hashCode() = id.hashCode()
 }
 
 class CardDeck {
-    @Suppress("MemberVisibilityCanBePrivate") val cardStack: MutableList<Card> = mutableListOf()
-    private var originalCards: List<Card> = listOf()
+    private var originalCards: List<Card> = generateCards()
+    @Suppress("MemberVisibilityCanBePrivate") var cardStack: MutableList<Card> = originalCards.toMutableList()
     val playedCards = mutableListOf<Card>()
 
-    init {
-        // get the largest possible deck size
-        for (i in 3..1000) {
-            originalCards = generateCards(i) ?: break
+    private fun checkAndTopUpStack() {
+        if (cardStack.size <= 2) {
+            cardStack = originalCards
+                .filter { card -> !playedCards.contains(card) }
+                .shuffled()
+                .toMutableList()
         }
-
-        require(originalCards.isNotEmpty()) { "No cards found to generate a deck" }
-
-        cardStack.addAll(originalCards)
-    }
-
-    private fun checkEmptyStack() {
-        if (cardStack.size > 3) return
-
-        // don't clear played cards, they are used for scoring
-        // prevent any duplicates
-        cardStack.clear()
-        cardStack.addAll(originalCards)
-
-        cardStack.shuffle()
     }
 
     fun pickAndTakeThree(): List<Card> {
-        checkEmptyStack()
+        checkAndTopUpStack()
 
         return List(3) {
             cardStack.removeAt(0)
@@ -52,7 +43,7 @@ class CardDeck {
     }
 
     fun playOneBlind() {
-        checkEmptyStack()
+        checkAndTopUpStack()
         playedCards.add(cardStack.removeAt(0))
     }
 
@@ -64,22 +55,17 @@ val positiveCards get() = cards.filter { it.consequence == POSITIVE }
 val negativeCards get() = cards.filter { it.consequence == NEGATIVE }
 val neutralCards get() = cards.filter { it.consequence == NEUTRAL }
 
-private const val POSITIVE_RATIO = 0.4
-private const val NEGATIVE_RATIO = 0.5
+// 11-6, then discard the last two
+private fun generateCards(): List<Card> {
+    val negativeCount = 11
+    val positiveCount = 6
 
-private fun generateCards(deckSize: Int): List<Card>? {
-    val positiveCount = (deckSize * POSITIVE_RATIO).toInt()
-    val negativeCount = (deckSize * NEGATIVE_RATIO).toInt()
-    val neutralCount = deckSize - positiveCount - negativeCount
-
-    if (positiveCount > positiveCards.size) return null
-    if (negativeCount > negativeCards.size) return null
-    if (neutralCount > neutralCards.size) return null
+    require(negativeCount <= negativeCards.size) { "Not enough negative cards available" }
+    require(positiveCount <= positiveCards.size) { "Not enough positive cards available" }
 
     return listOf(
-        *positiveCards.shuffled().take(positiveCount).toTypedArray(),
         *negativeCards.shuffled().take(negativeCount).toTypedArray(),
-        *neutralCards.shuffled().take(neutralCount).toTypedArray(),
+        *positiveCards.shuffled().take(positiveCount).toTypedArray(),
     ).shuffled()
 }
 

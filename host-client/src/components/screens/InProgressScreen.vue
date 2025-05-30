@@ -18,6 +18,7 @@
         <AwaitingAdvisorElectionOutcomeScreen v-else-if="game.inner_game_state.type === 'awaiting_advisor_election_outcome'" :game/>
         <AwaitingPresidentElectionOutcomeScreen v-else-if="game.inner_game_state.type === 'awaiting_president_election_outcome'" :game/>
         <AwaitingInvestigationAnalysis v-else-if="game.inner_game_state.type === 'awaiting_investigation_analysis'" :game/>
+        <AwaitingPolicyPeekScreen v-else-if="game.inner_game_state.type === 'awaiting_policy_peek'" :game/>
         <AwaitingPlayerActionChoiceScreen v-else-if="game.inner_game_state.type === 'awaiting_president_action_choice'" :game/>
         <AwaitingRoleConfirmationsScreen v-else-if="game.inner_game_state.type === 'awaiting_role_confirmations'" :game/>
         <IdleScreen v-else-if="game.inner_game_state.type === 'idle'" :game/>
@@ -53,6 +54,7 @@ import DemonBoard from '@/components/ui/DemonBoard.vue';
 import { watch } from 'vue';
 import { toast } from 'vue3-toastify';
 import AwaitingRoleConfirmationsScreen from '@/components/screens/game-screens/AwaitingRoleConfirmationsScreen.vue';
+import AwaitingPolicyPeekScreen from '@/components/screens/game-screens/AwaitingPolicyPeekScreen.vue';
 
 const props = defineProps<{ game: InProgressGameState }>();
 
@@ -67,9 +69,9 @@ watch(() => props.game, (game, oldGame) => {
 
   if (newNegativeCards >= NEGATIVE_CARD_COUNT_SATAN_ELECTION_WIN && oldNegativeCards < NEGATIVE_CARD_COUNT_SATAN_ELECTION_WIN) {
     toast('Demons will win if Satan is elected as advisor', {
-      position: toast.POSITION.TOP_RIGHT,
+      position: toast.POSITION.TOP_CENTER,
       type: toast.TYPE.WARNING,
-      autoClose: 5000
+      autoClose: false
     });
   }
 });

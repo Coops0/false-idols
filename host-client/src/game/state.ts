@@ -82,6 +82,9 @@ export type AwaitingRoleConfirmationsInnerGameState = {
     type: 'awaiting_role_confirmations';
     confirmed: string[]
 }
+export type AwaitingPolicyPeekInnerGameState = {
+    type: 'awaiting_policy_peek';
+}
 
 export type AwaitingInvestigationAnalysisInnerGameState = { type: 'awaiting_investigation_analysis', target: string };
 
@@ -93,6 +96,7 @@ export type InnerGameState =
     | AwaitingAdvisorElectionOutcomeInnerGameState
     | AwaitingPresidentElectionOutcomeInnerGameState
     | AwaitingInvestigationAnalysisInnerGameState
+    | AwaitingPolicyPeekInnerGameState
     | AwaitingRoleConfirmationsInnerGameState;
 
 export type LobbyGameState = {

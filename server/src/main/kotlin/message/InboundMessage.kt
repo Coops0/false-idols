@@ -15,7 +15,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
     JsonSubTypes.Type(value = InboundMessage.DiscardOneCard::class, name = "discard_one_card"),
     JsonSubTypes.Type(value = InboundMessage.ChooseCard::class, name = "choose_card"),
     JsonSubTypes.Type(value = InboundMessage.Ping::class, name = "ping"),
-    JsonSubTypes.Type(value = InboundMessage.ConfirmRole::class, name = "confirm_role")
+    JsonSubTypes.Type(value = InboundMessage.Confirm::class, name = "confirm")
 )
 sealed class InboundMessage {
     /// President chooses a player to execute an action upon
@@ -30,5 +30,5 @@ sealed class InboundMessage {
 
     class Ping(val requestIcon: Boolean = false) : InboundMessage()
 
-    class ConfirmRole() : InboundMessage()
+    class Confirm : InboundMessage()
 }

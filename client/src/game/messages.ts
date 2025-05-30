@@ -55,7 +55,7 @@ export type OutboundMessage =
     { type: 'ping', request_icon?: boolean } |
     /// At the start of the game we need to confirm our role to prevent
     /// from role confirmation spam.
-    { type: 'confirm_role' };
+    { type: 'confirm' };
 
 
 //@formatter:off

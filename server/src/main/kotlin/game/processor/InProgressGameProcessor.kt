@@ -5,7 +5,6 @@ import com.cooper.game.SimpleRole.Companion.simple
 import com.cooper.message.OutboundMessage
 import com.cooper.message.OutboundMessage.RequestActionChoice.ActionSupplementedPlayer
 import com.cooper.message.OutboundMessage.StrippedPlayer.Companion.stripped
-import com.cooper.message.server.ServerOutboundMessage
 
 suspend fun GameState.GameInProgress.rotatePresident() {
     val igs = this.innerGameState
@@ -228,10 +227,11 @@ suspend fun GameState.GameInProgress.handleNegativeCardAction(): Boolean {
 
     // Policy peek
     if (action == null) {
+        this.innerGameState = InnerGameState.AwaitingPolicyPeek()
+
         val cards = this.deck.cardStack.take(3)
         this.president.emit(OutboundMessage.PolicyPeek(cards))
-        this.sendServer(ServerOutboundMessage.PolicyPeeking())
-        return false
+        return true
     }
 
     this.innerGameState = InnerGameState.AwaitingPresidentActionChoice(action)
@@ -301,6 +301,13 @@ fun GameState.GameInProgress.playerMessageFromState(player: GamePlayer): Outboun
             }
         }
 
+        is InnerGameState.AwaitingPolicyPeek -> {
+            if (this.president == player) {
+                val cards = this.deck.cardStack.take(3)
+                return OutboundMessage.PolicyPeek(cards)
+            }
+        }
+
         is InnerGameState.AwaitingPresidentActionChoice -> {
             if (this.president != player) {
                 return null
@@ -346,13 +353,27 @@ fun GameState.GameInProgress.playerToActionSupplementedPlayer(
     )
 }
 
-fun GameState.GameInProgress.handlePlayerConfirmRole(player: GamePlayer) {
-    val igs = this.innerGameState
-    require(igs is InnerGameState.AwaitingRoleConfirmations) { "Game must be awaiting role confirmation to confirm role" }
-    require(player.name !in igs.confirmed) { "Player must not have already confirmed role" }
+fun GameState.GameInProgress.handlePlayerConfirmation(player: GamePlayer) {
+    when (val igs = this.innerGameState) {
+        is InnerGameState.AwaitingRoleConfirmations -> {
+            require(player.name !in igs.confirmed) { "Player must not have already confirmed role" }
 
-    igs.confirmed.add(player.name)
-    if (igs.confirmed.size == this.players.size) {
-        this.idle()
+            igs.confirmed.add(player.name)
+            if (igs.confirmed.size == this.players.size) {
+                this.idle()
+            }
+        }
+
+        is InnerGameState.AwaitingInvestigationAnalysis -> {
+            require(this.president == player) { "Player must be president to confirm investigation" }
+            this.idle()
+        }
+
+        is InnerGameState.AwaitingPolicyPeek -> {
+            require(this.president == player) { "Player must be president to confirm policy peek" }
+            this.idle()
+        }
+
+        else -> throw IllegalStateException("Got unexpected confirmation")
     }
 }
